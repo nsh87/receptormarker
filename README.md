@@ -26,7 +26,7 @@ code:
 devtools::load_all()
 ```
 
-Be sure to follow this[code style](http://r-pkgs.had.co.nz/r.html#style "Hadley Wickham's Modified Google R Style Guide")
+Be sure to follow this [code style](http://r-pkgs.had.co.nz/r.html#style "Hadley Wickham's Modified Google R Style Guide")
  and [document your functions](http://r-pkgs.had.co.nz/man.html "Documenting
 with Roxygen2").  If you create any functions that are internal and not of
 interest to most users, be sure to document them with `@keywords internal` to
