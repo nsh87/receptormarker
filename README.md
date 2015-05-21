@@ -13,7 +13,7 @@ Once version 1.0 is complete the package will be submitted to CRAN.
 
 ## Development
 
-Fork the repository and submit changes with a pull request.
+Fork the repository and submit changes with a pull request to `develop`.
 
 To get started, make sure you have the latest version of R and RStudio
 installed. It is strongly suggested that you have installed the following
