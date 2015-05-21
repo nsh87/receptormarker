@@ -1,4 +1,4 @@
-[![Travis-CI Build Status](https://travis-ci.org/nsh87/receptormarker.svg?branch=master)](https://travis-ci.org/nsh87/receptormarker)
+# Receptor Marker [![Travis-CI Build Status](https://travis-ci.org/nsh87/receptormarker.svg?branch=dev)](https://travis-ci.org/nsh87/receptormarker)
 
 ## Installation
 
