@@ -1,4 +1,11 @@
+# Operating System
 .DS_Store
+
+# R
 .Rproj.user
 .Rhistory
 .RData
+
+# Vim
+*.swo
+*.swp
