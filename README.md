@@ -1,3 +1,5 @@
+[![Travis-CI Build Status](https://travis-ci.org/nsh87/receptormarker.svg?branch=master)](https://travis-ci.org/nsh87/receptormarker)
+
 ## Installation
 
 While this package is in development it can be installed directly from GitHub
