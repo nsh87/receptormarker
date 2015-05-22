@@ -6,6 +6,7 @@
 #' @name receptormarker
 NULL
 
+
 #' Creates and stores package options using R's \code{.onLoad} hook.
 #' 
 #' Saved options will be available throughout the package using
@@ -22,7 +23,47 @@ NULL
 .onLoad <- function(libname, pkgname) {
   op <- options()
   op.receptormarker <- list(
-    devtools.py_version = py_version(),  
-    devtools.biopy_version = biopy_version()
+    receptormarker.py_version = py_version(),  
+    receptormarker.biopy_version = biopy_version()
   )
+  toset <- !(names(op.receptormarker) %in% names(op))
+  if(any(toset)) options(op.receptormarker[toset])
+  
+  invisible()
+}
+
+
+#' \code{library(receptormarker)} and presents user with warning if none found.
+#' @keywords internal
+.onAttach <- function(libname, pkgname) {
+  missing_apps = c()
+  if (is.null(getOption('receptormarker.py_version'))) {
+    missing_apps[length(missing_apps) + 1] <- "Python"
+  }
+  if (is.null(getOption('receptormarker.biopy_version'))) {
+    missing_apps[length(missing_apps) + 1] <- "Biopython"
+  }
+  
+  if (length(missing_apps) > 0) {
+    if (length(missing_apps) == 1) {
+      apps_list <- missing_apps
+    } else {
+      apps_list <- paste0(missing_apps, collapse=" and ")
+    }
+    
+    install_biopy <- 'http://biopython.org/DIST/docs/install/Installation.html'
+    missing_apps_warning <- paste0(c("Warning: Unable to find",
+                                     apps_list,
+                                     "on your system. In order to achieve the",
+                                     "best results it is strongly suggest to",
+                                     "install Python's Biopython to your",
+                                     "system's path. See",
+                                     install_biopy,
+                                     "for installation instructions. Once",
+                                     "installed, please reload this package."
+                                     ),
+                                   collapse=" "
+    )
+    packageStartupMessage(missing_apps_warning)
+  }
 }
