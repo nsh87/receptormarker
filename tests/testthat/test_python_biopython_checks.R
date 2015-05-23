@@ -1,11 +1,17 @@
 context("System checks for getting Python and Biopython version numbers")
 
 
-test_that("Python version number is returned and accurate", {
-  versn <- py_version()
-  expect_that(versn, is_a("numeric"))
-  expect_that(length(versn), equals(1))
-  expect_that(2 < versn && versn < 4, is_true())
+test_that("assume Python exists: verify version number is sane and not NULL", {
+  py_vers <- py_version()
+  expect_that(py_vers, is_a("numeric"))
+  expect_that(length(py_vers), equals(1))
+  expect_that(2 < py_vers && py_vers < 4, is_true())
+})
+
+
+test_that("package can laod the Python and Biopython version from options", {
+  expect_equal(getOption("receptormarker.py_version"), py_version())
+  expect_equal(getOption("receptormarker.biopy_version"), biopy_version())
 })
 
 
