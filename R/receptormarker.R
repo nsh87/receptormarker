@@ -23,8 +23,8 @@ NULL
 .onLoad <- function(libname, pkgname) {
   op <- options()
   op.receptormarker <- list(
-    receptormarker.py_version <- py_version(),  
-    receptormarker.biopy_version <- biopy_version()
+    receptormarker.py_version = py_version(),
+    receptormarker.biopy_version = biopy_version() 
   )
   toset <- !(names(op.receptormarker) %in% names(op))
   if(any(toset)) options(op.receptormarker[toset])
