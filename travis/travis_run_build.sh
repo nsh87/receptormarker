@@ -18,7 +18,7 @@ log_file="travis_build.log"
 # kill $tailpid
 
 # run checks
-eval "Rscript ./travis_build.R | tee -a '$log_file'"
+eval "Rscript ./travis/travis_build.R | tee -a '$log_file'"
 
 # search for errors
 err1="ERROR"
