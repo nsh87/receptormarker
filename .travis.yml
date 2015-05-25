@@ -13,6 +13,8 @@ r_binary_packages:
 
 before_script: Rscript ./travis_prep.R
 
+script: ./travis_build_check.R
+
 notifications:
   email:
     on_success: change
