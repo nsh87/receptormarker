@@ -11,6 +11,8 @@ env:
 r_binary_packages:
  - testthat
 
+before_script: Rscript ./travis_prep.R
+
 notifications:
   email:
     on_success: change
