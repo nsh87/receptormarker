@@ -13,7 +13,7 @@ r_binary_packages:
 
 before_script: "Rscript ./travis_prep.R"
 
-script: "Rscript ./travis_build_check.R"
+script: ./travis_run_build.sh
 
 notifications:
   email:
