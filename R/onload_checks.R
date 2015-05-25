@@ -44,12 +44,11 @@ versn <- function(cmd, application) {
   if (length(sys_cmd) == 0) {
     return()
   }
-  tryCatch(
-    {
-      response <- strsplit(sys_cmd, ' ')[[1]]
+  tryCatch({
+      response <- strsplit(sys_cmd, " ")[[1]]
       if (response[1] == application) {
-        full_version <- strsplit(response[2], '\\.')[[1]]  # Uses regex
-        versn <- as.numeric(paste0(full_version[c(1:2)], collapse='.'))
+        full_version <- strsplit(response[2], "\\.")[[1]]  # Uses regex
+        versn <- as.numeric(paste0(full_version[c(1:2)], collapse="."))
       } else {
         return()
       }
@@ -75,10 +74,10 @@ versn <- function(cmd, application) {
 #'   returns \code{NULL}.
 #' @keywords internal
 py_version <- function() {
-  cmd <- paste0('python -c "import platform;',
-                'print(\'Python {}\'.format(platform.python_version()))"',
-                collapse=' ')
-  versn(cmd, 'Python')
+  cmd <- paste0("python -c \"import platform;",
+                "print('Python {}'.format(platform.python_version()))\"",
+                collapse=" ")
+  versn(cmd, "Python")
 }
 
 
@@ -93,8 +92,8 @@ py_version <- function() {
 #'   returns \code{NULL}.
 #' @keywords internal
 biopy_version <- function() {
-  command <- paste0('python -c "import Bio;',
-                'print(\'Biopython {}\').format(Bio.__version__)"',
-                collapse=' ')
-  versn(command, 'Biopython') 
+  command <- paste0("python -c \"import Bio;",
+                "print('Biopython {}').format(Bio.__version__)\"",
+                collapse=" ")
+  versn(command, "Biopython") 
 }

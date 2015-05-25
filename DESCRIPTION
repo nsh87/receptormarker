@@ -19,4 +19,5 @@ URL: https://github.com/nsh87/receptormarker
 Imports:
     fpc (>= 2.1)
 Suggests:
-    testthat (>= 0.9.1)
+    testthat (>= 0.9.1),
+    lintr (>= 0.2.0)

@@ -23,8 +23,8 @@ NULL
 .onLoad <- function(libname, pkgname) {
   op <- options()
   op.receptormarker <- list(
-    receptormarker.py_version = py_version(),  
-    receptormarker.biopy_version = biopy_version()
+    receptormarker.py_version = py_version(),
+    receptormarker.biopy_version = biopy_version() 
   )
   toset <- !(names(op.receptormarker) %in% names(op))
   if(any(toset)) options(op.receptormarker[toset])
@@ -36,11 +36,11 @@ NULL
 #' \code{library(receptormarker)} and presents user with warning if none found.
 #' @keywords internal
 .onAttach <- function(libname, pkgname) {
-  missing_apps = c()
-  if (is.null(getOption('receptormarker.py_version'))) {
+  missing_apps <- c()
+  if (is.null(getOption("receptormarker.py_version"))) {
     missing_apps[length(missing_apps) + 1] <- "Python"
   }
-  if (is.null(getOption('receptormarker.biopy_version'))) {
+  if (is.null(getOption("receptormarker.biopy_version"))) {
     missing_apps[length(missing_apps) + 1] <- "Biopython"
   }
   
@@ -51,7 +51,7 @@ NULL
       apps_list <- paste0(missing_apps, collapse=" and ")
     }
     
-    install_biopy <- 'http://biopython.org/DIST/docs/install/Installation.html'
+    install_biopy <- "http://biopython.org/DIST/docs/install/Installation.html"
     missing_apps_warning <- paste0(c("Warning: Unable to find",
                                      apps_list,
                                      "on your system. In order to achieve the",
