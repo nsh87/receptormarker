@@ -11,9 +11,9 @@ env:
 r_binary_packages:
  - testthat
 
-before_script: Rscript ./travis_prep.R
+before_script: "Rscript ./travis_prep.R"
 
-script: ./travis_build_check.R
+script: "Rscript ./travis_build_check.R"
 
 notifications:
   email:
