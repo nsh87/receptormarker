@@ -21,6 +21,7 @@ packages:
 
 ```R
 install.packages(c("devtools", "roxygen2", "testthat", "knitr"))
+devtools::install_github('jimhester/lintr')  # Do not install from CRAN
 ```
 
 Load **receptormarker.Rproj** to open the project in RStudio, then load the
@@ -50,7 +51,7 @@ functions written. Run all tests with:
 devtools::test()
 ```
 
-Before submitting a pull request you should build the documentation, run tests
+Before submitting a pull request you should build the documentation, run tests, 
 and check that the package builds. This can be done with a single command:
 
 ```R
