@@ -51,7 +51,7 @@ NULL
       apps_list <- paste0(missing_apps, collapse=" and ")
     }
     
-    install_biopy <- "http://biopython.org/DIST/docs/install/Installation.html  slaj"
+    install_biopy <- "http://biopython.org/DIST/docs/install/Installation.html"
     missing_apps_warning <- paste0(c("Warning: Unable to find",
                                      apps_list,
                                      "on your system. In order to achieve the",
