@@ -20,7 +20,8 @@ installed. It is strongly suggested that you have installed the following
 packages:
 
 ```R
-install.packages(c("devtools", "roxygen2", "testthat", "knitr", "lintr"))
+install.packages(c("devtools", "roxygen2", "testthat", "knitr"))
+devtools::install_github('jimhester/lintr')
 ```
 
 Load **receptormarker.Rproj** to open the project in RStudio, then load the
