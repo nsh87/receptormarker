@@ -51,7 +51,7 @@ functions written. Run all tests with:
 devtools::test()
 ```
 
-Before submitting a pull request you should build the documentation, run tests
+Before submitting a pull request you should build the documentation, run tests, 
 and check that the package builds. This can be done with a single command:
 
 ```R

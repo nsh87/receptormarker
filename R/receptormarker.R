@@ -1,15 +1,13 @@
 #' Analyze antibody receptor sequences and phenotypic markers.
 #'
 #' Useful for quick normalization, clustering, and creating phylogenetic trees.
-#'
 #' @docType package
 #' @name receptormarker
 NULL
 
 
-#' Creates and stores package options using R's \code{.onLoad} hook.
-#' 
-#' Saved options will be available throughout the package using
+#' @title Creates and stores package options using R's \code{.onLoad} hook.
+#' @description Saved options will be available throughout the package using
 #' \code{getOptions(receptormarker.option_name)}. Options include:
 #' \enumerate{
 #'   \item \code{py_version}: Python's version; empty string if not installed.
@@ -33,7 +31,9 @@ NULL
 }
 
 
-#' \code{library(receptormarker)} and presents user with warning if none found.
+#' @title Check if Biopython is installed on \code{library(receptormarker)}
+#' @description Presents user with warning if Biopython or Python is not
+#'   installed, but allows user to continue using the package.
 #' @keywords internal
 .onAttach <- function(libname, pkgname) {
   missing_apps <- c()
