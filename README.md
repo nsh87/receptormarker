@@ -21,6 +21,7 @@ packages:
 
 ```R
 install.packages(c("devtools", "roxygen2", "testthat", "knitr"))
+devtools::install_github('jimhester/lintr')  # Do not install from CRAN
 ```
 
 Load **receptormarker.Rproj** to open the project in RStudio, then load the
