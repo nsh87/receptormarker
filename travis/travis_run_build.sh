@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-log_file="travis_build.log"
+log_file="travis/travis_build.log"
 #R CMD BATCH ./travis_build.R $log_file 
 #cat $log_file
 
