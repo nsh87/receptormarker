@@ -20,7 +20,7 @@ installed. It is strongly suggested that you have installed the following
 packages:
 
 ```R
-install.packages(c("devtools", "roxygen2", "testthat", "knitr"))
+install.packages(c("devtools", "roxygen2", "testthat", "knitr", "htmlwidgets"))
 devtools::install_github('jimhester/lintr')  # Do not install from CRAN
 ```
 
