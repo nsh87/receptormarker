@@ -5,11 +5,12 @@
 #' @import htmlwidgets
 #'
 #' @export
-radial_phylo <- function(message, width = NULL, height = NULL) {
+# allow users to set viewer.suppress to FALSE to see the thing in RStudio
+radial_phylo <- function(dataObject, width = NULL, height = NULL) {
 
   # forward options using x
   x = list(
-    message = message
+    dataObject = dataObject
   )
 
   # create widget
@@ -18,6 +19,12 @@ radial_phylo <- function(message, width = NULL, height = NULL) {
     x,
     width = width,
     height = height,
+    htmlwidgets::sizingPolicy(
+      viewer.padding = 0,
+      #viewer.suppress = TRUE,
+      viewer.paneHeight = 500,
+      browser.fill = TRUE
+    ),
     package = 'receptormarker'
   )
 }
