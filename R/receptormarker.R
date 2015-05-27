@@ -60,7 +60,13 @@ NULL
                                      "system's path. See",
                                      install_biopy,
                                      "for installation instructions. Once",
-                                     "installed, please reload this package."
+                                     "installed, please reload this package.",
+                                     "If you use Biopython through Enthought",
+                                     "Canopy or Anaconda, these tools run in",
+                                     "an environment on top of your system",
+                                     "path, which is not accessible through",
+                                     "R; please install Biopython to your",
+                                     "system path, as well."
                                      ),
                                    collapse=" "
     )
