@@ -21,6 +21,7 @@ HTMLWidgets.widget({
 
     // set some options of the phylogram
     Smits.PhyloCanvas.Render.Parameters.Circular['bufferRadius'] = .35;
+    Smits.PhyloCanvas.Render.Parameters.Circular['bufferOuterLabels'] = 0;
 
     // plot the phylgram
     var phylocanvas = new Smits.PhyloCanvas(
