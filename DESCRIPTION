@@ -17,7 +17,8 @@ Description: Provides functions for executing computations on antibody receptor
 License: BSD_2_clause + file LICENSE
 URL: https://github.com/nsh87/receptormarker
 Imports:
-    fpc (>= 2.1)
+    htmlwidgets (>= 0.4)
 Suggests:
     testthat (>= 0.9.1),
     lintr (>= 0.2.0)
+
