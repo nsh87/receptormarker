@@ -6,8 +6,9 @@
 #'
 #' @export
 # allow users to set viewer.suppress to FALSE to see the thing in RStudio
-radial_phylo <- function(dataFile, radius='fill', autoResize=FALSE,
-                         suppressViewer=FALSE, width=NULL, height=NULL) {
+radial_phylo <- function(dataFile, radius='auto', fontSize='auto',
+                         autoResize=FALSE, suppressViewer=FALSE, width=NULL,
+                         height=NULL) {
 
   u <- read.csv(dataFile)
   seqscol <- 3
@@ -44,6 +45,8 @@ radial_phylo <- function(dataFile, radius='fill', autoResize=FALSE,
   tryCatch({
     if (!is.element(radius, radius_options) && (radius != floor(radius))) {
       stop(err, call.=FALSE)
+    } else if (radius < 1) {
+      stop(err, call.=FALSE)
     }
   },
   error = function(e) {
@@ -51,32 +54,18 @@ radial_phylo <- function(dataFile, radius='fill', autoResize=FALSE,
   }
   )
   
-  # Warn user if setting 'radius' and autoResize=TRUE at same time
-  warn = "Using autoResize=TRUE will override the 'radius' parameter"
-  tryCatch({
-    if (is.numeric(radius) && autoResize == TRUE) {
-      warning(warn, call.=FALSE)
-    }
-  })
-  
   # forward options using x
   x = list(
     radius = radius,
     autoResize = autoResize
   )
   
-#   xmlFileSplit <- strsplit(xmlFile, '/', fixed=TRUE)
-#   xmlFileNameOnly <- xmlFileSplit[[1]][length(xmlFileSplit[[1]])]
-#   
-#   
    phyloxml <- htmltools::htmlDependency(
      name = 'phyloxml',
      version = '1.0',
-#     src = system.file('htmlwidgets/lib/phyloxmls', package='receptormarker'),
      src = c(file=dirname(xmlFile)),
      attachment = list(xml=basename(xmlFile))
    )
-#   dep <- htmltools::copyDependencyToDir(phyloxml, outputDir='htmlwidgets/lib')
 
   # create widget
   htmlwidgets::createWidget(
