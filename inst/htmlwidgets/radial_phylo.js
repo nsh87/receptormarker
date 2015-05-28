@@ -15,9 +15,29 @@ HTMLWidgets.widget({
 
   renderValue: function(el, x, instance) {
 
-    // get width and height of current window
-    var width = el.offsetWidth;
-    var height = el.offsetHeight;
+    // add css
+    var css = "svg { height: 100%; width: 100%; }";
+    var head = document.head || document.getElementsByTagName('head')[0];
+    var style = document.createElement('style');
+    style.type = "text/css";
+    if (style.styleSheet) {
+        style.styleSheet.cssText = css;
+    } else {
+        style.appendChild(document.createTextNode(css));
+    }
+    head.appendChild(style);
+                   
+    // if 'radius' is a number then use it
+    var width = undefined;
+    var height = undefined;
+    if (typeof(x.radius === 'number') && x.radius%1 === 0) {
+        width = x.radius;
+        height = x.radius;
+    } else {
+        // get width and height of current window
+        width = el.offsetWidth;
+        height = el.offsetHeight;
+    }
 
     // set some options of the phylogram
     Smits.PhyloCanvas.Render.Parameters.Circular['bufferRadius'] = .35;
@@ -30,9 +50,9 @@ HTMLWidgets.widget({
         },
         el.id,
         width, height,
-        'circular'
+        'circular',
+        x.autoResize  // holds true or false
     );
-
 
   },
 

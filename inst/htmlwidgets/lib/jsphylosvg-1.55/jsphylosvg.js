@@ -106,7 +106,7 @@ Smits = {};Smits.Common = {
 		svg,
 		dataObject;
 
-	return function(inputFormat, sDivId, canvasWidth, canvasHeight, type){
+	return function(inputFormat, sDivId, canvasWidth, canvasHeight, type, autoResize){
 		/* Privileged Methods */
 		this.getNewickObject = function(){
 			return newickObject;
@@ -174,7 +174,7 @@ Smits = {};Smits.Common = {
 		}
 
 		divId = sDivId;
-		svg = new Smits.PhyloCanvas.Render.SVG( divId, canvasWidth, canvasHeight );
+		svg = new Smits.PhyloCanvas.Render.SVG( divId, canvasWidth, canvasHeight, autoResize );
 
 			/* FACTORY */
 		if(type == "circular"){
@@ -1211,13 +1211,19 @@ Smits.PhyloCanvas.NexmlParse.prototype = {
 	var divId,
 		canvasSize;
 
-	return function(sDivId, canvasWidth, canvasHeight){
+	return function(sDivId, canvasWidth, canvasHeight, autoResize){
 
 		/* CONSTRUCTOR */
 		divId = sDivId;
 		this.canvasSize = [canvasWidth, canvasHeight];
-
-		this.svg = Raphael(sDivId, this.canvasSize[0], this.canvasSize[1]);
+		
+		if (autoResize == true) {
+			this.svg = Raphael(sDivId, this.canvasSize[0], this.canvasSize[1]);	
+			this.svg.setViewBox(0, 0, this.canvasSize[0], this.canvasSize[1], true);
+			this.svg.canvas.setAttribute('preserveAspectRatio', 'xMinYMin meet');
+		} else {
+			this.svg = Raphael(sDivId, this.canvasSize[0], this.canvasSize[1]);			
+		}
 
 	}
 
