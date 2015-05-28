@@ -6,7 +6,8 @@
 #'
 #' @export
 # allow users to set viewer.suppress to FALSE to see the thing in RStudio
-radial_phylo <- function(dataObject, radius='fill', autoResize=FALSE, width=NULL, height=NULL) {
+radial_phylo <- function(dataObject, radius='fill', autoResize=FALSE,
+                         suppressViewer=FALSE, width=NULL, height=NULL) {
 
   # Determine what the parameter 'radius' is
   err = "The argument 'radius' is invalid"
@@ -44,8 +45,7 @@ radial_phylo <- function(dataObject, radius='fill', autoResize=FALSE, width=NULL
     height = height,
     htmlwidgets::sizingPolicy(
       viewer.padding = 0,
-      #viewer.suppress = TRUE,
-      viewer.paneHeight = 500,
+      viewer.suppress = suppressViewer,
       browser.fill = TRUE
     ),
     package = 'receptormarker'
