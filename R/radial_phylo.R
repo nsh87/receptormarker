@@ -16,18 +16,13 @@ radial_phylo <- function(dataFile, radius='fill', autoResize=FALSE,
   seqsFile <- tempfile(pattern='seqs-', tmpdir=getwd(), fileext='.txt')
   write(w, seqsFile)
   
-  alignedFile <- tempfile(pattern='aligned-', tmpdir=getwd(), fileext='.txt')
+  alignedFile <- tempfile(pattern='aligned-', tmpdir=getwd(), fileext='.fasta')
   s <- as.character(seqs[, seqscol])
   ss <- Biostrings::AAStringSet(s)
+  names(ss) <- s
   alignment <- muscle::muscle(stringset=ss, quiet=TRUE)
-  caretseqs <- as.character(lapply(s, function(x) { paste0('>', x) }))
-  fast <- lapply(seq_along(caretseqs), function(y, i) {
-    caret <- y[i]
-    algn <- as.character(alignment)[i]
-    c(caret, algn)
-  }, y=caretseqs)
-  faster <- unlist(fast)
-  write(faster, alignedFile)
+  AAStrSet <- as(alignment, "AAStringSet")
+  Biostrings::writeXStringSet(AAStrSet, file=alignedFile)
   
   aligned <- seqinr::read.alignment(alignedFile, format='fasta')
   aligned_dist <- as.matrix(seqinr::dist.alignment(x=aligned, matrix='identity'))
