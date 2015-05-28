@@ -6,11 +6,25 @@
 #'
 #' @export
 # allow users to set viewer.suppress to FALSE to see the thing in RStudio
-radial_phylo <- function(dataObject, width = NULL, height = NULL) {
+radial_phylo <- function(dataObject, radius='fill', width=NULL, height=NULL) {
 
+  # determine what the parameter 'radius' is
+  radius_options <- list('fill', 'scale')
+  err = "The argument 'radius' is invalid"
+  tryCatch({
+    if (!is.element(radius, c('fill', 'scale')) && (radius != floor(radius))) {
+      stop(err)
+    }
+  },
+  error = function(e) {
+    stop(err)
+  }
+  )
+  
   # forward options using x
   x = list(
-    dataObject = dataObject
+    dataObject = dataObject,
+    radius = radius
   )
 
   # create widget
