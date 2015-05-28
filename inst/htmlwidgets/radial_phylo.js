@@ -15,7 +15,7 @@ HTMLWidgets.widget({
 
   renderValue: function(el, x, instance) {
 
-    // add css
+    // function to add css to <head>
     var addCSS = function(css) {
         var head = document.head || document.getElementsByTagName('head')[0];
         var style = document.createElement('style');
@@ -40,6 +40,7 @@ HTMLWidgets.widget({
         height = Math.max(instance.width, instance.height);
     }
 
+    // if user provides large radius give the svg that width and height
     if (x.autoResize === true) {
         addCSS("svg { width: 100%; height: 100%; }");
     } else {
@@ -51,16 +52,24 @@ HTMLWidgets.widget({
     Smits.PhyloCanvas.Render.Parameters.Circular['bufferRadius'] = .42;
     Smits.PhyloCanvas.Render.Parameters.Circular['bufferOuterLabels'] = 0;
 
-    // plot the phylgram
-    var phylocanvas = new Smits.PhyloCanvas(
-        {
-            newick: x.dataObject
-        },
-        el.id,
-        width, height,
-        'circular',
-        x.autoResize  // holds true or false
-    );
+    // get xml file's contents and plot the phylogram
+    var xml_relpath = HTMLWidgets.getAttachmentUrl('phyloxml', 'xml');
+    $.get(xml_relpath, function(xmldata) {
+
+        var dataObject = {
+            phyloxml: xmldata,
+            fileSource: true
+        };
+
+        var phylocanvas = new Smits.PhyloCanvas(
+            dataObject,
+            el.id,
+            width, height,
+            'circular',
+            x.autoResize  // holds true or false
+        );
+
+    });
 
   },
 

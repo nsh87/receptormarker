@@ -11,3 +11,7 @@ dependencies:
   version: 1.55
   src: htmlwidgets/lib/jsphylosvg-1.55
   script: ./jsphylosvg.js  
+- name: jquery
+  version: 1.11.3
+  src: htmlwidgets/lib/jquery-1.11.3
+  script: ./jquery.min.js
