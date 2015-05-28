@@ -16,16 +16,17 @@ HTMLWidgets.widget({
   renderValue: function(el, x, instance) {
 
     // add css
-    var css = "svg { height: 100%; width: 100%; }";
-    var head = document.head || document.getElementsByTagName('head')[0];
-    var style = document.createElement('style');
-    style.type = "text/css";
-    if (style.styleSheet) {
-        style.styleSheet.cssText = css;
-    } else {
-        style.appendChild(document.createTextNode(css));
+    var addCSS = function(css) {
+        var head = document.head || document.getElementsByTagName('head')[0];
+        var style = document.createElement('style');
+        style.type = "text/css";
+        if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }
+        head.appendChild(style);
     }
-    head.appendChild(style);
                    
     // if 'radius' is a number then use it
     var width = undefined;
@@ -35,12 +36,19 @@ HTMLWidgets.widget({
         height = x.radius;
     } else {
         // get width and height of current window
-        width = el.offsetWidth;
-        height = el.offsetHeight;
+        width = Math.max(instance.width, instance.height);
+        height = Math.max(instance.width, instance.height);
+    }
+
+    if (x.autoResize === true) {
+        addCSS("svg { width: 100%; height: 100%; }");
+    } else {
+        addCSS("svg { height: " + width + "px; width: " + height + "px; }");
+        addCSS("body { overflow: scroll !important; }");
     }
 
     // set some options of the phylogram
-    Smits.PhyloCanvas.Render.Parameters.Circular['bufferRadius'] = .35;
+    Smits.PhyloCanvas.Render.Parameters.Circular['bufferRadius'] = .42;
     Smits.PhyloCanvas.Render.Parameters.Circular['bufferOuterLabels'] = 0;
 
     // plot the phylgram
