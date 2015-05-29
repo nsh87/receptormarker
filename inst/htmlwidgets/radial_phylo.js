@@ -82,14 +82,14 @@ HTMLWidgets.widget({
 	a.appendChild(downloadLink);
 	a.href = "#"
 	a.title = "Save Image";
-	$(a).css({"position": "absolute", "top": "10px", "left": "10px"});
+    a.id = "download_link";
 	var widget = document.body.children[0];
 	document.body.insertBefore(a, widget);
 
 	// Attach click handler to save the image when link clicked
 	a.onclick = function() {
-		$(document.body).append("<canvas id='canvg' style='display: none;'></canvas>")
-		$(document.body).append("<img id='svgimg' style='display: none;' src=''>")
+		$(document.body).append("<canvas id='canvg'></canvas>");
+		$(document.body).append("<img id='svgimg' src=''>");
 		
 		// Use Raphael.Export to get the SVG from the phylogram
 		var s = phylocanvas.getSvg();
@@ -104,7 +104,13 @@ HTMLWidgets.widget({
 		           //fetch the dataURL from the canvas and set it as src on the image
 		           var dataURL = document.getElementById("canvg").toDataURL("image/png");
 		           document.getElementById("svgimg").src = dataURL;
-        }, 1500);
+        }, 1000);
+
+        // Change the image type to initiate the download
+        setTimeout(function() {
+            var svgimg = document.getElementById("svgimg");
+            window.location.href = svgimg.src.replace("image/png", "image/octet-stream");
+        }, 1000);
     }
 
   },

@@ -26,3 +26,7 @@ dependencies:
     - ./canvg.js
     - ./rgbcolor.js
     - ./StackBlur.js
+- name: custom-css
+  version: 1.0
+  src: htmlwidgets/lib/css
+  stylesheet: ./radial_phylo.css

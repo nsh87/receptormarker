@@ -1,0 +1,17 @@
+#htmlwidget_container {
+	pointer-events: none;
+}
+
+#download_link {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+}
+
+#canvg {
+	display: none;
+}
+
+#svgimg {
+	display: none;
+}
