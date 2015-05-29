@@ -1,7 +1,4 @@
 var phylocanvas = undefined;
-//var s = phylocanvas.getSvg();
-//var c = s.svg;
-//var svg = c.toSVG();
 
 HTMLWidgets.widget({
 
@@ -78,7 +75,7 @@ HTMLWidgets.widget({
 
 	// Create 'Save Image' text link
 	var a = document.createElement('a');
-	var downloadLink = document.createTextNode("Save Image");
+	var downloadLink = document.createTextNode("Save Image (Web Browser Only)");
 	a.appendChild(downloadLink);
 	a.href = "#"
 	a.title = "Save Image";
