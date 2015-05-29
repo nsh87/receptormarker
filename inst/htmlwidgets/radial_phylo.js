@@ -1,3 +1,8 @@
+var phylocanvas = undefined;
+//var s = phylocanvas.getSvg();
+//var c = s.svg;
+//var svg = c.toSVG();
+
 HTMLWidgets.widget({
 
   name: 'radial_phylo',
@@ -61,7 +66,7 @@ HTMLWidgets.widget({
             fileSource: true
         };
 
-        var phylocanvas = new Smits.PhyloCanvas(
+        phylocanvas = new Smits.PhyloCanvas(
             dataObject,
             el.id,
             width, height,
@@ -70,6 +75,37 @@ HTMLWidgets.widget({
         );
 
     });
+
+	// Create 'Save Image' text link
+	var a = document.createElement('a');
+	var downloadLink = document.createTextNode("Save Image");
+	a.appendChild(downloadLink);
+	a.href = "#"
+	a.title = "Save Image";
+	$(a).css({"position": "absolute", "top": "10px", "left": "10px"});
+	var widget = document.body.children[0];
+	document.body.insertBefore(a, widget);
+
+	// Attach click handler to save the image when link clicked
+	a.onclick = function() {
+		$(document.body).append("<canvas id='canvg' style='display: none;'></canvas>")
+		$(document.body).append("<img id='svgimg' style='display: none;' src=''>")
+		
+		// Use Raphael.Export to get the SVG from the phylogram
+		var s = phylocanvas.getSvg();
+		var c = s.svg;
+		var svg = c.toSVG();
+		
+		// Use canvg to draw the SVG onto the empty canvas
+		canvg(document.getElementById("canvg"), svg);
+		
+		// Give the canvas a second or two to load, then set the image source
+		setTimeout(function() {
+		           //fetch the dataURL from the canvas and set it as src on the image
+		           var dataURL = document.getElementById("canvg").toDataURL("image/png");
+		           document.getElementById("svgimg").src = dataURL;
+        }, 1500);
+    }
 
   },
 

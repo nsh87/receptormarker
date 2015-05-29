@@ -15,3 +15,14 @@ dependencies:
   version: 1.11.3
   src: htmlwidgets/lib/jquery-1.11.3
   script: ./jquery.min.js
+- name: raphaelexport
+  version: 1.0
+  src: htmlwidgets/lib/raphaelexport-1.0
+  script: ./raphael.export.js
+- name: canvg
+  version: 1.0
+  src: htmlwidgets/lib/canvg-1.0
+  script:
+    - ./canvg.js
+    - ./rgbcolor.js
+    - ./StackBlur.js
