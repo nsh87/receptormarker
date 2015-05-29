@@ -79,6 +79,7 @@ radial_phylo <- function(df, seqsCol, radius='fill', fontSize='auto',
   # Step 2: Do a multiple sequence alignment (MSA)
   seqs_biostring <- Biostrings::AAStringSet(seqs)
   names(seqs_biostring) <- seqs
+  if (verbose == TRUE) { print("MUSCLE multiple sequence alignment:") }
   ms_alignment <- muscle::muscle(stringset=seqs_biostring, quiet=!verbose)
   # Write the alignment if the user wants it
   if (verbose == TRUE) {
@@ -108,7 +109,7 @@ radial_phylo <- function(df, seqsCol, radius='fill', fontSize='auto',
   # Step 5: Convert the .newick to phylo.xml
   xml_file <- tempfile(pattern='phyloxml-', tmpdir=phyloxml_tmpdir, fileext='.xml')
   forester <- system.file("java", "forester_1038.jar", package="receptormarker")
-  system(sprintf("java -cp %s org.forester.application.phyloxml_converter -f=nn -ni %s %s", forester, newick_file, xml_file))
+  system(sprintf("java -cp %s org.forester.application.phyloxml_converter -f=nn -ni %s %s", forester, newick_file, xml_file), ignore.stdout=!verbose, ignore.stderr=!verbose)
   # Also write it to the verbose folder if the user wants it
   if (verbose == TRUE && file.exists(xml_file)) {
     file.copy(xml_file, verbose_dir, copy.date=TRUE)
