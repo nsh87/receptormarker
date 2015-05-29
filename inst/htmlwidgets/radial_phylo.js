@@ -90,6 +90,11 @@ HTMLWidgets.widget({
 	a.onclick = function() {
 		$(document.body).append("<canvas id='canvg'></canvas>");
 		$(document.body).append("<img id='svgimg' src=''>");
+        // The anchor below allows you to suggest a filename for the image. You
+        // have to download the image through it, by setting the href to the
+        // image src once it's ready and setting the filename in the 'downloaad'
+        // attribute.
+        var download_anchor = document.createElement("a");
 		
 		// Use Raphael.Export to get the SVG from the phylogram
 		var s = phylocanvas.getSvg();
@@ -106,10 +111,23 @@ HTMLWidgets.widget({
 		           document.getElementById("svgimg").src = dataURL;
         }, 1000);
 
-        // Change the image type to initiate the download
+        // Initiate the download
         setTimeout(function() {
             var svgimg = document.getElementById("svgimg");
-            window.location.href = svgimg.src.replace("image/png", "image/octet-stream");
+            // Indicate the data is a byte stream so it doesn't open image in browser
+            var img_data_uri =  svgimg.src.replace("image/png", "image/octet-stream");
+            $(download_anchor).attr("download", "phylo.png");
+            download_anchor.href = img_data_uri;
+            // Fake a mouse click on our anchor to initiate the download
+            if (document.createEvent) {
+                var e = document.createEvent("MouseEvents");
+                e.initMouseEvent("click", true, true, window,
+                    0, 0, 0, 0, 0, false, false, false,
+                    false, 0, null);
+                download_anchor.dispatchEvent(e);
+            } else if (download_anchor.fireEvent) {
+                download_anchor.fireEvent("onclick");
+            }
         }, 1000);
     }
 
