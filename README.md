@@ -57,3 +57,13 @@ and check that the package builds. This can be done with a single command:
 ```R
 devtools::check()
 ```
+
+You can also load the package and then test functions after running:
+
+```R
+devtools::install()
+library(receptormarker)
+```
+
+Installing the package is not required to run many functions locally, but for
+any functions that use `htmlwidgets` this is a necessary step.
