@@ -5,7 +5,7 @@ Version: 0.0.0.9000
 Date: 2015-05-20
 Authors@R: as.person(c(
     "Nikhil Haas <nikhil@nikhilhaas.com> [aut, cre]",
-    "Chris Atterbury <catterbu@dons.usfca.edu> [aut]",
+    "Chris Atterbury <chris.atterbury@gmail.com> [aut]",
     "Jacob Glanville <jake@hackbio.com> [aut]"))
 Description: Provides functions for executing computations on antibody receptor
     sequences and phenotypic markers. Generates visualizations or data suitable
