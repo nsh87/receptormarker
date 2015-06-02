@@ -97,7 +97,7 @@ radial_phylo <- function(df, seqsCol, radius='fill', fontSize='auto',
   dist_matrix <- as.matrix(seqinr::dist.alignment(x=alignment, matrix='identity'))
   
   # Step 4: Calculate a distance tree and write it as .newick
-  dist_tree <- ape::nj(dist_matrix)
+  dist_tree <- ape::bionj(dist_matrix)
   phylo_tree <- ape::as.phylo(dist_tree)
   newick_file <- tempfile(pattern='tree-', tmpdir=tmp_dir, fileext='.newick')
   ape::write.tree(phy=phylo_tree, file=newick_file)
