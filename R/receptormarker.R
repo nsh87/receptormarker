@@ -55,7 +55,7 @@ NULL
     missing_apps_warning <- paste0(c("Warning: Unable to find",
                                      apps_list,
                                      "on your system. In order to achieve the",
-                                     "best results it is strongly suggest to",
+                                     "best results it is strongly suggested to",
                                      "install Python's Biopython to your",
                                      "system's path. See",
                                      install_biopy,
