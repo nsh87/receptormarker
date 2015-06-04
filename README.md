@@ -37,7 +37,7 @@ with Roxygen2").  If you create any functions that are internal and not of
 interest to most users, be sure to document them with `@keywords internal` to
 exclude them from the package index. You should explicitly
 [define functions to export](http://r-pkgs.had.co.nz/namespace.html#exports "Namespacing in R")
-to NAMESPACE with Roxygen2's `@external` tag. Build .Rd files from Roxygen2 comments with:
+to NAMESPACE with Roxygen2's `@export` tag. Build .Rd files from Roxygen2 comments with:
 
 ```R
 devtools::document()
