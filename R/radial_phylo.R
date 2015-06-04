@@ -141,13 +141,16 @@ newick_to_phyloxml <- function(newick_file, verbose, verbose_dir) {
 #' @export
 # allow users to set viewer.suppress to FALSE to see the thing in RStudio
 radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
-                         scale=FALSE, browser=FALSE, width=NULL,
-                         height=NULL, verbose=FALSE) {
-
+                         scale=TRUE, browser=FALSE, verbose=FALSE) {
+  
   # Validate function parameters
   validate_canvas_size(canvas_size)
   seqs <- extract_sequences (df, seqs_col)
   validate_sequences(seqs)
+  
+  # Not necessary to have as func parameters; these will get set automatically
+  width <- NULL
+  height <- NULL
   
   # Create verbose dir
   if (verbose == TRUE) {
@@ -167,13 +170,13 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
   # Step 5: Convert the .newick to phylo.xml
   xml_file <- newick_to_phyloxml(newick_file, verbose, verbose_dir)
   
-  # forward options to radial_phylo.js using 'x'
+  # Forward options to radial_phylo.js using 'x'
   x <- list(
     canvas_size = canvas_size,
     scale = scale
   )
   
-  # add the phyloxml as an HTML dependency so it can get loaded in the browser
+  # Add the phyloxml as an HTML dependency so it can get loaded in the browser
    phyloxml <- htmltools::htmlDependency(
      name = "phyloxml",
      version = "1.0",
@@ -181,7 +184,7 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
      attachment = list(xml=basename(xml_file))
    )
 
-  # create widget
+  # Create widget
   htmlwidgets::createWidget(
     name = "radial_phylo",
     x,
