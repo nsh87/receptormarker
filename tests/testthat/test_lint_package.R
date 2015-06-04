@@ -2,9 +2,7 @@ context("Lint package to verify code style")
 
 
 test_that("code conforms to the style guide", {
-  lint_errs <- lintr::lint_package(linters=lintr::with_defaults(
-    trailing_whitespace_linter=NULL,
-    line_length_linter=lintr::line_length_linter(80)))
+  lint_errs <- lintr::lint_package()
   
   lint_err_info <- ""
   trim.leading <- function (x)  sub("^\\s+", "", x)
