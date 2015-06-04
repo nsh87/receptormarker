@@ -50,7 +50,7 @@ validate_sequences <- function(seqs) {
 }
 
 
-clean_df <- function(df, seqs_col, verbose) {
+clean_df <- function(df, seqs_col, verbose, verbose_dir) {
   df_clean <- df[df[, seqs_col] != "", ]  # Remove rows with no sequences
   df_clean <- df_clean[complete.cases(df_clean[, seqs_col]), ]  # Remove NA rows
   # Write the sequences if the user wants them
@@ -66,6 +66,21 @@ clean_df <- function(df, seqs_col, verbose) {
     write(seqs_fasta, seqs_file)
   }
   df_clean
+}
+
+
+msa <- function(seqs, verbose, verbose_dir) {
+  seqs_biostring <- Biostrings::AAStringSet(seqs)
+  names(seqs_biostring) <- seqs
+  if (verbose == TRUE) print("MUSCLE multiple sequence alignment:")
+  ms_alignment <- muscle::muscle(stringset=seqs_biostring, quiet=!verbose)
+  # Write the alignment if the user wants it
+  if (verbose == TRUE) {
+    aa_str_set <- as(ms_alignment, "AAStringSet")
+    msa_file <- tempfile(pattern="msa-", tmpdir=verbose_dir, fileext=".fasta")
+    Biostrings::writeXStringSet(aa_str_set, file=msa_file)
+  }
+  ms_alignment
 }
 
 
@@ -96,21 +111,12 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
   }
   
   # Step 1: Clean the data.frame and get the cleaned sequences
-  df_clean <- clean_df(df, seqs_col, verbose)
+  df_clean <- clean_df(df, seqs_col, verbose, verbose_dir)
   seqs <- as.character(df_clean[, seqs_col])
 
-  
   # Step 2: Do a multiple sequence alignment (MSA)
-  seqs_biostring <- Biostrings::AAStringSet(seqs)
-  names(seqs_biostring) <- seqs
-  if (verbose == TRUE) print("MUSCLE multiple sequence alignment:")
-  ms_alignment <- muscle::muscle(stringset=seqs_biostring, quiet=!verbose)
-  # Write the alignment if the user wants it
-  if (verbose == TRUE) {
-    aa_str_set <- as(ms_alignment, "AAStringSet")
-    msa_file <- tempfile(pattern="msa-", tmpdir=verbose_dir, fileext=".fasta")
-    Biostrings::writeXStringSet(aa_str_set, file=msa_file)
-  }
+  ms_alignment <- msa(seqs, verbose, verbose_dir)
+  
   
   # Step 3: Compute pairwise distances of the aligned sequences
   # Need to turn the MSA into class 'alignment'
