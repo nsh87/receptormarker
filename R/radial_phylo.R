@@ -11,7 +11,7 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
                          height=NULL, verbose=FALSE) {
 
   # Determine what the parameter "canvas_size" is
-  err = "The argument 'canvas_size' is invalid"
+  err <- "The argument 'canvas_size' is invalid"
   canvas_size_options <- "auto"
   tryCatch({
     if (!is.element(canvas_size, canvas_size_options) && 
