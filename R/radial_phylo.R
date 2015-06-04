@@ -19,6 +19,27 @@ validate_canvas_size <- function(canvas_size) {
 }
 
 
+extract_sequences <- function(df, seqs_col) {
+  seqs_col_err <- "The argument 'df' and/or 'seqs_col' is invalid" 
+  tryCatch({
+    if (length(seqs_col) != 1) {
+      stop(seqs_col_err, call.=FALSE)
+    }
+    if (typeof(seqs_col) == "character" && seqs_col %in% names(df)) {
+      seqs <- as.character(df[, seqs_col])
+    } else if (seqs_col == floor(seqs_col) && length(seqs_col) == 1) {
+      seqs <- as.character(df[, seqs_col])
+    } else {
+      stop(seqs_col_err, call.=FALSE)
+    }
+  },
+  error = function(e) {
+    stop(seqs_col_err, call.=FALSE)
+  }
+  )
+}
+
+
 #' <Add Title>
 #'
 #' <Add Description>
@@ -32,24 +53,8 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
                          height=NULL, verbose=FALSE) {
 
   validate_canvas_size(canvas_size)
+  seqs <- extract_sequences (df, seqs_col)
   
-  # Get the sequences column from the data.frame
-  seqs_col_err <- "The argument 'df' and/or 'seqs_col' is invalid" 
-  tryCatch({
-    if (typeof(seqs_col) == "character" &&
-        length(names(df)) > 0 &&
-        length(seqs_col) == 1) {
-      seqs <- as.character(df[, seqs_col])
-    } else if (seqs_col == floor(seqs_col) && length(seqs_col) == 1) {
-      seqs <- as.character(df[, seqs_col])
-    } else {
-      stop(seqs_col_err, call.=FALSE)
-    }
-  },
-  error = function(e) {
-    stop(seqs_col_err, call.=FALSE)
-  }
-  )
   
   # Make sure sequences are only alpha characters
   seqs_col_err <- "Sequences must only contain characters from A-Z"
