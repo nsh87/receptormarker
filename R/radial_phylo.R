@@ -84,6 +84,16 @@ msa <- function(seqs, verbose, verbose_dir) {
 }
 
 
+compute_dist_matrix <- function(ms_alignment, seqs) {
+  # Need to turn the MSA into class 'alignment'
+  alignment <- seqinr::as.alignment(nb=nrow(ms_alignment),
+                            nam=seqs,
+                            seq=as.character(ms_alignment, use.names=FALSE)) 
+  dist_matrix <- as.matrix(seqinr::dist.alignment(x=alignment,
+                                                  matrix="identity"))
+}
+
+
 #' <Add Title>
 #'
 #' <Add Description>
@@ -117,14 +127,8 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
   # Step 2: Do a multiple sequence alignment (MSA)
   ms_alignment <- msa(seqs, verbose, verbose_dir)
   
-  
   # Step 3: Compute pairwise distances of the aligned sequences
-  # Need to turn the MSA into class 'alignment'
-  alignment <- seqinr::as.alignment(nb=nrow(ms_alignment),
-                            nam=seqs,
-                            seq=as.character(ms_alignment, use.names=FALSE)) 
-  dist_matrix <- as.matrix(seqinr::dist.alignment(x=alignment,
-                                                  matrix="identity"))
+  dist_matrix <- compute_dist_matrix(ms_alignment, seqs)
   
   # Step 4: Calculate a distance tree and write it as .newick
   dist_tree <- ape::bionj(dist_matrix)
