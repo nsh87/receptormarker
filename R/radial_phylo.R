@@ -6,7 +6,7 @@
 #'
 #' @export
 # allow users to set viewer.suppress to FALSE to see the thing in RStudio
-radial_phylo <- function(df, seqs_col, canvas_size="auto", fontSize="auto",
+radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
                          autoResize=FALSE, suppressViewer=FALSE, width=NULL,
                          height=NULL, verbose=FALSE) {
 
