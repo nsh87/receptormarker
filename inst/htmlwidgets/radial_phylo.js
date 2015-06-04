@@ -43,7 +43,7 @@ HTMLWidgets.widget({
     }
 
     // if user provides large canvas_size give the svg that width and height
-    if (x.autoResize === true) {
+    if (x.scale === true) {
         addCSS("svg { width: 100%; height: 100%; }");
     } else {
         addCSS("svg { height: " + width + "px; width: " + height + "px; }");
@@ -68,7 +68,7 @@ HTMLWidgets.widget({
             el.id,
             width, height,
             'circular',
-            x.autoResize  // holds true or false
+            x.scale  // holds true or false
         );
 
     });

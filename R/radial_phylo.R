@@ -7,7 +7,7 @@
 #' @export
 # allow users to set viewer.suppress to FALSE to see the thing in RStudio
 radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
-                         autoResize=FALSE, suppressViewer=FALSE, width=NULL,
+                         scale=FALSE, suppressViewer=FALSE, width=NULL,
                          height=NULL, verbose=FALSE) {
 
   # Determine what the parameter "canvas_size" is
@@ -120,7 +120,7 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
   # forward options to radial_phylo.js using 'x'
   x = list(
     canvas_size = canvas_size,
-    autoResize = autoResize
+    scale = scale
   )
   
   # add the phyloxml as an HTML dependency so it can get loaded in the browser
