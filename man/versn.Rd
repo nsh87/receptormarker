@@ -2,7 +2,7 @@
 % Please edit documentation in R/onload_checks.R
 \name{versn}
 \alias{versn}
-\title{Get installed version}
+\title{Get installed version of external application}
 \usage{
 versn(cmd, application)
 }
@@ -23,8 +23,8 @@ If the package is installed, returns the version number as a
   \code{numeric} (for example, \code{2.7}), otherwise returns NULL.
 }
 \description{
-An internal function that retrieves the version of an external application
-  by executing code on the system's command line.
+An internal function that retrieves the version of an external
+  application by executing code on the system's command line.
 }
 \details{
 If necessary, the command passed to the paramater \code{cmd} should

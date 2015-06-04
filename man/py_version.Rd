@@ -12,11 +12,12 @@ If Python is installed the version number will be returned as a
   returns \code{NULL}.
 }
 \description{
-Get the major and minor version of the system's Python distribution.
+Get the major and minor version of the system's Python
+  distribution.
 }
 \details{
-This is an internal function for checking to see whether or not Python is
-installed on the system during the \code{.onLoad()} hook.
+This is an internal function for checking to see whether or not
+  Python is installed on the system during the \code{.onLoad()} hook.
 }
 \keyword{internal}
 
