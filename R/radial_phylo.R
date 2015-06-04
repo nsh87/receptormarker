@@ -6,17 +6,19 @@
 #'
 #' @export
 # allow users to set viewer.suppress to FALSE to see the thing in RStudio
-radial_phylo <- function(df, seqsCol, radius='fill', fontSize='auto',
+radial_phylo <- function(df, seqsCol, canvas_size='auto', fontSize='auto',
                          autoResize=FALSE, suppressViewer=FALSE, width=NULL,
                          height=NULL, verbose=FALSE) {
 
-  # Determine what the parameter 'radius' is
-  err = "The argument 'radius' is invalid"
-  radius_options <- c('fill')
+  # Determine what the parameter 'canvas_size' is
+  err = "The argument 'canvas_size' is invalid"
+  canvas_size_options <- c('auto')
   tryCatch({
-    if (!is.element(radius, radius_options) && (radius != floor(radius)) && length(radius) != 1) {
+    if (!is.element(canvas_size, canvas_size_options) && 
+        canvas_size != floor(canvas_size) &&
+        length(canvas_size) != 1) {
       stop(err, call.=FALSE)
-    } else if (radius < 1) {
+    } else if (canvas_size < 1) {
       stop(err, call.=FALSE)
     }
   },
@@ -117,7 +119,7 @@ radial_phylo <- function(df, seqsCol, radius='fill', fontSize='auto',
   
   # forward options to radial_phylo.js using 'x'
   x = list(
-    radius = radius,
+    canvas_size = canvas_size,
     autoResize = autoResize
   )
   

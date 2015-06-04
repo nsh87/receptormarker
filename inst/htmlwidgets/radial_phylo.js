@@ -30,19 +30,19 @@ HTMLWidgets.widget({
         head.appendChild(style);
     }
                    
-    // if 'radius' is a number then use it
+    // if 'canvas_size' is a number then use it
     var width = undefined;
     var height = undefined;
-    if (typeof(x.radius === 'number') && x.radius%1 === 0) {
-        width = x.radius;
-        height = x.radius;
+    if (typeof(x.canvas_size === 'number') && x.canvas_size%1 === 0) {
+        width = x.canvas_size;
+        height = x.canvas_size;
     } else {
         // get width and height of current window
         width = Math.max(instance.width, instance.height);
         height = Math.max(instance.width, instance.height);
     }
 
-    // if user provides large radius give the svg that width and height
+    // if user provides large canvas_size give the svg that width and height
     if (x.autoResize === true) {
         addCSS("svg { width: 100%; height: 100%; }");
     } else {
