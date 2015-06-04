@@ -66,11 +66,8 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
   seqs <- extract_sequences (df, seqs_col)
   validate_sequences(seqs)
   
-  
-  # Create temp dirs to hold intermediate files unless user want to see them
-  tmp_dir <- tempdir()  # Different for each new R session
-  # PhyloXML's should go in their own sub-dir because htmlwidgets will copy its 
-  # entire parent dir to make the file available in the browser
+  # Create temp dir for final phylo.xml's to in; htmlwidgets will copy this
+  # entire dir to make the phylo.xml available to the browser
   phyloxml_tmpdir <- tempfile("", tmpdir=tempdir(), fileext="")
   dir.create(phyloxml_tmpdir)
   # Create verbose dir if user wants the intermediate files
@@ -79,6 +76,7 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
     dir.create(verbose_dir)
   }
   
+
   # Step 1: Clean the data.frame and get the cleaned sequences
   df_clean <- df[df[, seqs_col] != "", ]  # Remove rows with no sequences
   df_clean <- df_clean[complete.cases(df_clean[, seqs_col]), ]  # Remove NA rows
@@ -119,7 +117,7 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
   # Step 4: Calculate a distance tree and write it as .newick
   dist_tree <- ape::bionj(dist_matrix)
   phylo_tree <- ape::as.phylo(dist_tree)
-  newick_file <- tempfile(pattern="tree-", tmpdir=tmp_dir, fileext=".newick")
+  newick_file <- tempfile(pattern="tree-", tmpdir=tempdir(), fileext=".newick")
   ape::write.tree(phy=phylo_tree, file=newick_file)
   # Copy the newick file from the tmp dir to verbose dir if the user wants it
   if (verbose == TRUE && file.exists(newick_file)) {
