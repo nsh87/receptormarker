@@ -94,6 +94,19 @@ compute_dist_matrix <- function(ms_alignment, seqs) {
 }
 
 
+create_tree <- function(dist_matrix, verbose, verbose_dir) {
+  dist_tree <- ape::bionj(dist_matrix)
+  phylo_tree <- ape::as.phylo(dist_tree)
+  newick_file <- tempfile(pattern="tree-", tmpdir=tempdir(), fileext=".newick")
+  ape::write.tree(phy=phylo_tree, file=newick_file)
+  # Copy the newick file from the tmp dir to verbose dir if the user wants it
+  if (verbose == TRUE && file.exists(newick_file)) {
+    file.copy(newick_file, verbose_dir, copy.date=TRUE)
+  }
+  newick_file
+}
+
+
 #' <Add Title>
 #'
 #' <Add Description>
@@ -106,14 +119,14 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
                          scale=FALSE, browser=FALSE, width=NULL,
                          height=NULL, verbose=FALSE) {
 
+  # Validate function parameters
   validate_canvas_size(canvas_size)
   seqs <- extract_sequences (df, seqs_col)
   validate_sequences(seqs)
   
-  # Create temp dir for final phylo.xml's to in; htmlwidgets will copy this
-  # entire dir to make the phylo.xml available to the browser
+  # Create temp dirs
   phyloxml_tmpdir <- tempfile("", tmpdir=tempdir(), fileext="")
-  dir.create(phyloxml_tmpdir)
+  dir.create(phyloxml_tmpdir)  # htmlwidgets copies entire dir to browser
   # Create verbose dir if user wants the intermediate files
   if (verbose == TRUE) {
     verbose_dir <- tempfile("radial_phylo-", tmpdir=getwd(), fileext="")
@@ -123,22 +136,14 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
   # Step 1: Clean the data.frame and get the cleaned sequences
   df_clean <- clean_df(df, seqs_col, verbose, verbose_dir)
   seqs <- as.character(df_clean[, seqs_col])
-
   # Step 2: Do a multiple sequence alignment (MSA)
   ms_alignment <- msa(seqs, verbose, verbose_dir)
-  
   # Step 3: Compute pairwise distances of the aligned sequences
   dist_matrix <- compute_dist_matrix(ms_alignment, seqs)
-  
   # Step 4: Calculate a distance tree and write it as .newick
-  dist_tree <- ape::bionj(dist_matrix)
-  phylo_tree <- ape::as.phylo(dist_tree)
-  newick_file <- tempfile(pattern="tree-", tmpdir=tempdir(), fileext=".newick")
-  ape::write.tree(phy=phylo_tree, file=newick_file)
-  # Copy the newick file from the tmp dir to verbose dir if the user wants it
-  if (verbose == TRUE && file.exists(newick_file)) {
-    file.copy(newick_file, verbose_dir, copy.date=TRUE)
-  }
+  newick_file <- create_tree(dist_matrix, verbose, verbose_dir)
+  
+  
   
   # Step 5: Convert the .newick to phylo.xml
   xml_file <- tempfile(pattern="phyloxml-", tmpdir=phyloxml_tmpdir,
