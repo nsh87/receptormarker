@@ -107,6 +107,31 @@ create_tree <- function(dist_matrix, verbose, verbose_dir) {
 }
 
 
+newick_to_phyloxml <- function(newick_file, verbose, verbose_dir) {
+  # Create tempdir for phyloxml file
+  phyloxml_tmpdir <- tempfile("", tmpdir=tempdir(), fileext="")
+  dir.create(phyloxml_tmpdir)  # htmlwidgets copies entire dir to browser
+  
+  xml_file <- tempfile(pattern="phyloxml-", tmpdir=phyloxml_tmpdir,
+                       fileext=".xml")
+  forester <- system.file("java", "forester_1038.jar", package="receptormarker")
+  system(sprintf(
+    "java -cp %s org.forester.application.phyloxml_converter -f=nn -ni %s %s",
+    forester,
+    newick_file,
+    xml_file
+    ),
+    ignore.stdout=!verbose,
+    ignore.stderr=!verbose
+  )
+  # Also write it to the verbose folder if the user wants it
+  if (verbose == TRUE && file.exists(xml_file)) {
+    file.copy(xml_file, verbose_dir, copy.date=TRUE)
+  }
+  xml_file
+}
+
+
 #' <Add Title>
 #'
 #' <Add Description>
@@ -124,10 +149,7 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
   seqs <- extract_sequences (df, seqs_col)
   validate_sequences(seqs)
   
-  # Create temp dirs
-  phyloxml_tmpdir <- tempfile("", tmpdir=tempdir(), fileext="")
-  dir.create(phyloxml_tmpdir)  # htmlwidgets copies entire dir to browser
-  # Create verbose dir if user wants the intermediate files
+  # Create verbose dir
   if (verbose == TRUE) {
     verbose_dir <- tempfile("radial_phylo-", tmpdir=getwd(), fileext="")
     dir.create(verbose_dir)
@@ -142,26 +164,8 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
   dist_matrix <- compute_dist_matrix(ms_alignment, seqs)
   # Step 4: Calculate a distance tree and write it as .newick
   newick_file <- create_tree(dist_matrix, verbose, verbose_dir)
-  
-  
-  
   # Step 5: Convert the .newick to phylo.xml
-  xml_file <- tempfile(pattern="phyloxml-", tmpdir=phyloxml_tmpdir,
-                       fileext=".xml")
-  forester <- system.file("java", "forester_1038.jar", package="receptormarker")
-  system(sprintf(
-    "java -cp %s org.forester.application.phyloxml_converter -f=nn -ni %s %s",
-    forester,
-    newick_file,
-    xml_file
-    ),
-    ignore.stdout=!verbose,
-    ignore.stderr=!verbose
-  )
-  # Also write it to the verbose folder if the user wants it
-  if (verbose == TRUE && file.exists(xml_file)) {
-    file.copy(xml_file, verbose_dir, copy.date=TRUE)
-  }
+  xml_file <- newick_to_phyloxml(newick_file, verbose, verbose_dir)
   
   # forward options to radial_phylo.js using 'x'
   x <- list(
