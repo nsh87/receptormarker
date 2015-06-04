@@ -7,7 +7,7 @@
 #' @export
 # allow users to set viewer.suppress to FALSE to see the thing in RStudio
 radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
-                         scale=FALSE, suppressViewer=FALSE, width=NULL,
+                         scale=FALSE, browser=FALSE, width=NULL,
                          height=NULL, verbose=FALSE) {
 
   # Determine what the parameter "canvas_size" is
@@ -139,7 +139,7 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
     height = height,
     htmlwidgets::sizingPolicy(
       viewer.padding = 0,
-      viewer.suppress = suppressViewer,
+      viewer.suppress = browser,
       browser.fill = TRUE
     ),
     package = "receptormarker",
