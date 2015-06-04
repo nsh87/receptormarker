@@ -6,13 +6,13 @@
 #'
 #' @export
 # allow users to set viewer.suppress to FALSE to see the thing in RStudio
-radial_phylo <- function(df, seqs_col, canvas_size='auto', fontSize='auto',
+radial_phylo <- function(df, seqs_col, canvas_size="auto", fontSize="auto",
                          autoResize=FALSE, suppressViewer=FALSE, width=NULL,
                          height=NULL, verbose=FALSE) {
 
-  # Determine what the parameter 'canvas_size' is
+  # Determine what the parameter "canvas_size" is
   err = "The argument 'canvas_size' is invalid"
-  canvas_size_options <- c('auto')
+  canvas_size_options <- "auto"
   tryCatch({
     if (!is.element(canvas_size, canvas_size_options) && 
         canvas_size != floor(canvas_size) &&
@@ -30,7 +30,7 @@ radial_phylo <- function(df, seqs_col, canvas_size='auto', fontSize='auto',
   # Get the sequences column from the data.frame
   seqsColErr <- "The argument 'df' and/or 'seqs_col' is invalid" 
   tryCatch({
-    if (typeof(seqs_col) == 'character' && length(names(df)) > 0 && length(seqs_col) == 1) {
+    if (typeof(seqs_col) == "character" && length(names(df)) > 0 && length(seqs_col) == 1) {
       seqs <- as.character(df[, seqs_col])
     } else if (seqs_col == floor(seqs_col) && length(seqs_col) == 1) {
       seqs <- as.character(df[, seqs_col])
@@ -54,16 +54,16 @@ radial_phylo <- function(df, seqs_col, canvas_size='auto', fontSize='auto',
   tmp_dir <- tempdir()  # Different for each new R session
   # PhyloXML's should go in their own sub-dir because htmlwidgets will copy its 
   # entire parent dir to make the file available in the browser
-  phyloxml_tmpdir <- tempfile('', tmpdir=tempdir(), fileext='')
+  phyloxml_tmpdir <- tempfile("", tmpdir=tempdir(), fileext="")
   dir.create(phyloxml_tmpdir)
   # Create verbose dir if user wants the intermediate files
   if (verbose == TRUE) {
-    verbose_dir <- tempfile('radial_phylo-', tmpdir=getwd(), fileext='')
+    verbose_dir <- tempfile("radial_phylo-", tmpdir=getwd(), fileext="")
     dir.create(verbose_dir)
   }
   
   # Step 1: Clean the data.frame and get the cleaned sequences
-  df_clean <- df[df[, seqs_col] != '', ]  # Remove rows with no sequences
+  df_clean <- df[df[, seqs_col] != "", ]  # Remove rows with no sequences
   df_clean <- df_clean[complete.cases(df_clean[, seqs_col]), ]  # Remove rows with NA seqs
   seqs <- as.character(df_clean[, seqs_col])
   # Write the sequences if the user wants them
@@ -74,7 +74,7 @@ radial_phylo <- function(df, seqs_col, canvas_size='auto', fontSize='auto',
                               collapse="\n"
                               )
     )
-    seqs_file <- tempfile(pattern='sequences-', tmpdir=verbose_dir, fileext='.txt')
+    seqs_file <- tempfile(pattern="sequences-", tmpdir=verbose_dir, fileext=".txt")
     write(seqs_fasta, seqs_file)
   }
   
@@ -86,7 +86,7 @@ radial_phylo <- function(df, seqs_col, canvas_size='auto', fontSize='auto',
   # Write the alignment if the user wants it
   if (verbose == TRUE) {
     aa_str_set <- as(ms_alignment, "AAStringSet")
-    msa_file <- tempfile(pattern='msa-', tmpdir=verbose_dir, fileext='.fasta')
+    msa_file <- tempfile(pattern="msa-", tmpdir=verbose_dir, fileext=".fasta")
     Biostrings::writeXStringSet(aa_str_set, file=msa_file)
   }
   
@@ -96,12 +96,12 @@ radial_phylo <- function(df, seqs_col, canvas_size='auto', fontSize='auto',
                             nam=seqs,
                             seq=as.character(ms_alignment, use.names=FALSE)
   ) 
-  dist_matrix <- as.matrix(seqinr::dist.alignment(x=alignment, matrix='identity'))
+  dist_matrix <- as.matrix(seqinr::dist.alignment(x=alignment, matrix="identity"))
   
   # Step 4: Calculate a distance tree and write it as .newick
   dist_tree <- ape::bionj(dist_matrix)
   phylo_tree <- ape::as.phylo(dist_tree)
-  newick_file <- tempfile(pattern='tree-', tmpdir=tmp_dir, fileext='.newick')
+  newick_file <- tempfile(pattern="tree-", tmpdir=tmp_dir, fileext=".newick")
   ape::write.tree(phy=phylo_tree, file=newick_file)
   # Copy the newick file from the tmp dir to the verbose dir if the user wants it
   if (verbose == TRUE && file.exists(newick_file)) {
@@ -109,7 +109,7 @@ radial_phylo <- function(df, seqs_col, canvas_size='auto', fontSize='auto',
   }
   
   # Step 5: Convert the .newick to phylo.xml
-  xml_file <- tempfile(pattern='phyloxml-', tmpdir=phyloxml_tmpdir, fileext='.xml')
+  xml_file <- tempfile(pattern="phyloxml-", tmpdir=phyloxml_tmpdir, fileext=".xml")
   forester <- system.file("java", "forester_1038.jar", package="receptormarker")
   system(sprintf("java -cp %s org.forester.application.phyloxml_converter -f=nn -ni %s %s", forester, newick_file, xml_file), ignore.stdout=!verbose, ignore.stderr=!verbose)
   # Also write it to the verbose folder if the user wants it
@@ -125,15 +125,15 @@ radial_phylo <- function(df, seqs_col, canvas_size='auto', fontSize='auto',
   
   # add the phyloxml as an HTML dependency so it can get loaded in the browser
    phyloxml <- htmltools::htmlDependency(
-     name = 'phyloxml',
-     version = '1.0',
+     name = "phyloxml",
+     version = "1.0",
      src = c(file=dirname(xml_file)),
      attachment = list(xml=basename(xml_file))
    )
 
   # create widget
   htmlwidgets::createWidget(
-    name = 'radial_phylo',
+    name = "radial_phylo",
     x,
     width = width,
     height = height,
@@ -142,7 +142,7 @@ radial_phylo <- function(df, seqs_col, canvas_size='auto', fontSize='auto',
       viewer.suppress = suppressViewer,
       browser.fill = TRUE
     ),
-    package = 'receptormarker',
+    package = "receptormarker",
     dependencies = phyloxml
   )
   
@@ -151,8 +151,8 @@ radial_phylo <- function(df, seqs_col, canvas_size='auto', fontSize='auto',
 #' Widget output function for use in Shiny
 #'
 #' @export
-radial_phyloOutput <- function(outputId, width = '100%', height = '400px'){
-  shinyWidgetOutput(outputId, 'radial_phylo', width, height, package = 'receptormarker')
+radial_phyloOutput <- function(outputId, width = "100%", height = "400px"){
+  shinyWidgetOutput(outputId, "radial_phylo", width, height, package = "receptormarker")
 }
 
 #' Widget render function for use in Shiny
