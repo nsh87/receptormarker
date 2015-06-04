@@ -1,4 +1,4 @@
-var phylocanvas = undefined;
+var phylocanvas;
 
 HTMLWidgets.widget({
 
@@ -31,8 +31,8 @@ HTMLWidgets.widget({
     }
                    
     // if 'canvas_size' is a number then use it
-    var width = undefined;
-    var height = undefined;
+    var width;
+    var height;
     if (typeof(x.canvas_size === 'number') && x.canvas_size%1 === 0) {
         width = x.canvas_size;
         height = x.canvas_size;
