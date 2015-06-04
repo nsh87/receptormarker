@@ -150,7 +150,7 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
     width = width,
     height = height,
     htmlwidgets::sizingPolicy(
-      viewer.padding = 0,
+      padding = 22,
       viewer.suppress = browser,
       browser.fill = TRUE
     ),
