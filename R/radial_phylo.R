@@ -6,7 +6,7 @@
 #'
 #' @export
 # allow users to set viewer.suppress to FALSE to see the thing in RStudio
-radial_phylo <- function(df, seqsCol, canvas_size='auto', fontSize='auto',
+radial_phylo <- function(df, seqs_col, canvas_size='auto', fontSize='auto',
                          autoResize=FALSE, suppressViewer=FALSE, width=NULL,
                          height=NULL, verbose=FALSE) {
 
@@ -28,12 +28,12 @@ radial_phylo <- function(df, seqsCol, canvas_size='auto', fontSize='auto',
   )
   
   # Get the sequences column from the data.frame
-  seqsColErr <- "The argument 'df' and/or 'seqsCol' is invalid" 
+  seqsColErr <- "The argument 'df' and/or 'seqs_col' is invalid" 
   tryCatch({
-    if (typeof(seqsCol) == 'character' && length(names(df)) > 0 && length(seqsCol) == 1) {
-      seqs <- as.character(df[, seqsCol])
-    } else if (seqsCol == floor(seqsCol) && length(seqsCol) == 1) {
-      seqs <- as.character(df[, seqsCol])
+    if (typeof(seqs_col) == 'character' && length(names(df)) > 0 && length(seqs_col) == 1) {
+      seqs <- as.character(df[, seqs_col])
+    } else if (seqs_col == floor(seqs_col) && length(seqs_col) == 1) {
+      seqs <- as.character(df[, seqs_col])
     } else {
       stop(seqsColErr, call.=FALSE)
     }
@@ -63,14 +63,14 @@ radial_phylo <- function(df, seqsCol, canvas_size='auto', fontSize='auto',
   }
   
   # Step 1: Clean the data.frame and get the cleaned sequences
-  df_clean <- df[df[, seqsCol] != '', ]  # Remove rows with no sequences
-  df_clean <- df_clean[complete.cases(df_clean[, seqsCol]), ]  # Remove rows with NA seqs
-  seqs <- as.character(df_clean[, seqsCol])
+  df_clean <- df[df[, seqs_col] != '', ]  # Remove rows with no sequences
+  df_clean <- df_clean[complete.cases(df_clean[, seqs_col]), ]  # Remove rows with NA seqs
+  seqs <- as.character(df_clean[, seqs_col])
   # Write the sequences if the user wants them
   if (verbose == TRUE) {
     seqs_fasta <- with(df_clean,
-                       paste0(">", df_clean[, seqsCol], "\n",
-                              df_clean[, seqsCol],
+                       paste0(">", df_clean[, seqs_col], "\n",
+                              df_clean[, seqs_col],
                               collapse="\n"
                               )
     )
