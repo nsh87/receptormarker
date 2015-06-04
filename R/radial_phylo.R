@@ -28,26 +28,28 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
   )
   
   # Get the sequences column from the data.frame
-  seqsColErr <- "The argument 'df' and/or 'seqs_col' is invalid" 
+  seqs_col_err <- "The argument 'df' and/or 'seqs_col' is invalid" 
   tryCatch({
-    if (typeof(seqs_col) == "character" && length(names(df)) > 0 && length(seqs_col) == 1) {
+    if (typeof(seqs_col) == "character" &&
+        length(names(df)) > 0 &&
+        length(seqs_col) == 1) {
       seqs <- as.character(df[, seqs_col])
     } else if (seqs_col == floor(seqs_col) && length(seqs_col) == 1) {
       seqs <- as.character(df[, seqs_col])
     } else {
-      stop(seqsColErr, call.=FALSE)
+      stop(seqs_col_err, call.=FALSE)
     }
   },
   error = function(e) {
-    stop(seqsColErr, call.=FALSE)
+    stop(seqs_col_err, call.=FALSE)
   }
   )
   
   # Make sure sequences are only alpha characters
-  seqsColErr <- "Sequences must only contain characters from A-Z"
+  seqs_col_err <- "Sequences must only contain characters from A-Z"
   g <- grepl("[^A-Za-z]", as.character(seqs))
   if (sum(g) > 0) {
-    stop(seqsColErr, cal.=FALSE)
+    stop(seqs_col_err, cal.=FALSE)
   }
   
   # Create temp dirs to hold intermediate files unless user want to see them
@@ -64,7 +66,7 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
   
   # Step 1: Clean the data.frame and get the cleaned sequences
   df_clean <- df[df[, seqs_col] != "", ]  # Remove rows with no sequences
-  df_clean <- df_clean[complete.cases(df_clean[, seqs_col]), ]  # Remove rows with NA seqs
+  df_clean <- df_clean[complete.cases(df_clean[, seqs_col]), ]  # Remove NA rows
   seqs <- as.character(df_clean[, seqs_col])
   # Write the sequences if the user wants them
   if (verbose == TRUE) {
@@ -74,14 +76,15 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
                               collapse="\n"
                               )
     )
-    seqs_file <- tempfile(pattern="sequences-", tmpdir=verbose_dir, fileext=".txt")
+    seqs_file <- tempfile(pattern="sequences-", tmpdir=verbose_dir,
+                          fileext=".txt")
     write(seqs_fasta, seqs_file)
   }
   
   # Step 2: Do a multiple sequence alignment (MSA)
   seqs_biostring <- Biostrings::AAStringSet(seqs)
   names(seqs_biostring) <- seqs
-  if (verbose == TRUE) { print("MUSCLE multiple sequence alignment:") }
+  if (verbose == TRUE) print("MUSCLE multiple sequence alignment:")
   ms_alignment <- muscle::muscle(stringset=seqs_biostring, quiet=!verbose)
   # Write the alignment if the user wants it
   if (verbose == TRUE) {
@@ -94,31 +97,40 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
   # Need to turn the MSA into class 'alignment'
   alignment <- seqinr::as.alignment(nb=nrow(ms_alignment),
                             nam=seqs,
-                            seq=as.character(ms_alignment, use.names=FALSE)
-  ) 
-  dist_matrix <- as.matrix(seqinr::dist.alignment(x=alignment, matrix="identity"))
+                            seq=as.character(ms_alignment, use.names=FALSE)) 
+  dist_matrix <- as.matrix(seqinr::dist.alignment(x=alignment,
+                                                  matrix="identity"))
   
   # Step 4: Calculate a distance tree and write it as .newick
   dist_tree <- ape::bionj(dist_matrix)
   phylo_tree <- ape::as.phylo(dist_tree)
   newick_file <- tempfile(pattern="tree-", tmpdir=tmp_dir, fileext=".newick")
   ape::write.tree(phy=phylo_tree, file=newick_file)
-  # Copy the newick file from the tmp dir to the verbose dir if the user wants it
+  # Copy the newick file from the tmp dir to verbose dir if the user wants it
   if (verbose == TRUE && file.exists(newick_file)) {
     file.copy(newick_file, verbose_dir, copy.date=TRUE)
   }
   
   # Step 5: Convert the .newick to phylo.xml
-  xml_file <- tempfile(pattern="phyloxml-", tmpdir=phyloxml_tmpdir, fileext=".xml")
+  xml_file <- tempfile(pattern="phyloxml-", tmpdir=phyloxml_tmpdir,
+                       fileext=".xml")
   forester <- system.file("java", "forester_1038.jar", package="receptormarker")
-  system(sprintf("java -cp %s org.forester.application.phyloxml_converter -f=nn -ni %s %s", forester, newick_file, xml_file), ignore.stdout=!verbose, ignore.stderr=!verbose)
+  system(sprintf(
+    "java -cp %s org.forester.application.phyloxml_converter -f=nn -ni %s %s",
+    forester,
+    newick_file,
+    xml_file
+    ),
+    ignore.stdout=!verbose,
+    ignore.stderr=!verbose
+  )
   # Also write it to the verbose folder if the user wants it
   if (verbose == TRUE && file.exists(xml_file)) {
     file.copy(xml_file, verbose_dir, copy.date=TRUE)
   }
   
   # forward options to radial_phylo.js using 'x'
-  x = list(
+  x <- list(
     canvas_size = canvas_size,
     scale = scale
   )
@@ -151,14 +163,18 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
 #' Widget output function for use in Shiny
 #'
 #' @export
+# nolint start
 radial_phyloOutput <- function(outputId, width = "100%", height = "400px"){
   shinyWidgetOutput(outputId, "radial_phylo", width, height, package = "receptormarker")
+# nolint end
 }
 
 #' Widget render function for use in Shiny
 #'
 #' @export
+# nolint start
 renderRadial_phylo <- function(expr, env = parent.frame(), quoted = FALSE) {
-  if (!quoted) { expr <- substitute(expr) } # force quoted
+  if (!quoted) expr <- substitute(expr) # force quoted
   shinyRenderWidget(expr, radial_phyloOutput, env, quoted = TRUE)
+# nolint end
 }

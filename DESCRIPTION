@@ -23,4 +23,3 @@ Imports:
 Suggests:
     testthat (>= 0.9.1),
     lintr (>= 0.2.0)
-
