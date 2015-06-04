@@ -40,6 +40,16 @@ extract_sequences <- function(df, seqs_col) {
 }
 
 
+validate_sequences <- function(seqs) {
+  # Make sure sequences are only alpha characters
+  seqs_col_err <- "Sequences must only contain characters from A-Z"
+  g <- grepl("[^A-Za-z]", as.character(seqs))
+  if (sum(g) > 0) {
+    stop(seqs_col_err, cal.=FALSE)
+  }
+}
+
+
 #' <Add Title>
 #'
 #' <Add Description>
@@ -54,14 +64,8 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
 
   validate_canvas_size(canvas_size)
   seqs <- extract_sequences (df, seqs_col)
+  validate_sequences(seqs)
   
-  
-  # Make sure sequences are only alpha characters
-  seqs_col_err <- "Sequences must only contain characters from A-Z"
-  g <- grepl("[^A-Za-z]", as.character(seqs))
-  if (sum(g) > 0) {
-    stop(seqs_col_err, cal.=FALSE)
-  }
   
   # Create temp dirs to hold intermediate files unless user want to see them
   tmp_dir <- tempdir()  # Different for each new R session
