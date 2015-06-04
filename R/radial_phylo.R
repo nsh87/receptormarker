@@ -50,6 +50,25 @@ validate_sequences <- function(seqs) {
 }
 
 
+clean_df <- function(df, seqs_col, verbose) {
+  df_clean <- df[df[, seqs_col] != "", ]  # Remove rows with no sequences
+  df_clean <- df_clean[complete.cases(df_clean[, seqs_col]), ]  # Remove NA rows
+  # Write the sequences if the user wants them
+  if (verbose == TRUE) {
+    seqs_fasta <- with(df_clean,
+                       paste0(">", df_clean[, seqs_col], "\n",
+                              df_clean[, seqs_col],
+                              collapse="\n"
+                              )
+    )
+    seqs_file <- tempfile(pattern="sequences-", tmpdir=verbose_dir,
+                          fileext=".txt")
+    write(seqs_fasta, seqs_file)
+  }
+  df_clean
+}
+
+
 #' <Add Title>
 #'
 #' <Add Description>
@@ -76,23 +95,10 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
     dir.create(verbose_dir)
   }
   
-
   # Step 1: Clean the data.frame and get the cleaned sequences
-  df_clean <- df[df[, seqs_col] != "", ]  # Remove rows with no sequences
-  df_clean <- df_clean[complete.cases(df_clean[, seqs_col]), ]  # Remove NA rows
+  df_clean <- clean_df(df, seqs_col, verbose)
   seqs <- as.character(df_clean[, seqs_col])
-  # Write the sequences if the user wants them
-  if (verbose == TRUE) {
-    seqs_fasta <- with(df_clean,
-                       paste0(">", df_clean[, seqs_col], "\n",
-                              df_clean[, seqs_col],
-                              collapse="\n"
-                              )
-    )
-    seqs_file <- tempfile(pattern="sequences-", tmpdir=verbose_dir,
-                          fileext=".txt")
-    write(seqs_fasta, seqs_file)
-  }
+
   
   # Step 2: Do a multiple sequence alignment (MSA)
   seqs_biostring <- Biostrings::AAStringSet(seqs)
