@@ -201,14 +201,17 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
   
 }
 
+
 #' Widget output function for use in Shiny
 #'
 #' @export
 # nolint start
 radial_phyloOutput <- function(outputId, width = "100%", height = "400px"){
-  shinyWidgetOutput(outputId, "radial_phylo", width, height, package = "receptormarker")
+  shinyWidgetOutput(outputId, "radial_phylo", width, height,
+                    package="receptormarker")
 # nolint end
 }
+
 
 #' Widget render function for use in Shiny
 #'
