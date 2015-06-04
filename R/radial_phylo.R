@@ -1,3 +1,24 @@
+validate_canvas_size <- function(canvas_size) {
+  err <- "The argument 'canvas_size' is invalid"
+  canvas_size_options <- "auto"
+  tryCatch({
+    if (length(canvas_size) != 1) {
+      stop(err, call.=FALSE)
+    }
+    if (!is.element(canvas_size, canvas_size_options) &&
+        canvas_size != floor(canvas_size)) {
+      stop(err, call.=FALSE)
+    } else if (canvas_size < 1) {
+      stop(err, call.=FALSE)
+    }
+  },
+  error = function(e) {
+    stop(err, call.=FALSE)
+  }
+  )
+}
+
+
 #' <Add Title>
 #'
 #' <Add Description>
@@ -10,22 +31,7 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
                          scale=FALSE, browser=FALSE, width=NULL,
                          height=NULL, verbose=FALSE) {
 
-  # Determine what the parameter "canvas_size" is
-  err <- "The argument 'canvas_size' is invalid"
-  canvas_size_options <- "auto"
-  tryCatch({
-    if (!is.element(canvas_size, canvas_size_options) && 
-        canvas_size != floor(canvas_size) &&
-        length(canvas_size) != 1) {
-      stop(err, call.=FALSE)
-    } else if (canvas_size < 1) {
-      stop(err, call.=FALSE)
-    }
-  },
-  error = function(e) {
-    stop(err, call.=FALSE)
-  }
-  )
+  validate_canvas_size(canvas_size)
   
   # Get the sequences column from the data.frame
   seqs_col_err <- "The argument 'df' and/or 'seqs_col' is invalid" 
