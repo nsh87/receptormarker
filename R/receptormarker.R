@@ -32,66 +32,10 @@ NULL
 }
 
 
-#' @title Check if Biopython is installed on \code{library(receptormarker)}
-#' @description Presents user with warning if Biopython or Python is not
-#'   installed, but allows user to continue using the package.
-#' @keywords internal
+# Check if Python/R libraries are installed.
+# For example, presents user with warning if Biopython, Python, or muscle is not
+# installed, but allows user to continue using the package.
 .onAttach <- function(libname, pkgname) {
-  # Print warning about missing Python applications
-  missing_py_apps <- c()
-  if (is.null(getOption("receptormarker.py_version"))) {
-    missing_py_apps[length(missing_py_apps) + 1] <- "Python"
-  }
-  if (is.null(getOption("receptormarker.biopy_version"))) {
-    missing_py_apps[length(missing_py_apps) + 1] <- "Biopython"
-  }
-  
-  if (length(missing_py_apps) > 0) {
-    if (length(missing_py_apps) == 1) {
-      apps_list <- missing_py_apps
-    } else {
-      apps_list <- paste0(missing_py_apps, collapse=" and ")
-    }
-    
-    install_biopy <- "http://biopython.org/DIST/docs/install/Installation.html"
-    missing_py_apps_warning <- paste0(c("Warning: Unable to find",
-                                     apps_list,
-                                     "on your system. In order to achieve the",
-                                     "best results it is strongly suggested to",
-                                     "install Python's Biopython to your",
-                                     "system's path. See",
-                                     install_biopy,
-                                     "for installation instructions. Once",
-                                     "installed, please reload this package.",
-                                     "If you use Biopython through Enthought",
-                                     "Canopy or Anaconda, these tools run in",
-                                     "an environment on top of your system",
-                                     "path, which is not accessible through",
-                                     "R; please install Biopython to your",
-                                     "system path, as well."
-                                     ),
-                                   collapse=" ")
-    packageStartupMessage(missing_py_apps_warning)
-  }
-  
-  # Print warning about any missing R packages from Bioconductor
-  install_muscle <- paste0(c("http://www.bioconductor.org/packages/release/",
-                             "bioc/html/muscle.html"),
-                           collapse="")
-  if (is.null(getOption("receptormarker.muscle_version"))) {
-    missing_r_apps_warning <- paste0(c("Warning: The package 'muscle' is not",
-                                       "installed. Please install the latest",
-                                       "version from Bioconductor. See",
-                                       install_muscle,
-                                       "for details."),
-                                     collapse=" ")
-    packageStartupMessage(missing_r_apps_warning)
-  } else if (getOption("receptormarker.muscle_version") < 3.10 ) {
-    missing_r_apps_warning <- paste0(c("Warning: The package 'muscle' is not",
-                                       "at a current version. Please install",
-                                       "the latest version from Bioconductor.",
-                                       "See", install_muscle, "for details."),
-                                     collapse=" ")
-    packageStartupMessage(missing_r_apps_warning)
-  }
+  check_bio_python(level="startup_warn")
+  check_muscle(level="startup_warn")
 }

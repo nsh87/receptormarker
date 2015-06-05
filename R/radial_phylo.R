@@ -223,6 +223,9 @@ calculate_canvas_size <- function(xml_file) {
 radial_phylo <- function(d, seqs_col=NULL, canvas_size="auto", font_size="auto",
                          scale=TRUE, browser=FALSE, verbose=FALSE) {
   
+  check_muscle(level="stop")
+  check_bio_python(level="warn")
+  
   # Validate function parameters
   validate_canvas_size(canvas_size)
   seqs <- extract_sequences (d, seqs_col)

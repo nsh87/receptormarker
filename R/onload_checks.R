@@ -118,17 +118,121 @@ biopy_version <- function() {
 
 #' @title Get MUSCLE version
 #' @description Get the major and minor version of the R package
-#'   \code{\link{muscle}}.
+#'   \code{muscle}.
 #' @details This is an internal function for checking to see whether or not
-#'   the latest version of \code{\link{muscle}} is installed. Previous versions
+#'   the latest version of \code{muscle} is installed. Previous versions
 #'   of the package could be installed via CRAN, but the package has now been
 #'   removed from CRAN and is only available on Bioconductor. The version
 #'   on Bioconductor has different function parameters and therefore users
 #'   need to update to the current version in order to prevent the calls
-#'   to \code{\link{muscle}} from erroring.
-#' @return If \code{\link{muscle}} is installed the version number will be
+#'   to \code{muscle} from erroring.
+#' @return If \code{muscle} is installed the version number will be
 #'   returned as a \code{numeric} (for example, \code{3.1}). If the package is
 #'   not installed, returns NULL.
 muscle_version <- function() {
   pkg_version("muscle")
+}
+
+
+#' @title Check for the existence of Python and Biopython
+#' @description Reads the versions of Python and Biopython from this package's
+#'   options and warns the user or stops execution depending on the paramater
+#'   \code{level}.
+#' @param level Either \code{"startup_warn"}, \code{"warn"}, or \code{"stop"},
+#'   depending on how you want to handle the non-existence of the \code{muscle}
+#'   package or an outdated version of the package.
+check_bio_python <- function(level) {
+  if (!(level %in% c("startup_warn", "warn", "stop"))) {
+    stop("Invalid argument", call.=TRUE)
+  }
+  
+  # Check version numbers store in options
+  missing_py_apps <- c()
+  if (is.null(getOption("receptormarker.py_version"))) {
+    missing_py_apps[length(missing_py_apps) + 1] <- "Python"
+  }
+  if (is.null(getOption("receptormarker.biopy_version"))) {
+    missing_py_apps[length(missing_py_apps) + 1] <- "Biopython"
+  }
+  
+  # Build error message, either singular or plural if both are missing
+  if (length(missing_py_apps) > 0) {
+    if (length(missing_py_apps) == 1) {
+      apps_list <- missing_py_apps
+    } else {
+      apps_list <- paste0(missing_py_apps, collapse=" and ")
+    }
+    
+    install_biopy <- "http://biopython.org/DIST/docs/install/Installation.html"
+    err <- paste0(c("Unable to find",
+                    apps_list,
+                    "on your system. In order to achieve the",
+                    "best results it is strongly suggested to",
+                    "install Python's Biopython to your",
+                    "system's path. See",
+                    install_biopy,
+                    "for installation instructions. Once",
+                    "installed, please reload this package.",
+                    "If you use Biopython through Enthought",
+                    "Canopy or Anaconda, these tools run in",
+                    "an environment on top of your system",
+                    "path, which is not accessible through",
+                    "R; please install Biopython to your",
+                    "system path, as well."
+                    ),
+                  collapse=" ")
+  }
+  
+  if (exists("err")) {
+    if (level == "startup_warn") {
+      packageStartupMessage(paste0(c("Warning:", err), collapse=" "))
+    } else if (level == "warn") {
+      warning(err, call.=FALSE)
+    } else if (level == "stop") {
+      stop(err, call.=FALSE)
+    }
+  }
+}
+ 
+
+#' @title Check for correct version of MUSCLE
+#' @description Reads the version of \code{muscle} from this package's
+#'   options and warns the user or stops execution depending on the parameter
+#'   \code{level}.
+#' @param level Either \code{"startup_warn"}, \code{"warn"}, or \code{"stop"},
+#'   depending on how you want to handle the non-existence of the \code{muscle}
+#'   package or an outdated version of the package.
+check_muscle <- function(level) {
+  if (!(level %in% c("startup_warn", "warn", "stop"))) {
+    stop("Invalid argument", call.=TRUE)
+  }
+  
+  install_muscle <- paste0(c("http://www.bioconductor.org/packages/release/",
+                             "bioc/html/muscle.html"),
+                           collapse="")
+  if (is.null(getOption("receptormarker.muscle_version"))) {
+    err <- paste0(c("The package 'muscle' is not",
+                    "installed. Please install the latest",
+                    "version from Bioconductor then reload this package. See",
+                    install_muscle,
+                    "for details."),
+                  collapse=" ")
+  } else if (getOption("receptormarker.muscle_version") < 3.10 ) {
+    err <- paste0(c("The package 'muscle' is not",
+                    "at a current version. Please install",
+                    "the latest version from Bioconductor then reload this",
+                    "package. See", install_muscle, "for details."),
+                  collapse=" ")
+  }
+  
+  # Raise message if MUSCLE not found or version is invalid
+  if (exists("err")) {
+    if (level == "startup_warn") {
+      packageStartupMessage(paste0(c("Warning:", err), collapse=" "))
+    } else if (level == "warn") {
+      warning(err, call.=FALSE)
+    } else if (level == "stop") {
+      stop(err, call.=FALSE)
+    }
+  }
 }
