@@ -142,7 +142,8 @@ muscle_version <- function() {
 #' @param level Either \code{"startup_warn"}, \code{"warn"}, or \code{"stop"},
 #'   depending on how you want to handle the non-existence of Python or
 #'   Biopython.
-#' @return Returns TRUE if the libraries are found, otherwise returns nothing.
+#' @return Returns TRUE if the libraries are found, otherwise returns
+#'   \code{NULL}.
 #' @keywords internal
 check_bio_python <- function(level) {
   if (!(level %in% c("startup_warn", "warn", "stop"))) {
@@ -189,8 +190,10 @@ check_bio_python <- function(level) {
   if (exists("err")) {
     if (level == "startup_warn") {
       packageStartupMessage(paste0(c("Warning:", err), collapse=" "))
+      return()
     } else if (level == "warn") {
       warning(err, call.=FALSE)
+      return()
     } else if (level == "stop") {
       stop(err, call.=FALSE)
     }
@@ -207,7 +210,7 @@ check_bio_python <- function(level) {
 #'   depending on how you want to handle the non-existence of the \code{muscle}
 #'   package or an outdated version of the package.
 #' @return Returns TRUE if the correct version of MUSCLE is found, otherwise
-#'   returns nothing.
+#'   returns \code{NULL}.
 #' @keywords internal
 check_muscle <- function(level) {
   if (!(level %in% c("startup_warn", "warn", "stop"))) {
@@ -236,8 +239,10 @@ check_muscle <- function(level) {
   if (exists("err")) {
     if (level == "startup_warn") {
       packageStartupMessage(paste0(c("Warning:", err), collapse=" "))
+      return()
     } else if (level == "warn") {
       warning(err, call.=FALSE)
+      return()
     } else if (level == "stop") {
       stop(err, call.=FALSE)
     }
