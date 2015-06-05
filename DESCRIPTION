@@ -20,7 +20,8 @@ Depends: R (>= 3.2.0)
 Imports:
     htmlwidgets (>= 0.4),
     seqinr (>= 3.1),
-    ape (>=  3.2)
+    ape (>=  3.2),
+    XML (>= 3.98-1.1)
 Suggests:
     testthat (>= 0.9.1),
     lintr (>= 0.2.0)

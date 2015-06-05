@@ -132,6 +132,29 @@ newick_to_phyloxml <- function(newick_file, verbose, verbose_dir) {
 }
 
 
+calculate_canvas_size <- function(xml_file) {
+  doc <- XML::xmlParse(xml_file)
+  root <- XML::xmlRoot(doc)
+  ns <- c(ns=XML::xmlNamespace(root))
+  num_elements <- length(XML::xpathApply(root, "//ns:name", namespaces=ns))
+  # Similarly: xpathApply(doc, "/ns:phyloxml//ns:name", xmlValue, namespaces=ns)
+  if (num_elements == 0) {
+    stop("Cannot generate phylogram: no sequences to plot", call.=FALSE)
+  } else if (num_elements <= 50) {
+    return(900)
+  } else if (num_elements <= 185) {
+    return(1300)
+  } else if (num_elements <= 1000) {
+    return(num_elements * 7)
+  } else {
+    performance_warning <- paste0("Performance of the phylogram plot might ",
+                                  "begin to degrade with >1000 sequences")
+    message(performance_warning)
+    return(num_elements * 7)
+  }
+}
+
+
 #' <Add Title>
 #'
 #' <Add Description>
@@ -169,6 +192,11 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
   newick_file <- create_tree(dist_matrix, verbose, verbose_dir)
   # Step 5: Convert the .newick to phylo.xml
   xml_file <- newick_to_phyloxml(newick_file, verbose, verbose_dir)
+  
+  # Calculate canvas size based on number of nodes in phylo.xml
+  if (canvas_size == "auto") {
+    canvas_size <- calculate_canvas_size(xml_file) 
+  }
   
   # Forward options to radial_phylo.js using 'x'
   x <- list(
