@@ -28,7 +28,7 @@ HTMLWidgets.widget({
             style.appendChild(document.createTextNode(css));
         }
         head.appendChild(style);
-    }
+    };
                    
     // if 'canvas_size' is a number then use it
     var width;
@@ -51,8 +51,8 @@ HTMLWidgets.widget({
     }
 
     // set some options of the phylogram
-    Smits.PhyloCanvas.Render.Parameters.Circular['bufferRadius'] = .28;
-    Smits.PhyloCanvas.Render.Parameters.Circular['bufferOuterLabels'] = 0;
+    Smits.PhyloCanvas.Render.Parameters.Circular.bufferRadius = 0.28;
+    Smits.PhyloCanvas.Render.Parameters.Circular.bufferOuterLabels = 0;
 
     // get xml file's contents and plot the phylogram
     var xml_relpath = HTMLWidgets.getAttachmentUrl('phyloxml', 'xml');
@@ -77,7 +77,7 @@ HTMLWidgets.widget({
 	var a = document.createElement('a');
 	var downloadLink = document.createTextNode("Save Image (Web Browser Only)");
 	a.appendChild(downloadLink);
-	a.href = "#"
+	a.href = "#";
 	a.title = "Save Image";
     a.id = "download_link";
 	var widget = document.body.children[0];
@@ -126,7 +126,7 @@ HTMLWidgets.widget({
                 download_anchor.fireEvent("onclick");
             }
         }, 1000);
-    }
+    };
 
   },
 
