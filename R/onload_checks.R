@@ -139,8 +139,10 @@ muscle_version <- function() {
 #'   options and warns the user or stops execution depending on the paramater
 #'   \code{level}.
 #' @param level Either \code{"startup_warn"}, \code{"warn"}, or \code{"stop"},
-#'   depending on how you want to handle the non-existence of the \code{muscle}
-#'   package or an outdated version of the package.
+#'   depending on how you want to handle the non-existence of Python or
+#'   Biopython.
+#' @return Returns TRUE if the libraries are found, otherwise returns nothing.
+#' @keywords internal
 check_bio_python <- function(level) {
   if (!(level %in% c("startup_warn", "warn", "stop"))) {
     stop("Invalid argument", call.=TRUE)
@@ -192,6 +194,7 @@ check_bio_python <- function(level) {
       stop(err, call.=FALSE)
     }
   }
+  return(TRUE)
 }
  
 
@@ -202,6 +205,9 @@ check_bio_python <- function(level) {
 #' @param level Either \code{"startup_warn"}, \code{"warn"}, or \code{"stop"},
 #'   depending on how you want to handle the non-existence of the \code{muscle}
 #'   package or an outdated version of the package.
+#' @return Returns TRUE if the correct version of MUSCLE is found, otherwise
+#'   returns nothing.
+#' @keywords internal
 check_muscle <- function(level) {
   if (!(level %in% c("startup_warn", "warn", "stop"))) {
     stop("Invalid argument", call.=TRUE)
@@ -235,4 +241,5 @@ check_muscle <- function(level) {
       stop(err, call.=FALSE)
     }
   }
+  return(TRUE)
 }
