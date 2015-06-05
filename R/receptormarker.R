@@ -22,7 +22,8 @@ NULL
   op <- options()
   op.receptormarker <- list(
     receptormarker.py_version = py_version(),
-    receptormarker.biopy_version = biopy_version() 
+    receptormarker.biopy_version = biopy_version(), 
+    receptormarker.muscle_version = muscle_version()
   )
   toset <- !(names(op.receptormarker) %in% names(op))
   if(any(toset)) options(op.receptormarker[toset])
@@ -36,23 +37,24 @@ NULL
 #'   installed, but allows user to continue using the package.
 #' @keywords internal
 .onAttach <- function(libname, pkgname) {
-  missing_apps <- c()
+  # Print warning about missing Python applications
+  missing_py_apps <- c()
   if (is.null(getOption("receptormarker.py_version"))) {
-    missing_apps[length(missing_apps) + 1] <- "Python"
+    missing_py_apps[length(missing_py_apps) + 1] <- "Python"
   }
   if (is.null(getOption("receptormarker.biopy_version"))) {
-    missing_apps[length(missing_apps) + 1] <- "Biopython"
+    missing_py_apps[length(missing_py_apps) + 1] <- "Biopython"
   }
   
-  if (length(missing_apps) > 0) {
-    if (length(missing_apps) == 1) {
-      apps_list <- missing_apps
+  if (length(missing_py_apps) > 0) {
+    if (length(missing_py_apps) == 1) {
+      apps_list <- missing_py_apps
     } else {
-      apps_list <- paste0(missing_apps, collapse=" and ")
+      apps_list <- paste0(missing_py_apps, collapse=" and ")
     }
     
     install_biopy <- "http://biopython.org/DIST/docs/install/Installation.html"
-    missing_apps_warning <- paste0(c("Warning: Unable to find",
+    missing_py_apps_warning <- paste0(c("Warning: Unable to find",
                                      apps_list,
                                      "on your system. In order to achieve the",
                                      "best results it is strongly suggested to",
@@ -68,8 +70,28 @@ NULL
                                      "R; please install Biopython to your",
                                      "system path, as well."
                                      ),
-                                   collapse=" "
-    )
-    packageStartupMessage(missing_apps_warning)
+                                   collapse=" ")
+    packageStartupMessage(missing_py_apps_warning)
+  }
+  
+  # Print warning about any missing R packages from Bioconductor
+  install_muscle <- paste0(c("http://www.bioconductor.org/packages/release/",
+                             "bioc/html/muscle.html"),
+                           collapse="")
+  if (is.null(getOption("receptormarker.muscle_version"))) {
+    missing_r_apps_warning <- paste0(c("Warning: The package 'muscle' is not",
+                                       "installed. Please install the latest",
+                                       "version from Bioconductor. See",
+                                       install_muscle,
+                                       "for details."),
+                                     collapse=" ")
+    packageStartupMessage(missing_r_apps_warning)
+  } else if (getOption("receptormarker.muscle_version") < 3.10 ) {
+    missing_r_apps_warning <- paste0(c("Warning: The package 'muscle' is not",
+                                       "at a current version. Please install",
+                                       "the latest version from Bioconductor.",
+                                       "See", install_muscle, "for details."),
+                                     collapse=" ")
+    packageStartupMessage(missing_r_apps_warning)
   }
 }

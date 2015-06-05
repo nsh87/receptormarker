@@ -1,3 +1,25 @@
+#' @title Get installed version of an R package
+#' @description An internal function that retrieves the version of a R package
+#' @param pkg The name of the R package
+#' @return If the package is installed, returns the version number as a
+#'   \code{numeric} (for example, \code{3.8}), otherwise returns NULL.
+#' @examples
+#'   pkg_version('base')
+#' @keywords internal
+pkg_version <- function(pkg) {
+  tryCatch({
+    v <- as.character(packageVersion(pkg))
+    vrsn <- strsplit(v, ".", fixed=TRUE)[[1]][1:2]
+    vrsn <- paste0(vrsn, collapse=".")
+    vrsn <- as.numeric(vrsn)
+  },
+  error = function(e) {
+    return(NULL)
+  }
+  )
+}
+
+
 #' @title Get installed version of external application
 #' @description  An internal function that retrieves the version of an external
 #'   application by executing code on the system's command line.
@@ -91,4 +113,22 @@ biopy_version <- function() {
                 "print('Biopython {}').format(Bio.__version__)\"",
                 collapse=" ")
   versn(command, "Biopython") 
+}
+
+
+#' @title Get MUSCLE version
+#' @description Get the major and minor version of the R package
+#'   \code{\link{muscle}}.
+#' @details This is an internal function for checking to see whether or not
+#'   the latest version of \code{\link{muscle}} is installed. Previous versions
+#'   of the package could be installed via CRAN, but the package has now been
+#'   removed from CRAN and is only available on Bioconductor. The version
+#'   on Bioconductor has different function parameters and therefore users
+#'   need to update to the current version in order to prevent the calls
+#'   to \code{\link{muscle}} from erroring.
+#' @return If \code{\link{muscle}} is installed the version number will be
+#'   returned as a \code{numeric} (for example, \code{3.1}). If the package is
+#'   not installed, returns NULL.
+muscle_version <- function() {
+  pkg_version('muscle')
 }
