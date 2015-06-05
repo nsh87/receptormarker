@@ -129,6 +129,7 @@ biopy_version <- function() {
 #' @return If \code{muscle} is installed the version number will be
 #'   returned as a \code{numeric} (for example, \code{3.1}). If the package is
 #'   not installed, returns NULL.
+#' @keywords internal
 muscle_version <- function() {
   pkg_version("muscle")
 }
