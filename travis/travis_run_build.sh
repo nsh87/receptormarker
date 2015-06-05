@@ -1,26 +1,10 @@
 #!/usr/bin/env sh
 log_file="travis/travis_build.log"
-#R CMD BATCH ./travis_build.R $log_file 
-#cat $log_file
 
-# touch $log_file
-# 
-# # run tail -f in background
-# tail -f $log_file # > out 2>&1 &
-# 
-# # process id of tail command
-# tailpid=$!
-# 
-# # run build
-# R CMD BATCH ./travis_build.R $log_file 
-# 
-# # now kill the tail process
-# kill $tailpid
-
-# run checks
+# Run custom commands, such as running your test cases
 eval "Rscript ./travis/travis_build.R | tee -a '$log_file'"
 
-# search for errors
+# Search for errors in the output of your custom commands
 err1="ERROR"
 err2="WARNING"
 err3="Failure (at"
@@ -36,3 +20,7 @@ else
     echo "ERROR, WARNING, or Failure found. See grep results above."
     exit 1
 fi
+
+# Run the same commands Travis runs by default
+R CMD build --no-build-vignettes --no-manual rpack
+R CMD check --no-build-vignettes --no-manual --as-cran rpack
