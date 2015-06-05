@@ -19,24 +19,61 @@ validate_canvas_size <- function(canvas_size) {
 }
 
 
-extract_sequences <- function(df, seqs_col) {
-  seqs_col_err <- "The argument 'df' and/or 'seqs_col' is invalid" 
+extract_sequences <- function(d, seqs_col) {
+  # Validation checks
+  if (is.null(d)) {
+    stop("Data cannot be NULL", call.=FALSE)
+  } else if (!(class(d) %in% c("data.frame", "character"))) {
+    stop("Data must be a data.frame or a character vector", call.=FALSE)
+  } else if (class(d) == "data.frame" &&
+             !(class(seqs_col) %in% c("character", "numeric"))) {
+    err <- paste0(c("Argument 'seqs_col' must be a column index or a column",
+                    "header when data is a data.frame, or NULL if data is",
+                    "a vector"),
+                  collapse = " ")
+    stop(err, call.=FALSE)
+  } else if (class(d) == "character" && !is.null(seqs_col)) {
+    err <- "Argument 'seqs_col' expected to be NULL when data is a vector"
+    stop(err, call.=FALSE)
+  } else if (class(d) == "data.frame" && length(seqs_col) != 1) {
+    err <- "Argument 'seqs_col' must represent a single column, i.e. length = 1"
+    stop(err, call.=FALSE)
+  } else if (class(d) == "data.frame" &&
+             class(seqs_col) == "numeric" &&
+             seqs_col > ncol(d)) {
+    stop("Argument 'seqs_col' greater than the number of columns of data",
+         call.=FALSE)
+  } else if (typeof(seqs_col) == "character" && !(seqs_col %in% names(d))) {
+    err <- paste0(c("Data does not have column name = '", seqs_col, "'"),
+                  collapse="")
+    stop(err, call.=FALSE)
+  }
+  
+  # Return the sequences
   tryCatch({
-    if (length(seqs_col) != 1) {
-      stop(seqs_col_err, call.=FALSE)
-    }
-    if (typeof(seqs_col) == "character" && seqs_col %in% names(df)) {
-      seqs <- as.character(df[, seqs_col])
+    # If d is single-column data frame return the sequences
+    if (class(d) == "data.frame" && dim(d)[2] == 1) {
+      seqs <- as.character(d[, 1])
       return(seqs)
+    # Otherwise check if d is a vector, return it if so
+    } else if (class(d) == "character") {
+      return(d)
+    # If data is >1D data.frame return the sequences column by header name
+    } else if (typeof(seqs_col) == "character" && seqs_col %in% names(d)) {
+      seqs <- as.character(d[, seqs_col])
+      return(seqs)
+    # Or if data is >1D data.frame return the sequences column by index
     } else if (seqs_col == floor(seqs_col) && length(seqs_col) == 1) {
-      seqs <- as.character(df[, seqs_col])
+      seqs <- as.character(d[, seqs_col])
       return(seqs)
     } else {
-      stop(seqs_col_err, call.=FALSE)
+      err <- paste0(c("Unexpected error retrieving sequences. Please check",
+                      "paraameters 'd' and 'seqs_col'."), collapse=" ")
+      stop(err, call.=FALSE)
     }
   },
   error = function(e) {
-    stop(seqs_col_err, call.=FALSE)
+    stop(e)
   }
   )
 }
@@ -52,29 +89,46 @@ validate_sequences <- function(seqs) {
 }
 
 
-clean_df <- function(df, seqs_col, verbose, verbose_dir) {
-  df_clean <- df[df[, seqs_col] != "", ]  # Remove rows with no sequences
-  df_clean <- df_clean[complete.cases(df_clean[, seqs_col]), ]  # Remove NA rows
+clean_d <- function(d, seqs_col, verbose, verbose_dir) {
+  if (class(d) == "data.frame" && dim(d)[2] > 1) {
+    d_clean <- d[d[, seqs_col] != "", ]  # Remove rows with no sequences
+    d_clean <- d_clean[complete.cases(d_clean[, seqs_col]), ]  # Remove NA rows
+    seqs <- as.character(d_clean[, seqs_col])
+  } else if (class(d) == "data.frame" && dim(d)[2] == 1) {
+    d_clean <- d[d != ""]  # Remove blank sequences
+    d_clean <- d_clean[!is.na(d_clean)]  # Remove NA's
+    seqs <- as.character(d_clean)
+  } else if (class(d) == "character") {
+    d_clean <- d[d != ""]  # Remove blank sequences
+    d_clean <- d_clean[!is.na(d_clean)]  # Remove NA's
+    seqs <- as.character(d_clean)
+  }
   # Write the sequences if the user wants them
   if (verbose == TRUE) {
-    seqs_fasta <- with(df_clean,
-                       paste0(">", df_clean[, seqs_col], "\n",
-                              df_clean[, seqs_col],
-                              collapse="\n"
-                              )
-    )
+    if (class(d) == "data.frame") {
+      seqs_fasta <- with(d_clean,
+                         paste0(">", seqs, "\n",
+                                seqs,
+                                collapse="\n"
+                                )
+      )
+    } else if (class(d) == "character") {
+      seqs_fasta <- paste0(">", seqs, "\n",
+                           seqs,
+                           collapse="\n")
+    }
     seqs_file <- tempfile(pattern="sequences-", tmpdir=verbose_dir,
                           fileext=".txt")
     write(seqs_fasta, seqs_file)
   }
-  df_clean
+  seqs
 }
 
 
 msa <- function(seqs, verbose, verbose_dir) {
   seqs_biostring <- Biostrings::AAStringSet(seqs)
   names(seqs_biostring) <- seqs
-  if (verbose == TRUE) message("MUSCLE multiple sequence alignment:")
+  if (verbose == TRUE) print("MUSCLE multiple sequence alignment:")
   ms_alignment <- muscle::muscle(stringset=seqs_biostring, quiet=!verbose)
   # Write the alignment if the user wants it
   if (verbose == TRUE) {
@@ -166,12 +220,12 @@ calculate_canvas_size <- function(xml_file) {
 #'
 #' @export
 # allow users to set viewer.suppress to FALSE to see the thing in RStudio
-radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
+radial_phylo <- function(d, seqs_col=NULL, canvas_size="auto", font_size="auto",
                          scale=TRUE, browser=FALSE, verbose=FALSE) {
   
   # Validate function parameters
   validate_canvas_size(canvas_size)
-  seqs <- extract_sequences (df, seqs_col)
+  seqs <- extract_sequences (d, seqs_col)
   validate_sequences(seqs)
   
   # Not necessary to have as func parameters; these will get set automatically
@@ -185,8 +239,7 @@ radial_phylo <- function(df, seqs_col, canvas_size="auto", font_size="auto",
   }
   
   # Step 1: Clean the data.frame and get the cleaned sequences
-  df_clean <- clean_df(df, seqs_col, verbose, verbose_dir)
-  seqs <- as.character(df_clean[, seqs_col])
+  seqs <- clean_d(d, seqs_col, verbose, verbose_dir)
   # Step 2: Do a multiple sequence alignment (MSA)
   ms_alignment <- msa(seqs, verbose, verbose_dir)
   # Step 3: Compute pairwise distances of the aligned sequences

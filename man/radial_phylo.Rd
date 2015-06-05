@@ -4,9 +4,8 @@
 \alias{radial_phylo}
 \title{<Add Title>}
 \usage{
-radial_phylo(df, seqs_col, canvas_size = "auto", font_size = "auto",
-  scale = FALSE, browser = FALSE, width = NULL, height = NULL,
-  verbose = FALSE)
+radial_phylo(d, seqs_col = NULL, canvas_size = "auto", font_size = "auto",
+  scale = TRUE, browser = FALSE, verbose = FALSE)
 }
 \description{
 <Add Description>
