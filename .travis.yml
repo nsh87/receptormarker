@@ -25,6 +25,9 @@ r_github_packages:
 
 before_script: Rscript ./travis/travis_prep.R
 
+bioc_packages:
+  - muscle
+
 script: ./travis/travis_run_build.sh
 
 notifications:
