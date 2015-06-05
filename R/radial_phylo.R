@@ -72,7 +72,7 @@ clean_df <- function(df, seqs_col, verbose, verbose_dir) {
 msa <- function(seqs, verbose, verbose_dir) {
   seqs_biostring <- Biostrings::AAStringSet(seqs)
   names(seqs_biostring) <- seqs
-  if (verbose == TRUE) print("MUSCLE multiple sequence alignment:")
+  if (verbose == TRUE) message("MUSCLE multiple sequence alignment:")
   ms_alignment <- muscle::muscle(stringset=seqs_biostring, quiet=!verbose)
   # Write the alignment if the user wants it
   if (verbose == TRUE) {
