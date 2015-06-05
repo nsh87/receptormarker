@@ -130,5 +130,5 @@ biopy_version <- function() {
 #'   returned as a \code{numeric} (for example, \code{3.1}). If the package is
 #'   not installed, returns NULL.
 muscle_version <- function() {
-  pkg_version('muscle')
+  pkg_version("muscle")
 }

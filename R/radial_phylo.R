@@ -27,8 +27,10 @@ extract_sequences <- function(df, seqs_col) {
     }
     if (typeof(seqs_col) == "character" && seqs_col %in% names(df)) {
       seqs <- as.character(df[, seqs_col])
+      return(seqs)
     } else if (seqs_col == floor(seqs_col) && length(seqs_col) == 1) {
       seqs <- as.character(df[, seqs_col])
+      return(seqs)
     } else {
       stop(seqs_col_err, call.=FALSE)
     }
