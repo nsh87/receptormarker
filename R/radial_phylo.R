@@ -147,8 +147,9 @@ calculate_canvas_size <- function(xml_file) {
   } else if (num_elements <= 1000) {
     return(num_elements * 7)
   } else {
-    performance_warning <- paste0("Performance of the phylogram plot might ",
-                                  "begin to degrade with >1000 sequences")
+    performance_warning <- paste0("Performance of the phylogram plot might",
+                                  "begin to degrade with >1000 sequences",
+                                  collapse=" ")
     message(performance_warning)
     return(num_elements * 7)
   }
