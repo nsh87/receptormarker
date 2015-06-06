@@ -44,7 +44,7 @@ extract_sequences <- function(d, seqs_col) {
     stop("Argument 'seqs_col' is greater than the number of columns of data",
          call.=FALSE)
   } else if (typeof(seqs_col) == "character" && !(seqs_col %in% names(d))) {
-    err <- paste0(c("Data does not have column name = '", seqs_col, "'"),
+    err <- paste0(c("Data does not have column named '", seqs_col, "'"),
                   collapse="")
     stop(err, call.=FALSE)
   }
