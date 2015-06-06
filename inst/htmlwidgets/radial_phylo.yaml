@@ -30,3 +30,10 @@ dependencies:
   version: 1.0
   src: htmlwidgets/lib/css
   stylesheet: ./radial_phylo.css
+- name: images
+  version: 1.0
+  src: htmlwidgets/lib/radial_phylo_images
+  attachment: {
+    "download_sheet_gray": "download-sheet-gray.png",
+    "download_sheet_blue": "download-sheet-blue.png"
+  }

@@ -16,7 +16,7 @@ HTMLWidgets.widget({
   },
 
   renderValue: function(el, x, instance) {
-
+    
     // function to add css to <head>
     var addCSS = function(css) {
         var head = document.head || document.getElementsByTagName('head')[0];
@@ -75,14 +75,31 @@ HTMLWidgets.widget({
 
 	// Create 'Save Image' text link
 	var a = document.createElement('a');
-	var downloadLink = document.createTextNode("Save Image (Web Browser Only)");
-	a.appendChild(downloadLink);
 	a.href = "#";
 	a.title = "Save Image";
-    a.id = "download_link";
+	a.id = "download_link";
 	var widget = document.body.children[0];
-	document.body.insertBefore(a, widget);
-
+	document.body.insertBefore(a, widget);  // Insert the link
+	var download_image = new Image();
+	var img_gray = HTMLWidgets.getAttachmentUrl('images', 'download_sheet_gray');
+	var img_blue = HTMLWidgets.getAttachmentUrl('images', 'download_sheet_blue');
+	$(download_image).attr("src", img_gray);
+	a.appendChild(download_image);  // Insert the image inside the link
+	$(download_image)
+	  .mouseover(function() {
+	    $(this).attr("src", img_blue);
+	  })
+	  .mouseout(function() {
+	    $(this).attr("src", img_gray);
+	  })
+	  .mousedown(function() {
+	    var current_pos = parseInt($(this).css("top"));
+	    $(this).css("padding-top", 1 + "px");
+	  })
+	  .bind("mouseup mouseleave", function() {
+	    $(this).css("padding-top", 0 + "px");
+  });
+	
 	// Attach click handler to save the image when link clicked
 	a.onclick = function() {
 		$(document.body).append("<canvas id='canvg'></canvas>");
