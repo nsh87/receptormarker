@@ -229,7 +229,8 @@ calculate_canvas_size <- function(xml_file) {
   doc <- XML::xmlParse(xml_file)
   root <- XML::xmlRoot(doc)
   ns <- c(ns=XML::xmlNamespace(root))
-  named_nodes <- XML::xpathApply(root, "//ns:name", xmlValue, namespaces=ns)
+  named_nodes <- XML::xpathApply(root, "//ns:name", XML::xmlValue,
+                                 namespaces=ns)
   named_nodes <- as.character(named_nodes)
   # Biopython adds a name "Inner123" to nodes that don't get shown. Need to
   # not count these when determining how many names are on phylogram
