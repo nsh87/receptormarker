@@ -130,13 +130,15 @@ msa <- function(seqs, verbose, verbose_dir) {
   names(seqs_biostring) <- seqs
   if (verbose == TRUE) print("MUSCLE multiple sequence alignment:")
   ms_alignment <- muscle::muscle(stringset=seqs_biostring, quiet=!verbose)
-  # Write the alignment if the user wants it
-  if (verbose == TRUE) {
-    aa_str_set <- as(ms_alignment, "AAStringSet")
-    msa_file <- tempfile(pattern="msa-", tmpdir=verbose_dir, fileext=".fasta")
-    Biostrings::writeXStringSet(aa_str_set, file=msa_file)
+  # Write the alignment
+  aa_str_set <- as(ms_alignment, "AAStringSet")
+  msa_file <- tempfile(pattern="msa-", tmpdir=tempdir(), fileext=".fasta")
+  Biostrings::writeXStringSet(aa_str_set, file=msa_file)
+  # Copy the alignment from the tmp dir to verbose dir if the user wants it
+  if (verbose == TRUE && file.exists(msa_file)) {
+    file.copy(msa_file, verbose_dir)
   }
-  ms_alignment
+  list(as_string=ms_alignment, file=msa_file)
 }
 
 
@@ -157,7 +159,7 @@ create_tree <- function(dist_matrix, verbose, verbose_dir) {
   ape::write.tree(phy=phylo_tree, file=newick_file)
   # Copy the newick file from the tmp dir to verbose dir if the user wants it
   if (verbose == TRUE && file.exists(newick_file)) {
-    file.copy(newick_file, verbose_dir, copy.date=TRUE)
+    file.copy(newick_file, verbose_dir)
   }
   newick_file
 }
@@ -246,7 +248,7 @@ radial_phylo <- function(d, seqs_col=NULL, canvas_size="auto", font_size="auto",
   # Step 2: Do a multiple sequence alignment (MSA)
   ms_alignment <- msa(seqs, verbose, verbose_dir)
   # Step 3: Compute pairwise distances of the aligned sequences
-  dist_matrix <- compute_dist_matrix(ms_alignment, seqs)
+  dist_matrix <- compute_dist_matrix(ms_alignment[["as_string"]], seqs)
   # Step 4: Calculate a distance tree and write it as .newick
   newick_file <- create_tree(dist_matrix, verbose, verbose_dir)
   # Step 5: Convert the .newick to phylo.xml
@@ -270,7 +272,7 @@ radial_phylo <- function(d, seqs_col=NULL, canvas_size="auto", font_size="auto",
      src = c(file=dirname(xml_file)),
      attachment = list(xml=basename(xml_file))
    )
-
+   
   # Create widget
   htmlwidgets::createWidget(
     name = "radial_phylo",
