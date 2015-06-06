@@ -73,32 +73,39 @@ HTMLWidgets.widget({
 
     });
 
-	// Create 'Save Image' text link
+  // Create DL image as PNG link
 	var a = document.createElement('a');
 	a.href = "#";
-	a.title = "Save as PNG";
 	a.id = "download_link";
 	var widget = document.body.children[0];
-	document.body.insertBefore(a, widget);  // Insert the link
-	var download_image = new Image();
 	var img_gray = HTMLWidgets.getAttachmentUrl('images', 'download_sheet_gray');
-	var img_blue = HTMLWidgets.getAttachmentUrl('images', 'download_sheet_blue');
+	var download_image = new Image();
 	$(download_image).attr("src", img_gray);
+  if (this.queryVar("viewer_pane") === "1") {
+    // If widgets shown in RStudio, DL as PNG link tells user to open in browser
+  	a.title = "Must view in browser to save as PNG";
+  } else {
+  	// Otherwise create the button hover effects
+  	a.title = "Save as PNG";
+  	var img_blue = HTMLWidgets.getAttachmentUrl('images',
+  	                                            'download_sheet_blue');
+  	$(download_image)
+  	  .mouseover(function() {
+  	    $(this).attr("src", img_blue);
+  	  })
+  	  .mouseout(function() {
+  	    $(this).attr("src", img_gray);
+  	  })
+  	  .mousedown(function() {
+  	    var current_pos = parseInt($(this).css("top"));
+  	    $(this).css("padding-top", 1 + "px");
+  	  })
+  	  .bind("mouseup mouseleave", function() {
+  	    $(this).css("padding-top", 0 + "px");
+    });
+  }
 	a.appendChild(download_image);  // Insert the image inside the link
-	$(download_image)
-	  .mouseover(function() {
-	    $(this).attr("src", img_blue);
-	  })
-	  .mouseout(function() {
-	    $(this).attr("src", img_gray);
-	  })
-	  .mousedown(function() {
-	    var current_pos = parseInt($(this).css("top"));
-	    $(this).css("padding-top", 1 + "px");
-	  })
-	  .bind("mouseup mouseleave", function() {
-	    $(this).css("padding-top", 0 + "px");
-  });
+	document.body.insertBefore(a, widget);  // Insert the link
 	
 	// Attach click handler to save the image when link clicked
 	a.onclick = function() {
