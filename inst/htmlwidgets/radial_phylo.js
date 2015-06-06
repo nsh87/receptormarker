@@ -76,7 +76,7 @@ HTMLWidgets.widget({
 	// Create 'Save Image' text link
 	var a = document.createElement('a');
 	a.href = "#";
-	a.title = "Save Image";
+	a.title = "Save as PNG";
 	a.id = "download_link";
 	var widget = document.body.children[0];
 	document.body.insertBefore(a, widget);  // Insert the link

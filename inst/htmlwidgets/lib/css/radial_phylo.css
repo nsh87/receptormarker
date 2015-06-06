@@ -12,3 +12,7 @@
 #svgimg {
 	display: none;
 }
+
+.custom-tooltip {
+  font-size: 11px !important;
+}

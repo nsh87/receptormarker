@@ -15,6 +15,12 @@ dependencies:
   version: 1.11.3
   src: htmlwidgets/lib/jquery-1.11.3
   script: ./jquery.min.js
+- name: jquery-ui
+  version: 1.11.4
+  src: htmlwidgets/lib/jquery-ui-1.11.4
+  script:
+    - ./jquery-ui.min.js
+    - ./jquery-ui-tooltip.js
 - name: raphaelexport
   version: 1.0
   src: htmlwidgets/lib/raphaelexport-1.0
@@ -29,7 +35,10 @@ dependencies:
 - name: custom-css
   version: 1.0
   src: htmlwidgets/lib/css
-  stylesheet: ./radial_phylo.css
+  stylesheet: 
+    - ./radial_phylo.css
+    - ./jquery-ui.min.css
+    - ./jquery-ui.theme.min.css
 - name: images
   version: 1.0
   src: htmlwidgets/lib/radial_phylo_images
