@@ -41,7 +41,7 @@ extract_sequences <- function(d, seqs_col) {
   } else if (class(d) == "data.frame" &&
              class(seqs_col) == "numeric" &&
              seqs_col > ncol(d)) {
-    stop("Argument 'seqs_col' greater than the number of columns of data",
+    stop("Argument 'seqs_col' is greater than the number of columns of data",
          call.=FALSE)
   } else if (typeof(seqs_col) == "character" && !(seqs_col %in% names(d))) {
     err <- paste0(c("Data does not have column name = '", seqs_col, "'"),
@@ -174,13 +174,18 @@ create_tree <- function(dist_matrix, verbose, verbose_dir) {
 }
 
 
-newick_to_phyloxml <- function(newick_file, verbose, verbose_dir) {
+phyloxml_temp <- function() {
   # Create tempdir for phyloxml file
   phyloxml_tmpdir <- tempfile("", tmpdir=tempdir(), fileext="")
   dir.create(phyloxml_tmpdir)  # htmlwidgets copies entire dir to browser
   
   xml_file <- tempfile(pattern="phyloxml-", tmpdir=phyloxml_tmpdir,
                        fileext=".xml")
+}
+
+
+newick_to_phyloxml <- function(newick_file, verbose, verbose_dir) {
+  xml_file <- phyloxml_temp()
   forester <- system.file("java", "forester_1038.jar", package="receptormarker")
   system(sprintf(
     "java -cp %s org.forester.application.phyloxml_converter -f=nn -ni %s %s",
@@ -191,9 +196,30 @@ newick_to_phyloxml <- function(newick_file, verbose, verbose_dir) {
     ignore.stdout=!verbose,
     ignore.stderr=!verbose
   )
-  # Also write it to the verbose folder if the user wants it
+  # Also write the phyloxml to the verbose folder if the user wants it
   if (verbose == TRUE && file.exists(xml_file)) {
-    file.copy(xml_file, verbose_dir, copy.date=TRUE)
+    file.copy(xml_file, verbose_dir)
+  }
+  xml_file
+}
+
+
+phyloxml_via_biopython <- function(ms_alignment, verbose, verbose_dir) {
+  xml_file <- phyloxml_temp()
+  phyloxml_from_msa <- system.file("py", "phyloxml_from_msa.py",
+                                   package="receptormarker")
+  system(sprintf(
+    "python %s %s %s",
+    phyloxml_from_msa,
+    ms_alignment,
+    xml_file
+    ),
+    ignore.stdout=!verbose,
+    ignore.stderr=!verbose
+  )
+  # Also write the phyloxml to the verbose folder if the user wants it
+  if (verbose == TRUE && file.exists(xml_file)) {
+    file.copy(xml_file, verbose_dir)
   }
   xml_file
 }
@@ -203,7 +229,12 @@ calculate_canvas_size <- function(xml_file) {
   doc <- XML::xmlParse(xml_file)
   root <- XML::xmlRoot(doc)
   ns <- c(ns=XML::xmlNamespace(root))
-  num_elements <- length(XML::xpathApply(root, "//ns:name", namespaces=ns))
+  named_nodes <- XML::xpathApply(root, "//ns:name", xmlValue, namespaces=ns)
+  named_nodes <- as.character(named_nodes)
+  # Biopython adds a name "Inner123" to nodes that don't get shown. Need to
+  # not count these when determining how many names are on phylogram
+  named_nodes <- named_nodes[grepl("^[^Inner]", named_nodes)]
+  num_elements <- length(named_nodes)
   # Similarly: xpathApply(doc, "/ns:phyloxml//ns:name", xmlValue, namespaces=ns)
   if (num_elements == 0) {
     stop("Cannot generate phylogram: no sequences to plot", call.=FALSE)
@@ -214,10 +245,10 @@ calculate_canvas_size <- function(xml_file) {
   } else if (num_elements <= 1000) {
     return(num_elements * 7)
   } else {
-    performance_warning <- paste0("Performance of the phylogram plot might",
-                                  "begin to degrade with >1000 sequences",
+    performance_warning <- paste0(c("Performance of the phylogram plot might",
+                                    "begin to degrade with >1000 sequences"),
                                   collapse=" ")
-    message(performance_warning)
+    warning(performance_warning, call.=FALSE)
     return(num_elements * 7)
   }
 }
@@ -232,10 +263,11 @@ calculate_canvas_size <- function(xml_file) {
 #' @export
 # allow users to set viewer.suppress to FALSE to see the thing in RStudio
 radial_phylo <- function(d, seqs_col=NULL, canvas_size="auto", font_size="auto",
-                         scale=TRUE, browser=FALSE, verbose=FALSE) {
+                         scale=TRUE, browser=FALSE, verbose=FALSE,
+                         fast=FALSE) {
   
   check_muscle(level="stop")
-  check_bio_python(level="warn")
+  biopy_existence <- check_bio_python(level="warn")
   
   # Validate function parameters
   validate_canvas_size(canvas_size)
@@ -256,12 +288,17 @@ radial_phylo <- function(d, seqs_col=NULL, canvas_size="auto", font_size="auto",
   seqs <- clean_d(d, seqs_col, verbose, verbose_dir)
   # Step 2: Do a multiple sequence alignment (MSA)
   ms_alignment <- msa(seqs, verbose, verbose_dir)
-  # Step 3: Compute pairwise distances of the aligned sequences
-  dist_matrix <- compute_dist_matrix(ms_alignment[["as_string"]], seqs)
-  # Step 4: Calculate a distance tree and write it as .newick
-  newick_file <- create_tree(dist_matrix, verbose, verbose_dir)
-  # Step 5: Convert the .newick to phylo.xml
-  xml_file <- newick_to_phyloxml(newick_file, verbose, verbose_dir)
+  if (is.null(biopy_existence) || fast == TRUE) {
+    # Step 3: Compute pairwise distances of the aligned sequences
+    dist_matrix <- compute_dist_matrix(ms_alignment[["as_string"]], seqs)
+    # Step 4: Calculate a distance tree and write it as .newick
+    newick_file <- create_tree(dist_matrix, verbose, verbose_dir)
+    # Step 5: Convert the .newick to phylo.xml
+    xml_file <- newick_to_phyloxml(newick_file, verbose, verbose_dir)
+  } else {
+    xml_file <- phyloxml_via_biopython(ms_alignment[["file"]], verbose,
+                                       verbose_dir)
+  }
   
   # Calculate canvas size based on number of nodes in phylo.xml
   if (canvas_size == "auto") {
