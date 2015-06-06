@@ -93,14 +93,17 @@ clean_d <- function(d, seqs_col, verbose, verbose_dir) {
   if (class(d) == "data.frame" && dim(d)[2] > 1) {
     d_clean <- d[d[, seqs_col] != "", ]  # Remove rows with no sequences
     d_clean <- d_clean[complete.cases(d_clean[, seqs_col]), ]  # Remove NA rows
+    d_clean <- d_clean[with(d_clean, order(d_clean[, seqs_col])), ]
     seqs <- as.character(d_clean[, seqs_col])
   } else if (class(d) == "data.frame" && dim(d)[2] == 1) {
     d_clean <- d[d != ""]  # Remove blank sequences
     d_clean <- d_clean[!is.na(d_clean)]  # Remove NA's
+    d_clean <- sort(d_clean)
     seqs <- as.character(d_clean)
   } else if (class(d) == "character") {
     d_clean <- d[d != ""]  # Remove blank sequences
     d_clean <- d_clean[!is.na(d_clean)]  # Remove NA's
+    d_clean <- sort(d_clean)
     seqs <- as.character(d_clean)
   }
   # Write the sequences if the user wants them
@@ -127,10 +130,16 @@ clean_d <- function(d, seqs_col, verbose, verbose_dir) {
 
 msa <- function(seqs, verbose, verbose_dir) {
   seqs_biostring <- Biostrings::AAStringSet(seqs)
-  names(seqs_biostring) <- seqs
+  # Create unique names for the sequences to be written to file so Biopython
+  # doesn't complain about duplicate sequence names
+  seqs_rle <- rle(seqs)
+  seqs_unique <- paste0(rep(seqs_rle[['values']], times=seqs_rle[['lengths']]),
+                        ".",
+                        unlist(lapply(seqs_rle[['lengths']], seq_len)))
+  names(seqs_biostring) <- seqs_unique
   if (verbose == TRUE) print("MUSCLE multiple sequence alignment:")
   ms_alignment <- muscle::muscle(stringset=seqs_biostring, quiet=!verbose)
-  # Write the alignment
+  # Write the alignment to file in case Biopython needs it
   aa_str_set <- as(ms_alignment, "AAStringSet")
   msa_file <- tempfile(pattern="msa-", tmpdir=tempdir(), fileext=".fasta")
   Biostrings::writeXStringSet(aa_str_set, file=msa_file)
