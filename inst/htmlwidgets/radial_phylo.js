@@ -30,7 +30,7 @@ HTMLWidgets.widget({
         head.appendChild(style);
     };
                    
-    // if 'canvas_size' is a number then use it
+    // if 'canvas_size' is a number (auto-calcuated or user-input) then use it
     var width;
     var height;
     if (typeof(x.canvas_size === 'number') && x.canvas_size%1 === 0) {
@@ -128,6 +128,16 @@ HTMLWidgets.widget({
         }, 1000);
     };
 
+  },
+  
+  // Returns the value of a GET variable
+  // From: github.com/rstudio/dygraphs/blob/master/inst/htmlwidgets/dygraphs.js
+  queryVar: function(name) {
+    return decodeURI(window.location.search.replace(
+      new RegExp("^(?:.*[&\\?]" +
+                 encodeURI(name).replace(/[\.\+\*]/g, "\\$&") +
+                 "(?:\\=([^&]*))?)?.*$", "i"),
+      "$1"));
   },
 
   resize: function(el, width, height, instance) {
