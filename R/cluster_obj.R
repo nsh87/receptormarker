@@ -23,7 +23,8 @@ cluster_obj <- function(data, krange = 2:10, iter.max = 100, runs=100, ...) {
                  km_opt <- NULL
                  for (i in 1:runs) {
                    kmm <- kmeans(data, k, iter.max = iter.max, ...)
-                   sil_sum <- summary(silhouette(kmm$cluster, data_dist))
+                   sil_sum <- summary(cluster::silhouette(kmm$cluster, 
+                                                          data_dist))
                    sil_avg <- sil_sum$avg.width
                    if (sil_avg > sil_max) {
                      sil_max <- sil_avg
