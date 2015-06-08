@@ -29,8 +29,6 @@
 #'     number of \code{krange} for the \code{K.max} argument.
 #'   \code{k_best} The optimal number of clusters based on silhouette score.
 #' 
-#' @import 
-#' 
 #' @export
 #'
 #' @seealso \code{\link{kmeans}}, \code{\link{silhouette}}
