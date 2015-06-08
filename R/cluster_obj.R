@@ -14,7 +14,7 @@
 #' @param runs An integer. Number of starts of the k-means algorithm.
 #' @param ... further arguments to be passed to \code{\link{kmeans}}.
 #'
-#' @return
+#' @return 
 #' 
 #' @import cluster
 #' 
@@ -46,5 +46,5 @@ cluster_obj <- function(data, krange = 2:10, iter.max = 100, runs=100, ...) {
     km$sil[[k]] <- sil_max
   }
   km$k_best <- which.max(km$sil_avg)
-  structure(km)
+  structure(km, class = "cluster_obj")
 }
