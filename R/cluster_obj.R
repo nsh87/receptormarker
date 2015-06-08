@@ -25,9 +25,11 @@
 #'   \code{num_clust} A list of the each number of clusters used.
 #'   \code{sil} A list of \code{\link{silhouette}} objects for each number of
 #'     clusters.
+#'   \code{clust_gap} A \code{\link{clusGap}} object that uses the highest
+#'     number of \code{krange} for the \code{K.max} argument.
 #'   \code{k_best} The optimal number of clusters based on silhouette score.
 #' 
-#' @import cluster
+#' @import 
 #' 
 #' @export
 #'
@@ -39,7 +41,8 @@
 cluster_obj <- function(data, krange = 2:10, iter.max = 100, runs=100, ...) {
   if (1 %in% krange) stop("The entire range for # of clusters is to be > 1.")
   data_dist <- dist(data)
-  km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL)
+  km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
+             clust_gap = NULL, k_best = NULL)
   for (k in krange) {
     sil_max <- 0
     sil_avg_max <- 0
@@ -60,6 +63,9 @@ cluster_obj <- function(data, krange = 2:10, iter.max = 100, runs=100, ...) {
     km$num_clust[[k]] <- k
     km$sil[[k]] <- sil_max
   }
+  km$clust_gap <- cluster::clusGap(data, kmeans, 
+                                   K.max = length(km$clust_model), B = 15,
+                                   verbose = FALSE)
   km$k_best <- which.max(km$sil_avg)
   structure(km, class = "cluster_obj")
 }
