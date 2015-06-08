@@ -1,6 +1,6 @@
 #' Plot of total within sum of squares for numbers of clusters
 #' 
-#' This function plots.
+#' This function plots within sum of squares.
 #'
 #' @param clust_obj 
 #' @param optimal 
@@ -27,5 +27,26 @@ wss_plot <- function(clust_obj, optimal = FALSE) {
     opti_clust <- clust_obj$k_best
     points(opti_clust, wss[opti_clust], col = "red", pch = 1, cex = 3)
     legend("topright", "Optimal Clusters", col = "red", pch = 1)
+  }
+}
+
+#' Plot of cluster gap statistic
+#' 
+#' This function plots gap analysis.
+#'
+#' @param clust_obj 
+#' @param optimal 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+clusGap_plot <- function(clust_obj, optimal = FALSE) {
+  plot(clust_obj$clust_gap, xlab="# of Clusters", main="Gap Analysis")
+  if (optimal) {
+    opti_clust <- clust_obj$k_best
+    gap_best <- clust_obj['clust_gap']['Tab'][[1]][opti_clust, 3]
+    points(opti_clust, gap_best, col = "red", pch = 1, cex = 3)
+    legend("topleft", "Optimal Clusters", col = "red", pch = 1)
   }
 }
