@@ -37,5 +37,6 @@ cluster_obj <- function(data, krange = 2:10, iter.max = 100, runs=100, ...) {
     km$num_clusters[[k]] <- k
     km$sil[[k]] <- sil_max
   }
-  k_best <- which.max(km$sil_avg)
+  km$k_best <- which.max(km$sil_avg)
+  structure(km)
 }
