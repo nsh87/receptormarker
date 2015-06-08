@@ -18,11 +18,11 @@
 #' @return \code{cluster_obj} returns an object of class "cluster_obj" that can
 #'   be used for multiple plots. It is a list with at least the following
 #'   components:
-#'   \code{km_obj} A list of \code{\link{kmeans}} objects for each number of
-#'     cluster centers requested.
+#'   \code{clust_model} A list of \code{\link{kmeans}} objects for each number
+#'     of cluster centers requested.
 #'   \code{sil_avg} A list of average silhouette scores for each number of
 #'     cluster centers requested.
-#'   \code{num_clusters} A list of the each number of clusters used.
+#'   \code{num_clust} A list of the each number of clusters used.
 #'   \code{sil} A list of \code{\link{silhouette}} objects for each number of
 #'     clusters.
 #'   \code{k_best} The optimal number of clusters based on silhouette score.
@@ -39,7 +39,7 @@
 cluster_obj <- function(data, krange = 2:10, iter.max = 100, runs=100, ...) {
   if (1 %in% krange) stop("The entire range for # of clusters is to be > 1.")
   data_dist <- dist(data)
-  km <- list(km_obj = NULL, sil_avg = NULL, num_clusters = NULL, sil = NULL)
+  km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL)
   for (k in krange) {
     sil_max <- 0
     sil_avg_max <- 0
@@ -55,9 +55,9 @@ cluster_obj <- function(data, krange = 2:10, iter.max = 100, runs=100, ...) {
         sil_max <- sil
       }
     }
-    km$km_obj[[k]] <- km_opt
+    km$clust_model[[k]] <- km_opt
     km$sil_avg[[k]] <- sil_avg_max
-    km$num_clusters[[k]] <- k
+    km$num_clust[[k]] <- k
     km$sil[[k]] <- sil_max
   }
   km$k_best <- which.max(km$sil_avg)
