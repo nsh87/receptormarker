@@ -9,7 +9,8 @@
 #'   such a matrix (such as a numeric vector or a data frame with all numeric
 #'   columns).
 #' @param krange An integer vector. Numbers of clusters which are to be compared
-#'   by the average silhouette width criterion.
+#'   by the average silhouette width criterion. Note: \code{krange} should not
+#'   include 1 since silhouette scores are not defined there.
 #' @param iter.max An integer. The maximum number of iterations allowed.
 #' @param runs An integer. Number of starts of the k-means algorithm.
 #' @param ... further arguments to be passed to \code{\link{kmeans}}.
