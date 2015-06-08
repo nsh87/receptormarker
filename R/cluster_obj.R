@@ -1,10 +1,18 @@
-#' Title
+#' Cluster with kmeans and find optimal k
+#' 
+#' This calls the function \code{\link{kmeans}} to perform kmeans clustering,
+#' but initializes multiple times and chooses the best one for each number of
+#' clusters based on average silhouette width using the \code{\link{silhouette}}
+#' 
 #'
-#' @param data 
-#' @param krange 
-#' @param iter.max 
-#' @param runs 
-#' @param ... 
+#' @param data A numeric matrix of data, or an object that can be coerced to
+#'   such a matrix (such as a numeric vector or a data frame with all numeric
+#'   columns).
+#' @param krange An integer vector. Numbers of clusters which are to be compared
+#'   by the average silhouette width criterion.
+#' @param iter.max An integer. The maximum number of iterations allowed.
+#' @param runs An integer. Number of starts of the k-means algorithm.
+#' @param ... further arguments to be passed to \code{\link{kmeans}}.
 #'
 #' @return
 #' 
