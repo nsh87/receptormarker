@@ -72,3 +72,20 @@ pca_plot <- function(data, clust_obj, num_clust) {
        ylab="Principal Component 2",
        main="PCA Plot of Clusters")
 }
+
+#' Plot silhouette scores for a given clustering of data.
+#' 
+#' This function plots silhouette scores for each cluster in a given clustering
+#' of data by leveraging the special way that the \code{\link{plot}} function
+#' handles a \code{\link{silhouette}} object.
+#'
+#' @param clust_obj 
+#' @param num_clust 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+sil_plot <- function(clust_obj, num_clust) {
+  
+}
