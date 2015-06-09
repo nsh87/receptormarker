@@ -50,3 +50,21 @@ clusGap_plot <- function(clust_obj, optimal = FALSE) {
     legend("topleft", "Optimal Clusters", col = "red", pch = 1)
   }
 }
+
+#' Plot of first two principal components.
+#' 
+#' This function plots the instances of \code{data} using the first two
+#' principal components as the x and y axes, respectively.
+#'
+#' @param data 
+#' @param clust_obj 
+#' @param num_clust 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+pca_plot <- function(data, clust_obj, num_clust) {
+  pca <- princomp(data)
+  
+}
