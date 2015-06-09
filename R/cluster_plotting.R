@@ -21,7 +21,7 @@ wss_plot <- function(clust_obj, optimal = FALSE) {
                   wss
                 },
                 numeric(1))
-  plot(krange, wss,type="b", xlab="# of Clusters", ylab="Within Sum of Squares",
+  plot(krange, wss, type="b", xlab="# of Clusters", ylab="Within Sum of Squares",
        main="Within Sum of Squares by Cluster")
   if (optimal) {
     opti_clust <- clust_obj$k_best
@@ -89,4 +89,20 @@ pca_plot <- function(data, clust_obj, num_clust) {
 sil_plot <- function(clust_obj, num_clust) {
   sil <- clust_obj['sil'][[num_clust]]
   plot(sil)
+}
+
+#' Plot average silhouette widths for different numbers of clusters.
+#' 
+#' This function plots the average silhouette widths for all numbers of
+#' clusters present in \code{clust_obj}.
+#'
+#' @param clust_obj 
+#' @param optimal 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+avg_sil_plot <- function(clust_obj, optimal = FALSE) {
+  
 }
