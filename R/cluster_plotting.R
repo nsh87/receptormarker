@@ -66,5 +66,9 @@ clusGap_plot <- function(clust_obj, optimal = FALSE) {
 #' @examples
 pca_plot <- function(data, clust_obj, num_clust) {
   pca <- princomp(data)
-  
+  clusters <- clust_obj['clust_model'][[num_clust]]['cluster']
+  plot(pca$scores[,1:2], col=rainbow(num_clust)[clusters],
+       xlab="Principal Component 1",
+       ylab="Principal Component 2",
+       main="PCA Plot of Clusters")
 }
