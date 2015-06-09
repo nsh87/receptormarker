@@ -87,5 +87,6 @@ pca_plot <- function(data, clust_obj, num_clust) {
 #'
 #' @examples
 sil_plot <- function(clust_obj, num_clust) {
-  
+  sil <- clust_obj['sil'][[num_clust]]
+  plot(sil)
 }
