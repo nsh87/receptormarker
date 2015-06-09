@@ -21,8 +21,9 @@ wss_plot <- function(clust_obj, optimal = FALSE) {
                   wss
                 },
                 numeric(1))
-  plot(krange, wss, type="b", xlab="# of Clusters", ylab="Within Sum of Squares",
-       main="Within Sum of Squares by Cluster")
+  plot(krange, wss, type = "b", xlab = "# of Clusters", 
+       ylab = "Within Sum of Squares", 
+       main = "Within Sum of Squares by Cluster")
   if (optimal) {
     opti_clust <- clust_obj$k_best
     points(opti_clust, wss[opti_clust], col = "red", pch = 1, cex = 3)
@@ -42,7 +43,7 @@ wss_plot <- function(clust_obj, optimal = FALSE) {
 #'
 #' @examples
 clusGap_plot <- function(clust_obj, optimal = FALSE) {
-  plot(clust_obj$clust_gap, xlab="# of Clusters", main="Gap Analysis")
+  plot(clust_obj$clust_gap, xlab = "# of Clusters", main = "Gap Analysis")
   if (optimal) {
     opti_clust <- clust_obj$k_best
     gap_best <- clust_obj['clust_gap']['Tab'][[1]][opti_clust, 3]
@@ -67,10 +68,10 @@ clusGap_plot <- function(clust_obj, optimal = FALSE) {
 pca_plot <- function(data, clust_obj, num_clust) {
   pca <- princomp(data)
   clusters <- clust_obj['clust_model'][[num_clust]]['cluster']
-  plot(pca$scores[,1:2], col=rainbow(num_clust)[clusters],
-       xlab="Principal Component 1",
-       ylab="Principal Component 2",
-       main="PCA Plot of Clusters")
+  plot(pca$scores[,1:2], col = rainbow(num_clust)[clusters],
+       xlab = "Principal Component 1",
+       ylab = "Principal Component 2",
+       main = "PCA Plot of Clusters")
 }
 
 #' Plot silhouette scores for a given clustering of data.
@@ -104,5 +105,13 @@ sil_plot <- function(clust_obj, num_clust) {
 #'
 #' @examples
 avg_sil_plot <- function(clust_obj, optimal = FALSE) {
-  
+  krange <- 1:length(clust_obj['sil_avg'])
+  plot(krange, clust_obj['sil_avg'], type = "b", xlab = "# of Clusters",
+       ylab = "Average Silhouette Width", 
+       main = "Average Silhouette Width by Cluster")
+  if (optimal) {
+    opti_clust <- clust_obj$k_best
+    points(opti_clust, wss[opti_clust], col = "red", pch = 1, cex = 3)
+    legend("bottomright", "Optimal Clusters", col = "red", pch = 1)
+  }
 }
