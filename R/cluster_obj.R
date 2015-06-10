@@ -2,8 +2,8 @@
 #' 
 #' This calls the function \code{\link{kmeans}} to perform kmeans clustering,
 #' but initializes multiple times. It chooses the best one for each number of
-#' clusters, and the best number of clusters overall, based on average 
-#' silhouette width using the \code{\link{silhouette}} function.
+#' clusters using within sum of squares, and the best number of clusters overall
+#' based on average silhouette width from the \code{\link{silhouette}} function.
 #'
 #' @param data A numeric matrix of data, or an object that can be coerced to
 #'   such a matrix (such as a numeric vector or a data frame with all numeric
@@ -42,26 +42,29 @@ cluster_optimal <- function(data, krange = 2:10, iter.max = 300, runs = 10, ...)
   if (1 %in% krange) stop("The entire range for # of clusters is to be > 1.")
   data_dist <- dist(data)
   km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
-             clust_gap = NULL, k_best = NULL)
+             clust_gap = NULL, wss = NULL, k_best = NULL)
   for (k in krange) {
     sil_max <- 0
     sil_avg_max <- 0
+    min_wss <- Inf
     km_opt <- NULL
     for (i in 1:runs) {
-      kmm <- kmeans(data, k, iter.max = iter.max)
-      sil <- cluster::silhouette(kmm['cluster'], data_dist)
-      sil_sum <- summary(sil)
-      sil_avg <- sil_sum['avg.width']
-      if (sil_avg > sil_avg_max) {
-        sil_avg_max <- sil_avg
+      kmm <- kmeans(data, k, iter.max = iter.max, nstart = 10)
+      swss <- kmm['tot.withinss']
+      if (swss < min_wss) {
+        min_wss <- swss
         km_opt <- kmm
-        sil_max <- sil
       }
     }
+    sil <- cluster::silhouette(km_opt['cluster'], data_dist)
+    sil_sum <- summary(sil)
+    sil_avg <- sil_sum['avg.width']
+    
     km['clust_model'][[k]] <- km_opt
-    km['sil_avg'][[k]] <- sil_avg_max
+    km['sil_avg'][[k]] <- sil_avg
     km['num_clust'][[k]] <- k
-    km['sil'][[k]] <- sil_max
+    km['sil'][[k]] <- sil
+    km['wss'][[k]] <- min_wss
   }
   km['clust_gap'] <- cluster::clusGap(data, kmeans, 
                                       K.max = length(km['clust_model']), B = 15,
