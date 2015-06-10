@@ -10,13 +10,13 @@
 #'
 #' @examples
 wss_plot <- function(clust_obj, optimal = FALSE) {
-  krange <- 1:length(clust_obj$clust_model)
+  krange <- 1:length(clust_obj['clust_model'])
   wss <- vapply(krange, 
                 function(k) {
-                  if (is.na(clust_obj$clust_model[[k]])) {
+                  if (is.na(clust_obj['clust_model'][[k]])) {
                     wss <- 0
                   } else {
-                    wss <- sum(clust_obj$clust_model[[k]]$withinss)
+                    wss <- sum(clust_obj['clust_model'][[k]]['withinss'])
                   }
                   wss
                 },
@@ -25,7 +25,7 @@ wss_plot <- function(clust_obj, optimal = FALSE) {
        ylab = "Within Sum of Squares", 
        main = "Within Sum of Squares by Cluster")
   if (optimal) {
-    opti_clust <- clust_obj$k_best
+    opti_clust <- clust_obj['k_best']
     points(opti_clust, wss[opti_clust], col = "red", pch = 1, cex = 3)
     legend("topright", "Optimal Clusters", col = "red", pch = 1)
   }
@@ -43,9 +43,9 @@ wss_plot <- function(clust_obj, optimal = FALSE) {
 #'
 #' @examples
 clusGap_plot <- function(clust_obj, optimal = FALSE) {
-  plot(clust_obj$clust_gap, xlab = "# of Clusters", main = "Gap Analysis")
+  plot(clust_obj['clust_gap'], xlab = "# of Clusters", main = "Gap Analysis")
   if (optimal) {
-    opti_clust <- clust_obj$k_best
+    opti_clust <- clust_obj['k_best']
     gap_best <- clust_obj['clust_gap']['Tab'][[1]][opti_clust, 3]
     points(opti_clust, gap_best, col = "red", pch = 1, cex = 3)
     legend("topleft", "Optimal Clusters", col = "red", pch = 1)
@@ -110,7 +110,7 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE) {
        ylab = "Average Silhouette Width", 
        main = "Average Silhouette Width by Cluster")
   if (optimal) {
-    opti_clust <- clust_obj$k_best
+    opti_clust <- clust_obj['k_best']
     points(opti_clust, wss[opti_clust], col = "red", pch = 1, cex = 3)
     legend("bottomright", "Optimal Clusters", col = "red", pch = 1)
   }
