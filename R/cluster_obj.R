@@ -11,8 +11,9 @@
 #' @param krange An integer vector. Numbers of clusters which are to be compared
 #'   by the average silhouette width criterion. Note: \code{krange} should not
 #'   include 1 since silhouette scores are not defined there.
-#' @param iter.max An integer. The maximum number of iterations allowed.
-#' @param runs An integer. Number of starts of the k-means algorithm.
+#' @param iter.max An integer. The maximum number of iterations used by kmeans
+#'   to find its centers.
+#' @param runs An integer. The number of starts of the k-means algorithm.
 #' @param ... further arguments to be passed to \code{\link{kmeans}}.
 #'
 #' @return \code{cluster_obj} returns an object of class "cluster_obj" that can
@@ -31,12 +32,13 @@
 #' 
 #' @export
 #'
-#' @seealso \code{\link{kmeans}}, \code{\link{silhouette}}
+#' @seealso \code{\link{kmeans}}, \code{\link{silhouette}}, 
+#'   \code{\link{clusGap}}
 #'
 #' @examples
 #' library(datasets)
 #' iris_cluster <- cluster_obj(iris[, 1:4])
-cluster_obj <- function(data, krange = 2:10, iter.max = 100, runs=100, ...) {
+cluster_obj <- function(data, krange = 2:10, iter.max = 300, runs = 10, ...) {
   if (1 %in% krange) stop("The entire range for # of clusters is to be > 1.")
   data_dist <- dist(data)
   km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
