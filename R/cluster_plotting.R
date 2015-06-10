@@ -10,17 +10,11 @@
 #'
 #' @examples
 wss_plot <- function(clust_obj, optimal = FALSE) {
-  krange <- 1:length(clust_obj['clust_model'])
-  wss <- vapply(krange, 
-                function(k) {
-                  if (is.na(clust_obj['clust_model'][[k]])) {
-                    wss <- 0
-                  } else {
-                    wss <- sum(clust_obj['clust_model'][[k]]['withinss'])
-                  }
-                  wss
-                },
-                numeric(1))
+  wss <- clust_obj['wss']
+  start <- length(wss[is.na(wss)]) + 1 # We start the krange right after NA's
+  end <- length(wss)
+  krange <- start:end
+  wss <- wss[!is.na(wss)]
   plot(krange, wss, type = "b", xlab = "# of Clusters", 
        ylab = "Within Sum of Squares", 
        main = "Within Sum of Squares by Cluster")
