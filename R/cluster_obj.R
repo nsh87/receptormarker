@@ -70,5 +70,5 @@ cluster_optimal <- function(data, krange = 2:10, iter.max = 300, runs = 10, ...)
                                       K.max = length(km['clust_model']), B = 15,
                                       verbose = FALSE)
   km['k_best'] <- which.max(km['sil_avg'])
-  structure(km, class = "cluster_obj")
+  structure(km, class = "cluster_optimal")
 }
