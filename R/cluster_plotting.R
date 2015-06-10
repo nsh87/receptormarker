@@ -19,7 +19,7 @@ wss_plot <- function(clust_obj, optimal = FALSE) {
        ylab = "Within Sum of Squares", 
        main = "Within Sum of Squares by Cluster")
   if (optimal) {
-    opti_clust <- clust_obj['k_best']
+    opti_clust <- clust_obj['k_best'] - start # Accounts for removal of NA's
     points(opti_clust, wss[opti_clust], col = "red", pch = 1, cex = 3)
     legend("topright", "Optimal Clusters", col = "red", pch = 1)
   }
@@ -99,13 +99,17 @@ sil_plot <- function(clust_obj, num_clust) {
 #'
 #' @examples
 avg_sil_plot <- function(clust_obj, optimal = FALSE) {
-  krange <- 1:length(clust_obj['sil_avg'])
-  plot(krange, clust_obj['sil_avg'], type = "b", xlab = "# of Clusters",
+  sil <- clust_obj['sil_avg']
+  start <- length(sil[is.na(sil)]) + 1 # We start the krange right after NA's
+  end <- length(sil)
+  krange <- start:end
+  sil <- sil[!is.na(sil)]
+  plot(krange, sil, type = "b", xlab = "# of Clusters",
        ylab = "Average Silhouette Width", 
        main = "Average Silhouette Width by Cluster")
   if (optimal) {
-    opti_clust <- clust_obj['k_best']
-    points(opti_clust, wss[opti_clust], col = "red", pch = 1, cex = 3)
+    opti_clust <- clust_obj['k_best'] - start # Accounts for removal of NA's
+    points(opti_clust, sil[opti_clust], col = "red", pch = 1, cex = 3)
     legend("bottomright", "Optimal Clusters", col = "red", pch = 1)
   }
 }
