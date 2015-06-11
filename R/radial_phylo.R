@@ -128,13 +128,18 @@ clean_d <- function(d, seqs_col, verbose, verbose_dir) {
 }
 
 
-msa <- function(seqs, verbose, verbose_dir) {
+msa <- function(seqs, dedupe_hash, verbose, verbose_dir) {
   seqs_biostring <- Biostrings::AAStringSet(seqs)
   # Create unique names for the sequences to be written to file so Biopython
-  # doesn't complain about duplicate sequence names
+  # doesn't complain about duplicate sequence names. We use the counts of each
+  # sequence to add a suffix (e.g. if 'CASHT' if found 3 times they will become
+  # 'CASHT.1', 'CASHT.2', 'CASHT.3'); and we prepend that with a hash so that
+  # we can reliably find our own dedupe sequence and remove it later. If we
+  # didn't have the has and just tried to remove '.1', '.2', and '.3' later we
+  # might end up removing part of the user's sequence name.
   seqs_rle <- rle(seqs)
   seqs_unique <- paste0(rep(seqs_rle[['values']], times=seqs_rle[['lengths']]),
-                        ".",
+                        ".", dedupe_hash, "-",
                         unlist(lapply(seqs_rle[['lengths']], seq_len)))
   names(seqs_biostring) <- seqs_unique
   if (verbose == TRUE) print("MUSCLE multiple sequence alignment:")
@@ -204,7 +209,7 @@ newick_to_phyloxml <- function(newick_file, verbose, verbose_dir) {
 }
 
 
-phyloxml_via_biopython <- function(ms_alignment, verbose, verbose_dir) {
+phyloxml_via_biopython <- function(ms_alignment, verbose) {
   xml_file <- phyloxml_temp()
   phyloxml_from_msa <- system.file("py", "phyloxml_from_msa.py",
                                    package="receptormarker")
@@ -217,10 +222,23 @@ phyloxml_via_biopython <- function(ms_alignment, verbose, verbose_dir) {
     ignore.stdout=!verbose,
     ignore.stderr=!verbose
   )
-  # Also write the phyloxml to the verbose folder if the user wants it
-  if (verbose == TRUE && file.exists(xml_file)) {
-    file.copy(xml_file, verbose_dir)
-  }
+  xml_file
+}
+
+
+remove_phyloxml_hash <- function(xml_file, hash) {
+  doc <- XML::xmlParse(xml_file)
+  root <- XML::xmlRoot(doc)
+  ns <- c(ns=XML::xmlNamespace(root))
+  named_nodes <- XML::getNodeSet(root, "//ns:name", namespaces=ns)
+  # Grab the separated period + hash + rest of chars until end of str
+  regex_find <- paste0("\\.", hash, ".*$")  
+  lapply(named_nodes, function(n) {
+    XML::xmlValue(n) <- gsub(regex_find, "", XML::xmlValue(n))
+  })
+  XML::saveXML(doc=doc, file=xml_file,
+               prefix="<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+               indent=FALSE)
   xml_file
 }
 
@@ -288,7 +306,8 @@ radial_phylo <- function(d, seqs_col=NULL, canvas_size="auto", font_size="auto",
   # Step 1: Clean the data.frame and get the cleaned sequences
   seqs <- clean_d(d, seqs_col, verbose, verbose_dir)
   # Step 2: Do a multiple sequence alignment (MSA)
-  ms_alignment <- msa(seqs, verbose, verbose_dir)
+  dedupe_hash <- paste0(sample(c(0:9, letters), 10, replace=TRUE), collapse="")
+  ms_alignment <- msa(seqs, dedupe_hash, verbose, verbose_dir)
   if (is.null(biopy_existence) || fast == TRUE) {
     # Step 3: Compute pairwise distances of the aligned sequences
     dist_matrix <- compute_dist_matrix(ms_alignment[["as_string"]], seqs)
@@ -297,8 +316,13 @@ radial_phylo <- function(d, seqs_col=NULL, canvas_size="auto", font_size="auto",
     # Step 5: Convert the .newick to phylo.xml
     xml_file <- newick_to_phyloxml(newick_file, verbose, verbose_dir)
   } else {
-    xml_file <- phyloxml_via_biopython(ms_alignment[["file"]], verbose,
-                                       verbose_dir)
+    xml_file_with_hash <- phyloxml_via_biopython(ms_alignment[["file"]],
+                                                 verbose)
+    xml_file <- remove_phyloxml_hash(xml_file_with_hash, dedupe_hash)
+    # Also write the phyloxml to the verbose folder if the user wants it
+    if (verbose == TRUE && file.exists(xml_file)) {
+      file.copy(xml_file, verbose_dir)
+    }
   }
   
   # Calculate canvas size based on number of nodes in phylo.xml
