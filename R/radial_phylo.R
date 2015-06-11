@@ -189,7 +189,7 @@ phyloxml_temp <- function() {
 }
 
 
-newick_to_phyloxml <- function(newick_file, verbose, verbose_dir) {
+newick_to_phyloxml <- function(newick_file) {
   xml_file <- phyloxml_temp()
   forester <- system.file("java", "forester_1038.jar", package="receptormarker")
   system(sprintf(
@@ -312,7 +312,7 @@ radial_phylo <- function(d, seqs_col=NULL, canvas_size="auto", font_size="auto",
     # Step 3: Compute pairwise distances of the aligned sequences
     dist_matrix <- compute_dist_matrix(ms_alignment[["as_string"]], seqs)
     # Step 4: Calculate a distance tree and write it as .newick
-    newick_file <- create_tree(dist_matrix, verbose, verbose_dir)
+    newick_file <- create_tree(dist_matrix)
     # Step 5: Convert the .newick to phylo.xml
     xml_file <- newick_to_phyloxml(newick_file, verbose, verbose_dir)
   } else {
