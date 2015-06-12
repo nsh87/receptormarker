@@ -210,7 +210,7 @@ phyloxml_via_biopython <- function(ms_alignment, verbose) {
   phyloxml_from_msa <- system.file("py", "phyloxml_from_msa.py",
                                    package="receptormarker")
   system(sprintf(
-    "python %s %s %s",
+    "python %s --msa %s --dest %s",
     phyloxml_from_msa,
     ms_alignment,
     xml_file

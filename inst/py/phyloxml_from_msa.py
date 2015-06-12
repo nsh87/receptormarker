@@ -1,4 +1,7 @@
-"""Generate a phylo.xml from a MUSCLE MSA.fasta"""
+"""Generate a phylo.xml from a MUSCLE MSA.fasta
+
+For usage use 'python phyloxml_from_msa.py -h'
+"""
 
 
 import argparse
@@ -6,10 +9,11 @@ import argparse
 
 ##### PARSE ARGUMENTS #####
 argparser = argparse.ArgumentParser()
-argparser.add_argument("msa", help="path to the MUSCLE MSA.fasta")
-argparser.add_argument("phyloxml", help="path to an output phylo.xml")
+argparser.add_argument("--msa", dest="msa", required=True, metavar="MSA_FILE",
+                       help="path to a MUSCLE_msa.fasta to create phylo from")
+argparser.add_argument("--dest", dest="dest", required=True,
+                       help="path to an output phylo.xml")
 args = argparser.parse_args()
-args = vars(args)  # Give access to arguments using a dict: e.g. args["msa"]
 ##### END PARSE ARGUMENTS #####
 
 
@@ -27,7 +31,7 @@ def phyloxml_from_msa(msa, phyloxml):
 
 
 if __name__ == "__main__":
-    msa = args["msa"]
-    phyloxml = args["phyloxml"]
+    msa = args.msa
+    phyloxml = args.dest
     phyloxml_from_msa(msa, phyloxml)
 
