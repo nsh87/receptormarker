@@ -166,15 +166,11 @@ compute_dist_matrix <- function(ms_alignment, seqs) {
 }
 
 
-create_tree <- function(dist_matrix, verbose, verbose_dir) {
+create_tree <- function(dist_matrix) {
   dist_tree <- ape::bionj(dist_matrix)
   phylo_tree <- ape::as.phylo(dist_tree)
   newick_file <- tempfile(pattern="tree-", tmpdir=tempdir(), fileext=".newick")
   ape::write.tree(phy=phylo_tree, file=newick_file)
-  # Copy the newick file from the tmp dir to verbose dir if the user wants it
-  if (verbose == TRUE && file.exists(newick_file)) {
-    file.copy(newick_file, verbose_dir)
-  }
   newick_file
 }
 
@@ -189,7 +185,7 @@ phyloxml_temp <- function() {
 }
 
 
-newick_to_phyloxml <- function(newick_file) {
+newick_to_phyloxml <- function(newick_file, verbose, verbose_dir) {
   xml_file <- phyloxml_temp()
   forester <- system.file("java", "forester_1038.jar", package="receptormarker")
   system(sprintf(
