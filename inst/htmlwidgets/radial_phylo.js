@@ -70,6 +70,7 @@ HTMLWidgets.widget({
             'circular',
             x.scale  // holds true or false
         );
+        init();
 
     });
 

@@ -84,7 +84,7 @@ validate_sequences <- function(seqs) {
   seqs_col_err <- "Sequences must only contain characters from A-Z"
   g <- grepl("[^A-Za-z]", as.character(seqs))
   if (sum(g) > 0) {
-    stop(seqs_col_err, cal.=FALSE)
+    stop(seqs_col_err, call.=FALSE)
   }
 }
 
@@ -294,17 +294,35 @@ add_bars_to_condensed_phyloxml <- function(xml_file, seqs) {
   named_nodes <- XML::getNodeSet(root,
                                  "//ns:name[not(starts-with(text(), 'Inner'))]",
                                  namespaces=ns)
-  # Add the bar info to each element
+  # Add the bar info and tooltip text to each element
+  # <clade>
+  #   <name>CATSREWGEAYEQYF</name>
+  #   <branch_length>0/141994136</branch_length>
+  #   <chart>
+  #     <content>3</content>  # This makes the bar length
+  #   </chart>
+  #   <annotation>
+  #     <desc>Expansions: 3</desc>  # This is the Unitip tooltip
+  #   </annotation>
+  # </clade>
   node_parents <- lapply(named_nodes, function(n) { XML::xmlParent(n) })
   node_parents <- lapply(named_nodes, function(n) {
     node_name <- XML::xmlValue(n)
-    chart_el <- XML::newXMLNode("chart")
+    parent <- XML::xmlParent(n)
+    
     # Subtract one from each seq's frequency so frequencies == 1 don't get bars
     bar_length <- seq_frequencies[names(seq_frequencies) == node_name] - 1
+    desc_text <- paste0(c("Expansions:", bar_length), collapse=" ")
+    
+    chart_el <- XML::newXMLNode("chart")
     bar_el <- XML::newXMLNode("content", bar_length)
+    annotation_el <- XML::newXMLNode("annotation")
+    desc_el <- XML::newXMLNode("desc", desc_text)
+    
     chart_el <- XML::addChildren(chart_el, kids=list(bar_el), append=FALSE)
-    parent <- XML::xmlParent(n)
-    parent <- XML::addChildren(parent, kids=list(chart_el), append=FALSE)
+    annotation_el <- XML::addChildren(annotation_el, kids=list(desc_el))
+    parent <- XML::addChildren(parent, kids=list(chart_el,
+                                                 annotation_el), append=FALSE)
     parent
   })
   # Add the bar styles, which need to be appended to the phylogeny
@@ -331,6 +349,7 @@ add_bars_to_condensed_phyloxml <- function(xml_file, seqs) {
   styles_el <- XML::addChildren(styles_el, kids=list(barchart_el))
   render_el <- XML::addChildren(render_el, kids=list(charts_el, styles_el))
   phylogeny <- XML::addChildren(phylogeny, kids=list(render_el))
+  
   XML::saveXML(doc=doc, file=xml_file,
                prefix="<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
                indent=FALSE)

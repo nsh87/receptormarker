@@ -32,6 +32,17 @@ dependencies:
     - ./canvg.js
     - ./rgbcolor.js
     - ./StackBlur.js
+- name: unitip
+  version: 1.0
+  src: htmlwidgets/lib/unitip-1.0
+  script:
+    - ./js/unitip.js
+  stylesheet: ./css/unitip.css
+  attachment:
+    - ./images/clear.gif
+    - ./images/TipCap.png
+    - ./images/TipMid.png
+    - ./TipPoint.png
 - name: custom-css
   version: 1.0
   src: htmlwidgets/lib/css
