@@ -253,6 +253,8 @@ calculate_canvas_size <- function(xml_file) {
   # Similarly: xpathApply(doc, "/ns:phyloxml//ns:name", xmlValue, namespaces=ns)
   if (num_elements == 0) {
     stop("Cannot generate phylogram: no sequences to plot", call.=FALSE)
+  } else if (num_elements <= 30) {
+    base_size <- 1300
   } else if (num_elements <= 50) {
     base_size <- 1100
   } else if (num_elements <= 185) {
