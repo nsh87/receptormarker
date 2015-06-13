@@ -124,7 +124,7 @@ clean_d <- function(d, seqs_col, verbose, verbose_dir) {
                           fileext=".txt")
     write(seqs_fasta, seqs_file)
   }
-  seqs
+  list("seqs"=seqs, "d"=d_clean)
 }
 
 
@@ -282,6 +282,60 @@ calculate_canvas_size <- function(xml_file) {
 }
 
 
+add_bars_to_condensed_phyloxml <- function(xml_file, seqs) {
+  seq_frequencies <- table(seqs)
+  
+  doc <- XML::xmlParse(xml_file)
+  root <- XML::xmlRoot(doc)
+  ns <- c(ns=XML::xmlNamespace(root))
+  # Get all elements that don't start with Biopython's "InnerXXX"
+  named_nodes <- XML::getNodeSet(root,
+                                 "//ns:name[not(starts-with(text(), 'Inner'))]",
+                                 namespaces=ns)
+  # Add the bar info to each element
+  node_parents <- lapply(named_nodes, function(n) { XML::xmlParent(n) })
+  node_parents <- lapply(named_nodes, function(n) {
+    node_name <- XML::xmlValue(n)
+    chart_el <- XML::newXMLNode("chart")
+    # Subtract one from each seq's frequency so frequencies == 1 don't get bars
+    bar_length <- seq_frequencies[names(seq_frequencies) == node_name] - 1
+    bar_el <- XML::newXMLNode("content", bar_length)
+    chart_el <- XML::addChildren(chart_el, kids=list(bar_el), append=FALSE)
+    parent <- XML::xmlParent(n)
+    parent <- XML::addChildren(parent, kids=list(chart_el), append=FALSE)
+    parent
+  })
+  # Add the bar styles, which need to be appended to the phylogeny
+  phylogeny_set <- XML::getNodeSet(root,
+                                   "/ns:phyloxml/ns:phylogeny", namespaces=ns)
+  phylogeny <- phylogeny_set[[1]]
+  # <render>
+  #  <charts>
+  #    <content fill="#666" type="bar" width="0.2"/>
+  #  </charts>
+  #  <styles>
+  #    <barChart fill="#333" stroke-width="0"/>
+  #  </styles>
+  # </render>
+  render_el <- XML::newXMLNode("render")
+  charts_el <- XML::newXMLNode("charts")
+  content_el <- XML::newXMLNode("content", attrs=c(fill="#666",
+                                                   type="bar",
+                                                   width="0.2"))
+  charts_el <- XML::addChildren(charts_el, kids=list(content_el))
+  styles_el <- XML::newXMLNode("styles")
+  barchart_el <- XML::newXMLNode("barChart", attrs=c(fill="#333",
+                                                     "stroke-width"="0"))
+  styles_el <- XML::addChildren(styles_el, kids=list(barchart_el))
+  render_el <- XML::addChildren(render_el, kids=list(charts_el, styles_el))
+  phylogeny <- XML::addChildren(phylogeny, kids=list(render_el))
+  XML::saveXML(doc=doc, file=xml_file,
+               prefix="<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+               indent=FALSE)
+  xml_file
+}
+
+
 #' <Add Title>
 #'
 #' <Add Description>
@@ -290,9 +344,9 @@ calculate_canvas_size <- function(xml_file) {
 #'
 #' @export
 # allow users to set viewer.suppress to FALSE to see the thing in RStudio
-radial_phylo <- function(d, seqs_col=NULL, canvas_size="auto", font_size="auto",
-                         scale=TRUE, browser=FALSE, verbose=FALSE,
-                         fast=FALSE) {
+radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, canvas_size="auto",
+                         font_size="auto", scale=TRUE, browser=FALSE,
+                         verbose=FALSE, fast=FALSE) {
   
   check_muscle(level="stop")
   biopy_existence <- check_bio_python(level="warn")
@@ -313,7 +367,11 @@ radial_phylo <- function(d, seqs_col=NULL, canvas_size="auto", font_size="auto",
   }
   
   # Step 1: Clean the data.frame and get the cleaned sequences
-  seqs <- clean_d(d, seqs_col, verbose, verbose_dir)
+  clean <- clean_d(d, seqs_col, verbose, verbose_dir)
+  seqs <- clean[["seqs"]]
+  if (condense == TRUE) {
+    seqs <- unique(seqs)
+  }
   # Step 2: Do a multiple sequence alignment (MSA)
   dedupe_hash <- paste0(sample(c(0:9, letters), 10, replace=TRUE), collapse="")
   ms_alignment <- msa(seqs, dedupe_hash, verbose, verbose_dir)
@@ -328,10 +386,17 @@ radial_phylo <- function(d, seqs_col=NULL, canvas_size="auto", font_size="auto",
     xml_file_with_hash <- phyloxml_via_biopython(ms_alignment[["file"]],
                                                  verbose)
     xml_file <- remove_phyloxml_hash(xml_file_with_hash, dedupe_hash)
-    # Also write the phyloxml to the verbose folder if the user wants it
-    if (verbose == TRUE && file.exists(xml_file)) {
-      file.copy(xml_file, verbose_dir)
-    }
+  }
+  
+  # Add annotations to phylo.xml
+  if (condense == TRUE) {
+    # Send the non-unique sequences to be able to count how many there are
+    xml_file <- add_bars_to_condensed_phyloxml(xml_file, clean[["seqs"]])
+  }
+  
+  # Also write the phyloxml to the verbose folder if the user wants it
+  if (verbose == TRUE && file.exists(xml_file)) {
+    file.copy(xml_file, verbose_dir)
   }
   
   # Calculate canvas size based on number of nodes in phylo.xml
