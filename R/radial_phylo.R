@@ -254,18 +254,31 @@ calculate_canvas_size <- function(xml_file) {
   if (num_elements == 0) {
     stop("Cannot generate phylogram: no sequences to plot", call.=FALSE)
   } else if (num_elements <= 50) {
-    return(900)
+    base_size <- 1100
   } else if (num_elements <= 185) {
-    return(1300)
+    base_size <- 1300
   } else if (num_elements <= 1000) {
-    return(num_elements * 7)
+    base_size <- num_elements * 7
   } else {
-    performance_warning <- paste0(c("Performance of the phylogram plot might",
-                                    "begin to degrade with >1000 sequences"),
+    performance_warning <- paste0(c("Depending on your computer, performance",
+                                    "might begin to degrade when plotting",
+                                    ">1000 sequences"),
                                   collapse=" ")
     warning(performance_warning, call.=FALSE)
-    return(num_elements * 7)
+    base_size <- num_elements * 7
   }
+  # Need to take into account length of names on the phylogram plot
+  longest_sequence <- max(nchar(named_nodes))
+  # Your base_size should allow for up to 20 char sequence names; beyond 15
+  # chars you need to expand the canvas to give them more room.
+  quotient <- longest_sequence %/% 20
+  remainder <- 0
+  if (quotient > 0) {
+    remainder <- longest_sequence %% 20
+  }
+  extra_room <- quotient * 500 + remainder * 60
+  canvas_size <- base_size + extra_room
+  canvas_size
 }
 
 
