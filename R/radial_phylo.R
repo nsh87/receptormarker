@@ -239,7 +239,7 @@ remove_phyloxml_hash <- function(xml_file, hash) {
 }
 
 
-calculate_canvas_size <- function(xml_file) {
+calculate_canvas_size <- function(xml_file, rings) {
   doc <- XML::xmlParse(xml_file)
   root <- XML::xmlRoot(doc)
   ns <- c(ns=XML::xmlNamespace(root))
@@ -281,6 +281,11 @@ calculate_canvas_size <- function(xml_file) {
   extra_room <- quotient * 500 + remainder * 60
   canvas_size <- base_size + extra_room
   canvas_size
+  # Need to add extra room if there are outer rings (100 pixels per ring works
+  # for up to 3 rings, check if it still does if using more rings)
+  if (!is.null(rings)) {
+    canvas_size <- canvas_size + length(rings) * 100
+  }
 }
 
 
@@ -357,6 +362,193 @@ add_bars_to_condensed_phyloxml <- function(xml_file, seqs) {
 }
 
 
+validate_rings <- function(rings, d) {
+  tryCatch({
+    # Rings should be either NULL or a named character or numeric vector
+    if (is.null(rings)) {
+      return()
+    } else if (!(class(rings) %in% c("character", "numeric"))) {
+      err <- paste0(c("The argument 'rings' must be a named vector,",
+                      "or NULL if no rings are desired"), collapse=" ")
+      stop(err, call.=FALSE)
+    } else if (length(names(rings)[names(rings) != ""]) != length(rings)) {
+      stop("All elements in the argument 'rings' must be named", call.=FALSE)
+    } else if (any(is.na(rings))) {
+      # You can't have rings <- c(seqs=NA)
+      stop("Values in the argument 'rings' cannot be NA", call.=FALSE)
+    } else if (class(d) != "data.frame") {
+      err <- paste0(c("Argument 'd' expected to be a data.frame when using",
+                      "the argument 'rings'"), collapse=" ")
+      stop(err, call.=FALSE)
+    } else if (ncol(d) <= 1) {
+      err <- paste0(c("The data.frame 'd' must have more than one column",
+                      "in order to use the argument 'rings'"), collapse=" ")
+      stop(err, call.=FALSE)
+    } else if (!(all(names(rings) %in% names(d)))) {
+      # Check that all the names in 'rings' are column headers of 'd', and if
+      # not tell user which one is not in 'd'
+      for (i in c(1:length(rings))) {
+        if (!(names(rings)[i] %in% names(d))) {
+          err <- paste0(c("Validation of the argument 'rings' failed: the ",
+                          "column name '", names(rings)[i], "' does not ",
+                          "exist in input data 'd'"), collapse="")
+          stop(err, call.=FALSE)
+        }
+      }
+    } else {
+      return()
+    }
+  },
+  error = function(e) {
+    stop(e)
+  }
+  )
+}
+
+
+validate_true_false <- function(arg_list) {
+  for (a in arg_list) {
+    if (!(a %in% c(TRUE, FALSE))) {
+      err <- paste0("The argument '", names(a), "' must be TRUE or FALSE",
+                    collapse="")
+      stop(err, call.=FALSE)
+    }
+  }
+}
+
+
+index_with_wrap <- function(index, v) {
+  indx <- index %% length(v)
+  if (indx == 0 ) { indx = length(v) }
+  list(name=names(v)[indx], val=v[indx])
+}
+
+
+add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
+                                  rings, condensed) {
+  colors <- c(green="#82A538", orange="#B1903C", blue="#626DBC", pink="#B5598F",
+              turqoise="#0DA765", yellow="#E9E700", purple="#64059C",
+              tangerine="#DE531C")
+  # If condensed == TRUE, the sequences in xml_file are unique; in order to get
+  # attributes for each ring, for each sequence you have to average each
+  # attribute across all duplicate sequences, which means two algorithms
+  # (one if condensed, one if not)
+  doc <- XML::xmlParse(xml_file)
+  root <- XML::xmlRoot(doc)
+  ns <- c(ns=XML::xmlNamespace(root))
+  unique_seqs <- unique(seqs)
+  # For each sequence...
+  for (seq in unique_seqs) {
+    search_str <- paste0("//ns:name[text()='", seq, "']")  # Grab all XML nodes
+    seq_nodes <- XML::getNodeSet(root, search_str, namespaces=ns)
+    # Get all rows of data where sequence == seq
+    seq_data_rows <- d_clean[d_clean[, seqs_col] == seq, ]
+    # Need to add rings data to the parent (clade) of each XML node:
+    # <clade>
+    #   <name>CATSREWGEAYEQYF</name>
+    #   <branch_length>0.141994136</branch_length>
+    #   <chart>
+    #     <outergroup1>green</outergroup1>  # This colors first ring green
+    #     <outergroup4>pink</outergroup4>  # This colors fourth ring pink
+    #   </chart>
+    # </clade>
+    node_parents <- lapply(seq_nodes, XML::xmlParent)
+    lapply(seq_along(node_parents), function(y, i) {
+      parent <- y[[i]]  # Current parent node
+      rings_to_add <- vector(mode="list", length=length(rings))
+      if (condensed == FALSE) {
+        # Compare 'rings' to the attributes of the current row of data
+        data_row <- seq_data_rows[i, ]
+        # Get values of current row's attributes in named list
+        attrs <- c(data_row[names(rings)])
+        # For each attribute...
+        for (j in c(1:length(attrs))) {
+          # If the value in the data matches the criteria in 'rings'...
+          if (!is.na(attrs[[j]]) && attrs[[j]] == rings[j]) {
+            # Add an XML node to color in the outer ring 
+            outer_ring_name <- paste0(c("outergroup", j), collapse="")
+            outer_ring_el <- XML::newXMLNode(outer_ring_name,
+                                             index_with_wrap(j, colors)[["name"]])
+            rings_to_add[[j]] <- outer_ring_el
+          }
+        }
+        # No <chart> node if condensed == FALSE, so add it now
+        chart_el <- XML::newXMLNode("chart")
+        rings_to_add <- rings_to_add[!is.na(rings_to_add)]
+        if (length(rings_to_add) > 0) {
+          chart_el <- XML::addChildren(chart_el, kids=rings_to_add)
+          parent <- XML::addChildren(parent, chart_el)
+        }
+      } else if (condensed == TRUE) {
+        for (j in c(1:length(rings))) {
+          # If >50% of the rows have an attribute that matches 'rings' add ring
+          this_attr <- seq_data_rows[, names(rings)[j]]
+          n_matches <- sum(this_attr == rings[j], na.rm=TRUE)
+          if (n_matches / length(this_attr) >= 0.5) {
+            outer_ring_name <- paste0(c("outergroup", j), collapse="")
+            outer_ring_el <- XML::newXMLNode(outer_ring_name,
+                                             index_with_wrap(j, colors)[["name"]])
+            rings_to_add[[j]] <- outer_ring_el
+          }
+        }
+        # The <chart> node exists if condensed == TRUE
+        chart_el <- XML::xmlElementsByTagName(parent, "chart")[[1]]
+        rings_to_add <- rings_to_add[!is.na(rings_to_add)]
+        if (length(rings_to_add) > 0) {
+          chart_el <- XML::addChildren(chart_el, kids=rings_to_add)
+          parent <- XML::addChildren(parent, chart_el)
+        }
+      }
+      parent
+    }
+    , y=node_parents
+    )
+  }
+  # Add rings styles. If condensed == FALSE there won't be a <styles> or
+  # <charts> section yet. Have to create them both. <charts> section dictates
+  # how the rings will be drawn and what data type they are. <style> matches
+  # up with the colors ('orange', 'blue', etc.)
+  phylogeny_set <- XML::getNodeSet(root,
+                                   "/ns:phyloxml/ns:phylogeny", namespaces=ns)
+  phylogeny <- phylogeny_set[[1]]
+  # Outer rings color styles
+  outergroups <- vector(mode="list", length=length(rings))
+  for (q in c(1:length(rings))) {
+    outergroup_name <- paste0(c("outergroup", q), collapse="")
+    outergroups[[q]] <- XML::newXMLNode(outergroup_name, attrs=c(disjointed=q,
+                                                               type="binary"))
+  }
+  # List names are not preserved in lapply...have to use indices
+  color_styles <- lapply(seq_along(colors), function(y, n, i) {
+    XML::newXMLNode(n[[i]], attrs=c(fill=y[[i]], opacity="#0.95",
+                                    stroke="#DDDDDD"))  
+  }
+  , y=colors, n=names(colors))
+  if (condensed == FALSE) {
+    render_el <- XML::newXMLNode("render")
+    charts_el <- XML::newXMLNode("charts")
+    charts_el <- XML::addChildren(charts_el, kids=outergroups)
+    styles_el <- XML::newXMLNode("styles")
+    styles_el <- XML::addChildren(styles_el, kids=color_styles)
+    render_el <- XML::addChildren(render_el, charts_el, styles_el)
+    phylogeny <- XML::addChildren(phylogeny, render_el)
+  } else if (condensed == TRUE) {
+    charts_el <- XML::getNodeSet(root,
+                                "/ns:phyloxml/ns:phylogeny/ns:render/ns:charts",
+                                namespaces=ns)[[1]]
+    charts_el <- XML::addChildren(charts_el, kids=outergroups)
+    styles_el <- XML::getNodeSet(root,
+                                "/ns:phyloxml/ns:phylogeny/ns:render/ns:styles",
+                                namespaces=ns)[[1]]
+    styles_el <- XML::addChildren(styles_el, kids=color_styles)
+  }
+  XML::saveXML(doc=doc, file=xml_file,
+               prefix="<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+               indent=FALSE)
+  xml_file
+}
+
+
 #' <Add Title>
 #'
 #' <Add Description>
@@ -365,9 +557,9 @@ add_bars_to_condensed_phyloxml <- function(xml_file, seqs) {
 #'
 #' @export
 # allow users to set viewer.suppress to FALSE to see the thing in RStudio
-radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, canvas_size="auto",
-                         font_size="auto", scale=TRUE, browser=FALSE,
-                         verbose=FALSE, fast=FALSE) {
+radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
+                         canvas_size="auto", font_size="auto", scale=TRUE,
+                         browser=FALSE, verbose=FALSE, fast=FALSE) {
   
   check_muscle(level="stop")
   biopy_existence <- check_bio_python(level="warn")
@@ -376,6 +568,9 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, canvas_size="auto",
   validate_canvas_size(canvas_size)
   seqs <- extract_sequences (d, seqs_col)
   validate_sequences(seqs)
+  validate_rings(rings, d)
+  validate_true_false(c(condense=condense, scale=scale, browser=browser,
+                        verbose=verbose, fast=fast))
   
   # Not necessary to have as func parameters; these will get set automatically
   width <- NULL
@@ -409,10 +604,16 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, canvas_size="auto",
     xml_file <- remove_phyloxml_hash(xml_file_with_hash, dedupe_hash)
   }
   
-  # Add annotations to phylo.xml
+  # Condense phylo if condense == TRUE
   if (condense == TRUE) {
     # Send the non-unique sequences to be able to count how many there are
     xml_file <- add_bars_to_condensed_phyloxml(xml_file, clean[["seqs"]])
+  }
+  
+  # Add outer-rings to phylo if there are any requested
+  if (!is.null(rings)) {
+    xml_file <- add_phylo_outer_rings(xml_file, seqs, clean[["d"]], seqs_col,
+                                      rings, condense)
   }
   
   # Also write the phyloxml to the verbose folder if the user wants it
@@ -422,7 +623,7 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, canvas_size="auto",
   
   # Calculate canvas size based on number of nodes in phylo.xml
   if (canvas_size == "auto") {
-    canvas_size <- calculate_canvas_size(xml_file) 
+    canvas_size <- calculate_canvas_size(xml_file, rings) 
   }
   
   # Forward options to radial_phylo.js using 'x'
