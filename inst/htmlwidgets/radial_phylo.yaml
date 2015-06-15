@@ -1,4 +1,8 @@
 dependencies:
+- name: yui
+  version: 3.18.1
+  src: htmlwidgets/lib/yui-3.18.1
+  script: ./yui.min.js
 - name: d3
   version: 3.5.5
   src: htmlwidgets/lib/d3

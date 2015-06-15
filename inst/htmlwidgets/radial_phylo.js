@@ -50,30 +50,43 @@ HTMLWidgets.widget({
         addCSS("body { overflow: scroll !important; }");
     }
 
-    // set some options of the phylogram
-    Smits.PhyloCanvas.Render.Parameters.Circular.bufferRadius = 0.28;
-    Smits.PhyloCanvas.Render.Parameters.Circular.bufferOuterLabels = 0;
-    Smits.PhyloCanvas.Render.Style.text["font-size"] = parseInt(x.font_size);
-
-    // get xml file's contents and plot the phylogram
-    var xml_relpath = HTMLWidgets.getAttachmentUrl('phyloxml', 'xml');
-    $.get(xml_relpath, function(xmldata) {
-
-        var dataObject = {
-            phyloxml: xmldata,
-            fileSource: true
-        };
-
-        phylocanvas = new Smits.PhyloCanvas(
-            dataObject,
-            el.id,
-            width, height,
-            'circular',
-            x.scale  // holds true or false
-        );
-        init();
-
-    });
+  YUI.add('plot', function(Y) {
+      Y.Plot = {
+          radial: function(width, height, id, o, args) {
+              var data = o.responseXML;
+              var dataObject = {
+                  phyloxml: data,
+                  fileSource: true
+              };
+              
+              // set some options of the phylogram
+              Smits.PhyloCanvas.Render.Parameters.Circular.bufferRadius = 0.28;
+              Smits.PhyloCanvas.Render.Parameters.Circular.bufferOuterLabels = 0;
+              Smits.PhyloCanvas.Render.Style.text["font-size"] = parseInt(x.font_size);
+              
+              // make phylogram
+              phylocanvas = new Smits.PhyloCanvas(
+                  dataObject,
+                  el.id,
+                  width, height,
+                  'circular',
+                  x.scale  // holds true or false
+              );
+          }
+      };
+  });
+  
+  window.onload = function(){
+      YUI().use('plot', 'oop', 'json-stringify', 'io-base', 'event', 'event-delegate', function(Y){
+          var uri = HTMLWidgets.getAttachmentUrl('phyloxml', 'xml');
+          function complete(id, o, args) {
+              Y.Plot.radial(width, height, id, o, args);
+              init(); //unitip
+          }
+          Y.on('io:complete', complete, Y);
+          var request = Y.io(uri);
+      });
+  };
 
   // Create DL image as PNG link
 	var a = document.createElement('a');
