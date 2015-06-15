@@ -561,6 +561,23 @@ validate_not_null <- function(arg_list) {
 }
 
 
+validate_font_size <- function(font_size) {
+  if (is.na(font_size)) {
+    stop("Argument 'font_size' must be a real value", call.=FALSE)
+  } else if (class(font_size) != "numeric") {
+    stop("Argument 'font_size' must be an integer", call.=FALSE)
+  } else if (length(font_size) != 1) {
+    stop("Argument 'font_size' must be a single integer", call.=FALSE)
+  } else if(font_size == 0) {
+    stop("Argument 'font_size' must be greater than 0", call.=FALSE)
+  } else if (length(grep("^[0-9]{1,3}$", font_size)) != 1 ||
+             grep("^[0-9]{1,2}$", font_size) != 1) {
+    stop("Argument 'font_size' must be an integer between 1 and 99",
+         call.=FALSE)
+  }
+}
+
+
 #' <Add Title>
 #'
 #' <Add Description>
@@ -570,7 +587,7 @@ validate_not_null <- function(arg_list) {
 #' @export
 # allow users to set viewer.suppress to FALSE to see the thing in RStudio
 radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
-                         canvas_size="auto", font_size="auto", scale=TRUE,
+                         canvas_size="auto", font_size=12, scale=TRUE,
                          browser=FALSE, verbose=FALSE, fast=FALSE) {
   
   check_muscle(level="stop")
@@ -581,11 +598,12 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
                          font_size=font_size, scale=scale, browser=browser,
                          verbose=verbose, fast=fast))
   validate_canvas_size(canvas_size)
+  validate_font_size(font_size)
+  validate_true_false(c(condense=condense, scale=scale, browser=browser,
+                        verbose=verbose, fast=fast))
   seqs <- extract_sequences (d, seqs_col)
   validate_sequences(seqs)
   validate_rings(rings, d)
-  validate_true_false(c(condense=condense, scale=scale, browser=browser,
-                        verbose=verbose, fast=fast))
   
   # Not necessary to have as func parameters; these will get set automatically
   width <- NULL
@@ -644,7 +662,8 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
   # Forward options to radial_phylo.js using 'x'
   x <- list(
     canvas_size = canvas_size,
-    scale = scale
+    scale = scale,
+    font_size = font_size
   )
   
   # Add the phyloxml as an HTML dependency so it can get loaded in the browser

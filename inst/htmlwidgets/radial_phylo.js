@@ -53,6 +53,7 @@ HTMLWidgets.widget({
     // set some options of the phylogram
     Smits.PhyloCanvas.Render.Parameters.Circular.bufferRadius = 0.28;
     Smits.PhyloCanvas.Render.Parameters.Circular.bufferOuterLabels = 0;
+    Smits.PhyloCanvas.Render.Style.text["font-size"] = parseInt(x.font_size);
 
     // get xml file's contents and plot the phylogram
     var xml_relpath = HTMLWidgets.getAttachmentUrl('phyloxml', 'xml');
