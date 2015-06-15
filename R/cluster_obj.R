@@ -15,7 +15,7 @@
 #' @param iter.max An integer. The maximum number of iterations used by kmeans
 #'   to find its centers.
 #' @param runs An integer. The number of starts of the k-means algorithm.
-#' @param ... further arguments to be passed to \code{\link[cluster]{kmeans}}.
+#' @param ... Further arguments to be passed to \code{\link[cluster]{kmeans}}.
 #'
 #' @return \code{cluster_optimal} returns an object of class "cluster_optimal"
 #'   that can be used for multiple plots. It is a list with at least the
@@ -33,7 +33,7 @@
 #' 
 #' @export
 #'
-#' @seealso \code{\link[cluster]{kmeans}}, \code{\link[cluster]{silhouette}}, 
+#' @seealso \code{\link[stats]{kmeans}}, \code{\link[cluster]{silhouette}}, 
 #'   \code{\link[cluster]{clusGap}}
 #'
 #' @examples
