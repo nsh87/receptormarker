@@ -224,9 +224,9 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
 clust_boxplot <- function(data, clust_obj, num_clust, ...) {
   meas_vars <- colnames(data)
   data['cluster'] <- clust_obj['clust_model'][[num_clust]]['cluster']
-  m <- melt(data, id.vars = "cluster", measure.vars = meas_vars)
-  qplot(x = as.factor(cluster), y = value, data = m, geom = "boxplot", 
-        fill = as.factor(cluster), xlab = NULL, 
-        ylab = "Relative expression level", ...) + 
+  m <- reshape2::melt(data, id.vars = "cluster", measure.vars = meas_vars)
+  ggplot2::qplot(x = as.factor(cluster), y = value, data = m, geom = "boxplot", 
+                 fill = as.factor(cluster), xlab = NULL, 
+                 ylab = "Relative expression level", ...) + 
     facet_wrap(~variable) + scale_fill_discrete(name = "Cluster")
 }
