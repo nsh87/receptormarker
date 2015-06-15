@@ -21,33 +21,39 @@ validate_canvas_size <- function(canvas_size) {
 
 extract_sequences <- function(d, seqs_col) {
   # Validation checks
-  if (is.null(d)) {
-    stop("Data cannot be NULL", call.=FALSE)
-  } else if (!(class(d) %in% c("data.frame", "character"))) {
-    stop("Data must be a data.frame or a character vector", call.=FALSE)
-  } else if (class(d) == "data.frame" &&
-             !(class(seqs_col) %in% c("character", "numeric"))) {
-    err <- paste0(c("Argument 'seqs_col' must be a column index or a column",
-                    "header when data is a data.frame, or NULL if data is",
-                    "a vector"),
-                  collapse = " ")
-    stop(err, call.=FALSE)
-  } else if (class(d) == "character" && !is.null(seqs_col)) {
-    err <- "Argument 'seqs_col' expected to be NULL when data is a vector"
-    stop(err, call.=FALSE)
-  } else if (class(d) == "data.frame" && length(seqs_col) != 1) {
-    err <- "Argument 'seqs_col' must represent a single column, i.e. length = 1"
-    stop(err, call.=FALSE)
-  } else if (class(d) == "data.frame" &&
-             class(seqs_col) == "numeric" &&
-             seqs_col > ncol(d)) {
-    stop("Argument 'seqs_col' is greater than the number of columns of data",
-         call.=FALSE)
-  } else if (typeof(seqs_col) == "character" && !(seqs_col %in% names(d))) {
-    err <- paste0(c("Data does not have column named '", seqs_col, "'"),
-                  collapse="")
-    stop(err, call.=FALSE)
+  tryCatch({
+    if (is.null(d)) {
+      stop("Data cannot be NULL", call.=FALSE)
+    } else if (!(class(d) %in% c("data.frame", "character"))) {
+      stop("Data must be a data.frame or a character vector", call.=FALSE)
+    } else if (class(d) == "data.frame" &&
+               !(class(seqs_col) %in% c("character", "numeric"))) {
+      err <- paste0(c("Argument 'seqs_col' must be a column index or a column",
+                      "name when 'd' is a data.frame, or NULL if 'd' is",
+                      "a vector"),
+                    collapse = " ")
+      stop(err, call.=FALSE)
+    } else if (class(d) == "character" && !is.null(seqs_col)) {
+      err <- "Argument 'seqs_col' expected to be NULL when data is a vector"
+      stop(err, call.=FALSE)
+    } else if (class(d) == "data.frame" && length(seqs_col) != 1) {
+      err <- "Argument 'seqs_col' must represent a single column, i.e. length = 1"
+      stop(err, call.=FALSE)
+    } else if (class(d) == "data.frame" &&
+               class(seqs_col) == "numeric" &&
+               seqs_col > ncol(d)) {
+      stop("Argument 'seqs_col' is greater than the number of columns of data",
+           call.=FALSE)
+    } else if (typeof(seqs_col) == "character" && !(seqs_col %in% names(d))) {
+      err <- paste0(c("Data does not have column named '", seqs_col, "'"),
+                    collapse="")
+      stop(err, call.=FALSE)
+    }
+  },
+  error = function(e) {
+    stop(e)  
   }
+  )
   
   # Return the sequences
   tryCatch({
@@ -81,7 +87,7 @@ extract_sequences <- function(d, seqs_col) {
 
 validate_sequences <- function(seqs) {
   # Make sure sequences are only alpha characters
-  seqs_col_err <- "Sequences must only contain characters from A-Z"
+  seqs_col_err <- "Sequences must only contain characters from A-Z and a-z"
   g <- grepl("[^A-Za-z]", as.character(seqs))
   if (sum(g) > 0) {
     stop(seqs_col_err, call.=FALSE)
@@ -239,7 +245,7 @@ remove_phyloxml_hash <- function(xml_file, hash) {
 }
 
 
-calculate_canvas_size <- function(xml_file, rings) {
+calculate_canvas_size <- function(xml_file, condense, rings) {
   doc <- XML::xmlParse(xml_file)
   root <- XML::xmlRoot(doc)
   ns <- c(ns=XML::xmlNamespace(root))
@@ -286,6 +292,10 @@ calculate_canvas_size <- function(xml_file, rings) {
   if (!is.null(rings)) {
     canvas_size <- canvas_size + length(rings) * 100
   }
+  if (condense == TRUE) {
+    canvas_size <- canvas_size + 200
+  }
+  canvas_size
 }
 
 
@@ -302,7 +312,7 @@ add_bars_to_condensed_phyloxml <- function(xml_file, seqs) {
   # Add the bar info and tooltip text to each element
   # <clade>
   #   <name>CATSREWGEAYEQYF</name>
-  #   <branch_length>0/141994136</branch_length>
+  #   <branch_length>0.141994136</branch_length>
   #   <chart>
   #     <content>3</content>  # This makes the bar length
   #   </chart>
@@ -336,7 +346,7 @@ add_bars_to_condensed_phyloxml <- function(xml_file, seqs) {
   phylogeny <- phylogeny_set[[1]]
   # <render>
   #  <charts>
-  #    <content fill="#666" type="bar" width="0.2"/>
+  #    <content fill="#666" type="bar" width="0.6"/>
   #  </charts>
   #  <styles>
   #    <barChart fill="#333" stroke-width="0"/>
@@ -346,7 +356,7 @@ add_bars_to_condensed_phyloxml <- function(xml_file, seqs) {
   charts_el <- XML::newXMLNode("charts")
   content_el <- XML::newXMLNode("content", attrs=c(fill="#666",
                                                    type="bar",
-                                                   width="0.2"))
+                                                   width="0.6"))
   charts_el <- XML::addChildren(charts_el, kids=list(content_el))
   styles_el <- XML::newXMLNode("styles")
   barchart_el <- XML::newXMLNode("barChart", attrs=c(fill="#333",
@@ -656,7 +666,7 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
   
   # Calculate canvas size based on number of nodes in phylo.xml
   if (canvas_size == "auto") {
-    canvas_size <- calculate_canvas_size(xml_file, rings) 
+    canvas_size <- calculate_canvas_size(xml_file, condense, rings) 
   }
   
   # Forward options to radial_phylo.js using 'x'

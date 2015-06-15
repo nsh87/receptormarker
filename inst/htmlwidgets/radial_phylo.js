@@ -181,26 +181,6 @@ HTMLWidgets.widget({
 
   resize: function(el, width, height, instance) {
 
-    // maximize the size of the phylogram by
-    var size = Math.max(width, height);
-
-    // delete the existing phylogram and remove its svg from the dom
-    ////delete phylocanvas;
-    ////var svg = el.firstElementChild;
-    ////el.removeChild(svg);
-
-    ////
-    ////el.innerText = x;
-
-    // phylocanvas = new Smits.PhyloCanvas(
-    //     {
-    //         newick: x.dataObject
-    //     },
-    //     el.id,
-    //     size, size,
-    //     'circular'
-    // );
-
   }
 
 });
