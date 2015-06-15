@@ -114,14 +114,14 @@ clean_d <- function(d, seqs_col, verbose, verbose_dir) {
   }
   # Write the sequences if the user wants them
   if (verbose == TRUE) {
-    if (class(d) == "data.frame") {
+    if (class(d_clean) == "data.frame") {
       seqs_fasta <- with(d_clean,
                          paste0(">", seqs, "\n",
                                 seqs,
                                 collapse="\n"
                                 )
       )
-    } else if (class(d) == "character") {
+    } else if (class(d_clean) == "character") {
       seqs_fasta <- paste0(">", seqs, "\n",
                            seqs,
                            collapse="\n")
@@ -286,7 +286,6 @@ calculate_canvas_size <- function(xml_file, condense, rings) {
   }
   extra_room <- quotient * 500 + remainder * 60
   canvas_size <- base_size + extra_room
-  canvas_size
   # Need to add extra room if there are outer rings (100 pixels per ring works
   # for up to 3 rings, check if it still does if using more rings)
   if (!is.null(rings)) {
@@ -417,10 +416,11 @@ validate_rings <- function(rings, d) {
 
 
 validate_true_false <- function(arg_list) {
-  for (a in arg_list) {
+  for (i in c(1:length(arg_list))) {
+    a <- arg_list[[i]]
     if (!(a %in% c(TRUE, FALSE))) {
-      err <- paste0("The argument '", names(a), "' must be TRUE or FALSE",
-                    collapse="")
+      err <- paste0("The argument '", names(arg_list)[[i]],
+                "' must be TRUE or FALSE", collapse="")
       stop(err, call.=FALSE)
     }
   }
