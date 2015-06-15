@@ -549,6 +549,18 @@ add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
 }
 
 
+validate_not_null <- function(arg_list) {
+  for (i in c(1:length(arg_list))) {
+    a <- arg_list[[i]]
+    if (is.null(a)) {
+      err <- paste0("The argument '", names(arg_list)[[i]],
+                    "' cannot be NULL", collapse="")
+      stop(err, call.=FALSE)
+    }
+  }
+}
+
+
 #' <Add Title>
 #'
 #' <Add Description>
@@ -565,6 +577,9 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
   biopy_existence <- check_bio_python(level="warn")
   
   # Validate function parameters
+  validate_not_null(list(d=d, condense=condense, canvas_size=canvas_size,
+                         font_size=font_size, scale=scale, browser=browser,
+                         verbose=verbose, fast=fast))
   validate_canvas_size(canvas_size)
   seqs <- extract_sequences (d, seqs_col)
   validate_sequences(seqs)
