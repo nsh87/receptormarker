@@ -1,9 +1,10 @@
 #' Cluster with kmeans and find optimal k
 #' 
-#' This calls the function \code{\link{kmeans}} to perform kmeans clustering,
-#' but initializes multiple times. It chooses the best one for each number of
-#' clusters using within sum of squares, and the best number of clusters overall
-#' based on average silhouette width from the \code{\link{silhouette}} function.
+#' This calls the function \code{\link[stats]{kmeans}} to perform kmeans 
+#' clustering, but initializes multiple times. It chooses the best one for each
+#' number of clusters using within sum of squares, and the best number of 
+#' clusters overall based on average silhouette width from the 
+#' \code{\link[cluster]{silhouette}} function.
 #'
 #' @param data A numeric matrix of data, or an object that can be coerced to
 #'   such a matrix (such as a numeric vector or a data frame with all numeric
@@ -14,30 +15,30 @@
 #' @param iter.max An integer. The maximum number of iterations used by kmeans
 #'   to find its centers.
 #' @param runs An integer. The number of starts of the k-means algorithm.
-#' @param ... further arguments to be passed to \code{\link{kmeans}}.
+#' @param ... further arguments to be passed to \code{\link[cluster]{kmeans}}.
 #'
-#' @return \code{cluster_obj} returns an object of class "cluster_obj" that can
-#'   be used for multiple plots. It is a list with at least the following
-#'   components:
-#'   \code{clust_model} A list of \code{\link{kmeans}} objects for each number
-#'     of cluster centers requested.
+#' @return \code{cluster_optimal} returns an object of class "cluster_optimal"
+#'   that can be used for multiple plots. It is a list with at least the
+#'   following components:
+#'   \code{clust_model} A list of \code{\link[stats]{kmeans}} objects for each
+#'     number of cluster centers requested.
 #'   \code{sil_avg} A list of average silhouette scores for each number of
 #'     cluster centers requested.
 #'   \code{num_clust} A list of the each number of clusters used.
-#'   \code{sil} A list of \code{\link{silhouette}} objects for each number of
-#'     clusters.
-#'   \code{clust_gap} A \code{\link{clusGap}} object that uses the highest
-#'     number of \code{krange} for the \code{K.max} argument.
+#'   \code{sil} A list of \code{\link[cluster]{silhouette}} objects for each
+#'     number of clusters.
+#'   \code{clust_gap} A \code{\link[cluster]{clusGap}} object that uses the
+#'     highest number of \code{krange} for the \code{K.max} argument.
 #'   \code{k_best} The optimal number of clusters based on silhouette score.
 #' 
 #' @export
 #'
-#' @seealso \code{\link{kmeans}}, \code{\link{silhouette}}, 
-#'   \code{\link{clusGap}}
+#' @seealso \code{\link[cluster]{kmeans}}, \code{\link[cluster]{silhouette}}, 
+#'   \code{\link[cluster]{clusGap}}
 #'
 #' @examples
 #' library(datasets)
-#' iris_cluster <- cluster_obj(iris[, 1:4])
+#' iris_cluster <- cluster_optimal(iris[, 1:4])
 cluster_optimal <- function(data, krange = 2:10, iter.max = 300, runs = 10, ...) {
   if (1 %in% krange) stop("The entire range for # of clusters is to be > 1.")
   data_dist <- dist(data)
