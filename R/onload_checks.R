@@ -4,7 +4,9 @@
 #' @return If the package is installed, returns the version number as a
 #'   \code{numeric} (for example, \code{3.8}), otherwise returns NULL.
 #' @examples
-#'   pkg_version('base')
+#' \dontrun{
+#' pkg_version('base')
+#' }
 #' @keywords internal
 pkg_version <- function(pkg) {
   tryCatch({

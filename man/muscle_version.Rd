@@ -7,21 +7,22 @@
 muscle_version()
 }
 \value{
-If \code{\link{muscle}} is installed the version number will be
+If \code{muscle} is installed the version number will be
   returned as a \code{numeric} (for example, \code{3.1}). If the package is
   not installed, returns NULL.
 }
 \description{
 Get the major and minor version of the R package
-  \code{\link{muscle}}.
+  \code{muscle}.
 }
 \details{
 This is an internal function for checking to see whether or not
-  the latest version of \code{\link{muscle}} is installed. Previous versions
+  the latest version of \code{muscle} is installed. Previous versions
   of the package could be installed via CRAN, but the package has now been
   removed from CRAN and is only available on Bioconductor. The version
   on Bioconductor has different function parameters and therefore users
   need to update to the current version in order to prevent the calls
-  to \code{\link{muscle}} from erroring.
+  to \code{muscle} from erroring.
 }
+\keyword{internal}
 

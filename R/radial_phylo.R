@@ -1,6 +1,64 @@
+#' @title Validate that a list of arguments are \code{TRUE} or \code{FALSE}
+#' @description An internal function that raises an error if any of the items in
+#' the list is not either \code{TRUE} or \code{FALSE}.
+#' @param arg_list A named list containing the variables to check. The names in
+#' the list should correspond to the variable names. For example,
+#' \code{list(param=param, datum=datum)}.
+#' @keywords internal
+validate_true_false <- function(arg_list) {
+  for (i in c(1:length(arg_list))) {
+    a <- arg_list[[i]]
+    if (!(a %in% c(TRUE, FALSE)) || is.null(a) || is.na(a)) {
+      err <- paste0("The argument '", names(arg_list)[[i]],
+                "' must be TRUE or FALSE", collapse="")
+      stop(err, call.=FALSE)
+    }
+  }
+}
+
+
+#' @title Validate that a list of arguments are not \code{NULL}
+#' @description An internal function that raises an error if any of the items in
+#' the list is \code{NULL}.
+#' @inheritParams validate_true_false
+#' @keywords internal
+validate_not_null <- function(arg_list) {
+  for (i in c(1:length(arg_list))) {
+    a <- arg_list[[i]]
+    if (is.null(a)) {
+      err <- paste0("The argument '", names(arg_list)[[i]],
+                    "' cannot be NULL", collapse="")
+      stop(err, call.=FALSE)
+    }
+  }
+}
+
+
+#' @title Validate a font size to be used with a radial phylogram
+#' @description An internal function that raises an error if a font size is not
+#' an integer between 1 and 99.
+#' @param font_size A font size
+#' @keywords internal
+validate_font_size <- function(font_size) {
+  if (is.na(font_size)) {
+    stop("Argument 'font_size' must be a real value", call.=FALSE)
+  } else if (class(font_size) != "numeric") {
+    stop("Argument 'font_size' must be an integer", call.=FALSE)
+  } else if (length(font_size) != 1) {
+    stop("Argument 'font_size' must be a single integer", call.=FALSE)
+  } else if(font_size == 0) {
+    stop("Argument 'font_size' must be greater than 0", call.=FALSE)
+  } else if (length(grep("^[0-9]{1,3}$", font_size)) != 1 ||
+             grep("^[0-9]{1,2}$", font_size) != 1) {
+    stop("Argument 'font_size' must be an integer between 1 and 99",
+         call.=FALSE)
+  }
+}
+
+
 #' @title Validate a radial phylogram's canvas size
 #' @description An internal function that creates an error if \code{canvas_size}
-#'   is invalid.
+#' is invalid.
 #' @param canvas_size
 #' @keywords internal
 validate_canvas_size <- function(canvas_size) {
@@ -25,7 +83,7 @@ validate_canvas_size <- function(canvas_size) {
 
 #' @title Validate protein or DNA sequences
 #' @description An internal function that creates an error if sequences contain
-#'   characters outisde the alphabet.
+#' characters outisde the alphabet.
 #' @param seqs A character vector of sequences.
 #' @keywords internal
 validate_sequences <- function(seqs) {
@@ -40,8 +98,8 @@ validate_sequences <- function(seqs) {
 
 #' @title Validate the data, sequence column, and sequences for a phylogram
 #' @description An internal function that raises an error if the arguments are
-#'   invalid, the data cannot be subset using the provided sequence column, or
-#'   the sequences extracted are invalid.
+#' invalid, the data cannot be subset using the provided sequence column, or the
+#' sequences extracted are invalid.
 #' @template -d
 #' @template -seqs_col
 #' @keywords internal
@@ -106,16 +164,67 @@ validate_d_seqs <- function(d, seqs_col) {
 }
 
 
+#' @title Validate the user-supplied argument \code{rings} for a phylogram
+#' @description An internal function that raises an error if \code{rings} is not
+#' a named character vector, if its names do not appear in \code{d} as column
+#' names, if \code{d} is not a data frame, and more.
+#' @param rings A user-supplied named character vector representing rings to add
+#' to a phylogram.
+#' @template -d
+#' @keywords internal
+validate_rings <- function(rings, d) {
+  tryCatch({
+    # Rings should be either NULL or a named character or numeric vector
+    if (is.null(rings)) {
+      return()
+    } else if (!(class(rings) %in% c("character", "numeric"))) {
+      err <- paste0(c("The argument 'rings' must be a named vector,",
+                      "or NULL if no rings are desired"), collapse=" ")
+      stop(err, call.=FALSE)
+    } else if (length(names(rings)[names(rings) != ""]) != length(rings)) {
+      stop("All elements in the argument 'rings' must be named", call.=FALSE)
+    } else if (any(is.na(rings))) {
+      # You can't have rings <- c(seqs=NA)
+      stop("Values in the argument 'rings' cannot be NA", call.=FALSE)
+    } else if (class(d) != "data.frame") {
+      err <- paste0(c("Argument 'd' expected to be a data.frame when using",
+                      "the argument 'rings'"), collapse=" ")
+      stop(err, call.=FALSE)
+    } else if (ncol(d) <= 1) {
+      err <- paste0(c("The data.frame 'd' must have more than one column",
+                      "in order to use the argument 'rings'"), collapse=" ")
+      stop(err, call.=FALSE)
+    } else if (!(all(names(rings) %in% names(d)))) {
+      # Check that all the names in 'rings' are column headers of 'd', and if
+      # not tell user which one is not in 'd'
+      for (i in c(1:length(rings))) {
+        if (!(names(rings)[i] %in% names(d))) {
+          err <- paste0(c("Validation of the argument 'rings' failed: the ",
+                          "column name '", names(rings)[i], "' does not ",
+                          "exist in input data 'd'"), collapse="")
+          stop(err, call.=FALSE)
+        }
+      }
+    } else {
+      return()
+    }
+  },
+  error = function(e) {
+    stop(e)
+  }
+  )
+}
+
+
 #' @title Clean the data for a phylogram and extract the sequences
 #' @description An internal function that removes rows of data where the
-#'   sequence column is \code{NA} or an empty string.
+#' sequence column is \code{NA} or an empty string.
 #' @template -d
 #' @template -seqs_col
 #' @param verbose \code{TRUE} or \code{FALSE}, depending on whether or not the
-#'   cleaned sequences should be written to the \code{verbose_dir} in FASTA
-#'   format.
-#' @param verbose_dir A directory to write files to when \code{verbose} is
-#'   \code{TRUE}.
+#' cleaned sequences should be written to the \code{verbose_dir} in FASTA
+#' format.
+#' @template -verbose_dir
 #' @return A named list containing the cleaned \code{"seqs"} and \code{"d"}.
 #' @keywords internal
 clean_data <- function(d, seqs_col, verbose, verbose_dir) {
@@ -150,22 +259,21 @@ clean_data <- function(d, seqs_col, verbose, verbose_dir) {
 
 #' @title Perform multiple sequence alignment on sequences
 #' @description An internal function that utilizes Bioconductor's MUSCLE for
-#'   MSA. Writes the alignment in addition to returning it so the file can be
-#'   loaded by Biopython.
-#' @param seqs A character vector containing sequences, preferably cleaned by
-#'   \code{\link{clean_data}}.
+#' MSA. Writes the alignment in addition to returning it so the file can be
+#' loaded by Biopython.
+#' @template -seqs
 #' @param verbose \code{TRUE} or \code{FALSE}, depending on whether or not the
-#'   output of the MSA should be printed and the alignment file should be copied
-#'   to the \code{verbose_dir}.
+#' output of the MSA should be printed and the alignment file should be copied
+#' to the \code{verbose_dir}.
 #' @template -verbose_dir
-#' @param dedupe_hash A random string to use to deduplicate sequence names
-#'   when writing the MSA to FASTA. This is necessary to prevent Biopython from
-#'   complaining about duplicate names when reading the MSA. By passing this
-#'   value in, it can later be removed from any subsequent files, such as the
-#'   final PhyloXML.
+#' @param dedupe_hash A random string to use to deduplicate sequence names when
+#' writing the MSA to FASTA. This is necessary to prevent Biopython from
+#' complaining about duplicate names when reading the MSA. By passing this value
+#' in, it can later be removed from any subsequent files, such as the final
+#' PhyloXML.
 #' @return A named list containing the multiple sequence alignment
-#'   \code{"as_string"} (a \emph{MultipleAlignment} class) and a path to the MSA
-#'   FASTA \code{"file"}.
+#' \code{"as_string"} (a \code{MultipleAlignment} class) and a path to the MSA
+#' FASTA \code{"file"}.
 #' @keywords internal
 msa <- function(seqs, verbose, verbose_dir, dedupe_hash=NULL) {
   seqs_biostring <- Biostrings::AAStringSet(seqs)
@@ -199,22 +307,28 @@ msa <- function(seqs, verbose, verbose_dir, dedupe_hash=NULL) {
 
 #' @title Compute a distance matrix from a MSA
 #' @description An internal function that uses the \emph{seqinr} package to
-#'   compute an identity distance matrix.
-#' @param ms_alignment A multiple sequence alignment of class
-#'   \emph{MultipleAlignment}, likely created by the \code{\link{msa}} function.
+#' compute an identity distance matrix.
+#' @template -ms_alignment
 #' @template -seqs
-#' @return A distance matrix of class \emph{dist}.
+#' @return A distance matrix of class \code{dist}.
 #' @keywords internal
 compute_dist_matrix <- function(ms_alignment, seqs) {
   # Need to turn the MSA into class 'alignment'
-  alignment <- seqinr::as.alignment(nb=nrow(ms_alignment),
-                            nam=seqs,
+  alignment <- seqinr::as.alignment(nb=nrow(ms_alignment), nam=seqs,
                             seq=as.character(ms_alignment, use.names=FALSE)) 
   dist_matrix <- as.matrix(seqinr::dist.alignment(x=alignment,
                                                   matrix="identity"))
 }
 
 
+#' @title Create a phylogenetic tree
+#' @description An internal function that uses the \emph{ape} package and the
+#' BIONJ method (an improved NJ, or neighbor joining, method) to create a
+#' phylogenetic tree.
+#' @param dist_matrix A distance matrix of class \code{dist}, likely created by
+#' the \code{\link{compute_dist_matrix}} function.
+#' @return A path to a Newick file representing the phylogenetic tree.
+#' @keywords internal
 create_tree <- function(dist_matrix) {
   dist_tree <- ape::bionj(dist_matrix)
   phylo_tree <- ape::as.phylo(dist_tree)
@@ -224,8 +338,16 @@ create_tree <- function(dist_matrix) {
 }
 
 
-phyloxml_temp <- function() {
-  # Create tempdir for phyloxml file
+#' @title Create a path to a tempory PhyloXML
+#' @description An internal function that creates a temporary directory to hold
+#' the PhyloXML file for a phylogram. The directory created is only intended to
+#' hold the PhyloXML, and no other files, because in order for htmlwidgets to
+#' make the PhyloXML available in the HTML it copies the entire parent
+#' directory.
+#' @return A filepath that can be used to save a PhyloXML.
+#' @keywords internal
+phyloxml_path <- function() {
+  # Create a temp dir for the phyloxml file
   phyloxml_tmpdir <- tempfile("", tmpdir=tempdir(), fileext="")
   dir.create(phyloxml_tmpdir)  # htmlwidgets copies entire dir to browser
   
@@ -234,17 +356,23 @@ phyloxml_temp <- function() {
 }
 
 
+#' @title Convert a Newick file to a PhyloXML
+#' @description An internal function that utilizes the Forester Java library to
+#' perform the conversion. The converted PhyloXML file will be saved to a
+#' tempory directory.
+#' @param newick_file A path to the Newick file, likely created by the
+#' \code{\link{create_tree}} function.
+#' @return A path to the PhyloXML file.
+#' @keywords internal
 newick_to_phyloxml <- function(newick_file, verbose, verbose_dir) {
-  xml_file <- phyloxml_temp()
+  xml_file <- phyloxml_path()
   forester <- system.file("java", "forester_1038.jar", package="receptormarker")
   system(sprintf(
     "java -cp %s org.forester.application.phyloxml_converter -f=nn -ni %s %s",
     forester,
     newick_file,
     xml_file
-    ),
-    ignore.stdout=!verbose,
-    ignore.stderr=!verbose
+    ), ignore.stdout=!verbose, ignore.stderr=!verbose
   )
   # Also write the phyloxml to the verbose folder if the user wants it
   if (verbose == TRUE && file.exists(xml_file)) {
@@ -254,8 +382,17 @@ newick_to_phyloxml <- function(newick_file, verbose, verbose_dir) {
 }
 
 
+#' @title Create a PhyloXML using Biopython
+#' @description An internal function that utilizes a custom Python script and
+#' Biopython to create a PhyloXML from a multiple sequence alignment.
+#' @template -ms_alignment 
+#' @param verbose \code{TRUE} or \code{FALSE}, depending on whether or not the
+#' stdout and stderr of the Python command should be captured by R. As of now,
+#' seems to have no effect.
+#' @return A path to the PhyloXML file.
+#' @keywords internal
 phyloxml_via_biopython <- function(ms_alignment, verbose) {
-  xml_file <- phyloxml_temp()
+  xml_file <- phyloxml_path()
   phyloxml_from_msa <- system.file("py", "phyloxml_from_msa.py",
                                    package="receptormarker")
   system(sprintf(
@@ -271,12 +408,24 @@ phyloxml_via_biopython <- function(ms_alignment, verbose) {
 }
 
 
+#' @title Remove a dedupe hash from a PhyloXML
+#' @description An internal function that looks for a hash in all \code{<name>}
+#' nodes of a PhyloXMl and removes the hash and any remaining characters after
+#' it. Used in conjuction with the function \code{\link{msa}} when its argument
+#' \code{dedupe_hash} is used.
+#' @template -xml_file
+#' @param hash A string to remove in the PhyloXML. In the XML node(s) in which
+#' \code{hash} is found, any characters following the \code{hash} will also be
+#' removed.
+#' @return A path to the PhyloXML file with the hash removed.
+#' @seealso \code{\link{msa}}
+#' @keywords internal
 remove_phyloxml_hash <- function(xml_file, hash) {
   doc <- XML::xmlParse(xml_file)
   root <- XML::xmlRoot(doc)
   ns <- c(ns=XML::xmlNamespace(root))
   named_nodes <- XML::getNodeSet(root, "//ns:name", namespaces=ns)
-  # Grab the separated period + hash + rest of chars until end of str
+  # Grab the separating period + hash + rest of chars until end of str
   regex_find <- paste0("\\.", hash, ".*$")  
   lapply(named_nodes, function(n) {
     XML::xmlValue(n) <- gsub(regex_find, "", XML::xmlValue(n))
@@ -288,7 +437,22 @@ remove_phyloxml_hash <- function(xml_file, hash) {
 }
 
 
-calculate_canvas_size <- function(xml_file, condense, rings) {
+#' @title Calculate the canvas size for a radial phylogram
+#' @description An internal function that takes into account the length of
+#' sequences in a PhyloXML, whether or not the phylogram is condensed, and the
+#' number of rings surrounding the phlogram in order to calculate the optimal
+#' canvas size for drawing the SVG. The calculations tend to err on the side of
+#' creating a larger canvas than a smaller one in order to not cut off parts of
+#' the phylogram when it is drawn.
+#' @template -xml_file
+#' @template -condensed
+#' @param rings A user-supplied named character vector representing rings to add
+#' to a phylogram.
+#' @return An integer value representing both the pixel width and height for the
+#' canvas.
+#' @seealso \code{\link{radial_phylo}}
+#' @keywords internal
+calculate_canvas_size <- function(xml_file, condensed, rings) {
   doc <- XML::xmlParse(xml_file)
   root <- XML::xmlRoot(doc)
   ns <- c(ns=XML::xmlNamespace(root))
@@ -329,18 +493,32 @@ calculate_canvas_size <- function(xml_file, condense, rings) {
   }
   extra_room <- quotient * 500 + remainder * 60
   canvas_size <- base_size + extra_room
-  # Need to add extra room if there are outer rings (100 pixels per ring works
-  # for up to 3 rings, check if it still does if using more rings)
+  # Need to add extra room if there are outer rings (~100 pixels per ring works)
   if (!is.null(rings)) {
     canvas_size <- canvas_size + length(rings) * 100
   }
-  if (condense == TRUE) {
+  if (condensed == TRUE) {
     canvas_size <- canvas_size + 200
   }
   canvas_size
 }
 
 
+#' @title Add bars data to a PhyloXML containing unique sequences
+#' @description An internal function that performs the final step of createing a
+#' "condensed" phylogram. It calculates sequence frequencies and adds the XML
+#' data in order to show bars (representing clonal expansion) and a tooltip on
+#' the radial phylogram. 
+#' @param xml_file A path to a PhyloXML file that has been built using only
+#' unique sequences.
+#' @param seqs A character vector containing non-unique sequences. This function
+#' will use the frequencies of sequences in this vector to add bars to the
+#' corresponding sequences in the PhyloXML. The \code{xml_file} representing the
+#' PhyloXML should have been built from the unique sequences in this vector,
+#' i.e. with \code{unique(seqs)}.
+#' @return A path to the PhyloXML file annotated with bars and tooltip data.
+#' @seealso \code{\link{radial_phylo}}
+#' @keywords internal
 add_bars_to_condensed_phyloxml <- function(xml_file, seqs) {
   seq_frequencies <- table(seqs)
   
@@ -412,62 +590,19 @@ add_bars_to_condensed_phyloxml <- function(xml_file, seqs) {
 }
 
 
-validate_rings <- function(rings, d) {
-  tryCatch({
-    # Rings should be either NULL or a named character or numeric vector
-    if (is.null(rings)) {
-      return()
-    } else if (!(class(rings) %in% c("character", "numeric"))) {
-      err <- paste0(c("The argument 'rings' must be a named vector,",
-                      "or NULL if no rings are desired"), collapse=" ")
-      stop(err, call.=FALSE)
-    } else if (length(names(rings)[names(rings) != ""]) != length(rings)) {
-      stop("All elements in the argument 'rings' must be named", call.=FALSE)
-    } else if (any(is.na(rings))) {
-      # You can't have rings <- c(seqs=NA)
-      stop("Values in the argument 'rings' cannot be NA", call.=FALSE)
-    } else if (class(d) != "data.frame") {
-      err <- paste0(c("Argument 'd' expected to be a data.frame when using",
-                      "the argument 'rings'"), collapse=" ")
-      stop(err, call.=FALSE)
-    } else if (ncol(d) <= 1) {
-      err <- paste0(c("The data.frame 'd' must have more than one column",
-                      "in order to use the argument 'rings'"), collapse=" ")
-      stop(err, call.=FALSE)
-    } else if (!(all(names(rings) %in% names(d)))) {
-      # Check that all the names in 'rings' are column headers of 'd', and if
-      # not tell user which one is not in 'd'
-      for (i in c(1:length(rings))) {
-        if (!(names(rings)[i] %in% names(d))) {
-          err <- paste0(c("Validation of the argument 'rings' failed: the ",
-                          "column name '", names(rings)[i], "' does not ",
-                          "exist in input data 'd'"), collapse="")
-          stop(err, call.=FALSE)
-        }
-      }
-    } else {
-      return()
-    }
-  },
-  error = function(e) {
-    stop(e)
-  }
-  )
-}
-
-
-validate_true_false <- function(arg_list) {
-  for (i in c(1:length(arg_list))) {
-    a <- arg_list[[i]]
-    if (!(a %in% c(TRUE, FALSE))) {
-      err <- paste0("The argument '", names(arg_list)[[i]],
-                "' must be TRUE or FALSE", collapse="")
-      stop(err, call.=FALSE)
-    }
-  }
-}
-
-
+#' @title Index a vector and allow the indexation to wrap if necessary
+#' @description An internal function that allows for indexation of a vector to
+#' wrap back to the beginning of a vector if the index is greater than the
+#' vector's length.
+#' @param index An index to use to subset the vector
+#' @param v A vector, either named or not named
+#' @return A list containing the \code{"name"} and \code{"val"} of the element.
+#' @examples
+#' \dontrun{
+#' color <- c(white="#FFF", black="000", blue="#00F")
+#' index_with_wrap(5, color)
+#' }
+#' @keywords internal
 index_with_wrap <- function(index, v) {
   indx <- index %% length(v)
   if (indx == 0 ) indx <- length(v)
@@ -475,6 +610,24 @@ index_with_wrap <- function(index, v) {
 }
 
 
+#' @title Add rings to a PhyloXML
+#' @description An internal function that adds a given number of rings to a
+#' condensed or not-condensed radial phylogram. Using the sequences in the
+#' PhyloXML, it examines the provided data \code{d_clean} and adds the XML data
+#' in order to create rings on a radial phylogram whenever the criteria provided
+#' by the argument \code{rings} is found to be true in the data. The rings will
+#' be colored using a preset color scheme.
+#' @template -xml_file
+#' @template -seqs
+#' @param d_clean The cleaned data frame from which the \code{seqs} were
+#' extracted, both preferably cleaned by \code{\link{clean_data}}.
+#' @param seqs_col Either an integer corresponding to a column index or a string
+#' corresponding to a column name in d that contains the sequences.
+#' @template -rings
+#' @template -condensed
+#' @return A path to the PhyloXML file annotated with rings data.
+#' @seealso \code{\link{radial_phylo}}
+#' @keywords internal
 add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
                                   rings, condensed) {
   colors <- c(green="#82A538", orange="#B1903C", blue="#626DBC", pink="#B5598F",
@@ -598,43 +751,87 @@ add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
 }
 
 
-validate_not_null <- function(arg_list) {
-  for (i in c(1:length(arg_list))) {
-    a <- arg_list[[i]]
-    if (is.null(a)) {
-      err <- paste0("The argument '", names(arg_list)[[i]],
-                    "' cannot be NULL", collapse="")
-      stop(err, call.=FALSE)
-    }
-  }
-}
-
-
-validate_font_size <- function(font_size) {
-  if (is.na(font_size)) {
-    stop("Argument 'font_size' must be a real value", call.=FALSE)
-  } else if (class(font_size) != "numeric") {
-    stop("Argument 'font_size' must be an integer", call.=FALSE)
-  } else if (length(font_size) != 1) {
-    stop("Argument 'font_size' must be a single integer", call.=FALSE)
-  } else if(font_size == 0) {
-    stop("Argument 'font_size' must be greater than 0", call.=FALSE)
-  } else if (length(grep("^[0-9]{1,3}$", font_size)) != 1 ||
-             grep("^[0-9]{1,2}$", font_size) != 1) {
-    stop("Argument 'font_size' must be an integer between 1 and 99",
-         call.=FALSE)
-  }
-}
-
-
-#' <Add Title>
+#' @title Create an interactive radial phylogram
+#' @description Creates a D3 JavaScript-based radial phylogram in RStudio or a
+#' browser window. Intended for use with relatively short amino acid sequences,
+#' particularly those representing the variable chains or complementary
+#' determining regions (CDRs) of antibody or T-cell receptors. Provides several
+#' parameters for customizing the phylogram by visually representing clonal
+#' expansion and/or visually representing phenotypic traits of individual cells
+#' or sequence populations. The phylogram is made available for download as a
+#' PNG.
+#' @details It is suggested to have Biopython installed and available to R when
+#' using this function. If Biopython is not available, a warning will be output
+#' when loading the package and running this function. Biopython is able to
+#' create a more visually appealing and "smarter" tree using the UPGMA
+#' algorithm. If Biopython is not available, \code{\link[ape]{bionj}} will be
+#' used to create a tree purely in R.
+#' 
+#' It is important to note the difference between \code{canvas_size} and
+#' \code{scale} when adjusting those arguments. The phylogram is drawn on an SVG
+#' canvas. As more sequences, rings, or bars are added to the phylogram, the
+#' radius of the phylogram must increase in order to prevent all that
+#' information from overlapping. Consequently, the SVG canvas needs to grow to
+#' accommodate the growing phylogram. If the growth of the canvas does not keep
+#' up with the growth of the phylogram, the phylogram will either be cut off at
+#' the horizontal and vertical edges of the canvas (which is akin to an HTML
+#' \code{<div>}) or squashed the by small canvas. The argument
+#' \code{canvas_size} has everything to do with the initial draw of the
+#' phylogram. In contrast, \code{scale} has nothing to do with the size of the
+#' phylogram during its initial draw, but rather everything to do with the
+#' scaling of the phylogram \emph{after it has already been drawn}. The
+#' phylogram will only be drawn once, since scaling does not initiate a redraw.
+#' Therefore any anomolies in the drawing of the phylogram should be addressed
+#' using \code{canvas_size}.
 #'
-#' <Add Description>
+#' \strong{TIP:} When experimenting or crafting a large or complex phylogram,
+#' such as a condensed phylogram with several annotations, set \code{fast=TRUE}
+#' to iterate quickly and when the ideal settings have been found change to
+#' \code{fast=FALSE} to build the final phylogram.
 #'
+#' \strong{TIP:} If the desired outcome is a PNG image of the phylogram, set
+#' \code{scale=FALSE, browser=TRUE} and then use the "Download PNG" button in
+#' the upper-left of the browser window to save the phylogram as a full-sized
+#' PNG.
+#' @template -d
+#' @template -seqs_col
+#' @param condense \code{TRUE} or \code{FALSE}, depending on whether or not the
+#' radial phylogram should only contain unique sequences. If \code{TRUE}, clonal
+#' expansion (i.e. sequence frequency data) will be represented by orthogonal
+#' vertical bars on the perimiter of the phylogram.
+#' @template -rings
+#' @param canvas_size An integer representing the desired width and height of
+#' the SVG canvas in pixels. Defaults to \code{"auto"} to automatically
+#' estimate the appropriate SVG canvas size. It is suggested to leave this at
+#' the default value and then adjust only if necessary. If parts of the
+#' phylogram are cut off, \code{canvas_size} should be increased. See the
+#' Details section for more information.
+#' @param font_size An integer font size for the phylogram's labels. It is
+#' suggested to leave this at the default value and then adjust only if
+#' necessary.
+#' @param scale \code{TRUE} or \code{FALSE}, depending on whether or not the
+#' phylogram should scale to fit the browser or RStudio Viewer window. If
+#' \code{FALSE} and the phylogram is on a large canvas, it will be necessary to
+#' scroll to see the entire canvas.
+#' @param browser \code{TRUE} or \code{FALSE}, depending on whether or not the
+#' phylogram should open in a browser window. Only applicable if using RStudio,
+#' which by default will show the phylogram in RStudio's Viewer. If using R from
+#' the command line, the phylogram will always open in a browser.
+#' @param verbose \code{TRUE} or \code{FALSE}. If \code{TRUE} additional output
+#' is printed to the R console and the sequences, multiple sequence alignment,
+#' and PhyloXML are written to a folder in the working directory.
+#' @param fast \code{TRUE} or \code{FALSE}, depending on whether or not the fast
+#' NJ (neighbor joining) algorithm in R should be used to build the phylogram.
+#' If \code{FALSE} and Biopython is installed, Biopython's UPGMA algorithm will
+#' be used instead. This method is slower, but it will generate "smarter" trees
+#' and therefore is the default setting. Only applicable if Biopython is
+#' installed and available.
 #' @import htmlwidgets
-#'
+#' @examples
+#' # Create a condensed radial phylogram with outer-ring annotations
+#' data(tcr)  # Packaged data set, a data.frame from a CSV file
+#' radial_phylo(tcr, 'seqs', condense=TRUE, rings=c(FOXP3=1, GATA3=1))
 #' @export
-# allow users to set viewer.suppress to FALSE to see the thing in RStudio
 radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
                          canvas_size="auto", font_size=12, scale=TRUE,
                          browser=FALSE, verbose=FALSE, fast=FALSE) {

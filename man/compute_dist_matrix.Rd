@@ -7,14 +7,19 @@
 compute_dist_matrix(ms_alignment, seqs)
 }
 \arguments{
-\item{ms_alignment}{A multiple sequence alignment, as a
-\emph{MultipleAlignment} class.}
+\item{ms_alignment}{A multiple sequence alignment of class
+\emph{MultipleAlignment}, likely created by the \code{\link{msa}}
+function.}
 
+<<<<<<< HEAD
 \item{seqs}{A character vector containing sequences, preferably cleaned by
+=======
+\item{A}{character vector containing sequences, preferably cleaned by
+>>>>>>> 95497d3... WIP Build docs
 \code{\link{clean_data}}.}
 }
 \value{
-A distance matrix of class \emph{dist}.
+A distance matrix of class \code{dist}.
 }
 \description{
 An internal function that uses the \emph{seqinr} package to

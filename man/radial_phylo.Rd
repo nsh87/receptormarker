@@ -2,12 +2,114 @@
 % Please edit documentation in R/radial_phylo.R
 \name{radial_phylo}
 \alias{radial_phylo}
-\title{<Add Title>}
+\title{Create an interactive radial phylogram}
 \usage{
-radial_phylo(d, seqs_col = NULL, canvas_size = "auto", font_size = "auto",
-  scale = TRUE, browser = FALSE, verbose = FALSE)
+radial_phylo(d, seqs_col = NULL, condense = FALSE, rings = NULL,
+  canvas_size = "auto", font_size = 12, scale = TRUE, browser = FALSE,
+  verbose = FALSE, fast = FALSE)
+}
+\arguments{
+\item{d}{A data frame or character vector containing protein sequences.}
+
+\item{seqs_col}{If \code{d} is a data frame, either an integer corresponding
+to a column index or a string corresponding to a column name in \code{d}
+that contains the sequences. If \code{d} is a character vector,
+\code{seqs_col} should be \code{NULL}.}
+
+\item{condense}{\code{TRUE} or \code{FALSE}, depending on whether or not the
+radial phylogram should only contain unique sequences. If \code{TRUE}, clonal
+expansion (i.e. sequence frequency data) will be represented by orthogonal
+vertical bars on the perimiter of the phylogram.}
+
+\item{rings}{A named character vector that can be used to create outer-ring
+annotations on the radial phylogram. The names of the vector must correspond
+to column names in the data.frame \code{d}, and the values should
+correspond to a desired value in each column which should be annotated
+on the ring. For example, \code{c(FOXP3=1, species="human")} will create
+two outer rings, the first of which will be colored whenever the column
+"FOXP3" is 1 and the second of which will be colored whenever the column
+"species" is "human". Annotations occur on a per-sequence basis when the
+PhyloXML represents a non-condensed phylogram. If the PhyloXML represents
+a condensed phylogram, annotations occur using individual sequence
+populations: if 50\% or more of the cells with a given sequence meet the
+current criteria given by \code{rings} then that sequence's ring on the
+radial phylogram will be annotated.}
+
+\item{canvas_size}{An integer representing the desired width and height of
+the SVG canvas in pixels. Defaults to \code{"auto"} to automatically
+estimate the appropriate SVG canvas size. It is suggested to leave this at
+the default value and then adjust only if necessary. If parts of the
+phylogram are cut off, \code{canvas_size} should be increased. See the
+Details section for more information.}
+
+\item{font_size}{An integer font size for the phylogram's labels. It is
+suggested to leave this at the default value and then adjust only if
+necessary.}
+
+\item{scale}{\code{TRUE} or \code{FALSE}, depending on whether or not the
+phylogram should scale to fit the browser or RStudio Viewer window. If
+\code{FALSE} and the phylogram is on a large canvas, it will be necessary to
+scroll to see the entire canvas.}
+
+\item{browser}{\code{TRUE} or \code{FALSE}, depending on whether or not the
+phylogram should open in a browser window. Only applicable if using RStudio,
+which by default will show the phylogram in RStudio's Viewer. If using R from
+the command line, the phylogram will always open in a browser.}
+
+\item{verbose}{\code{TRUE} or \code{FALSE}. If \code{TRUE} additional output
+is printed to the R console and the sequences, multiple sequence alignment,
+and PhyloXML are written to a folder in the working directory.}
+
+\item{fast}{\code{TRUE} or \code{FALSE}, depending on whether or not the fast
+NJ (neighbor joining) algorithm in R should be used to build the phylogram.
+If \code{FALSE} and Biopython is installed, Biopython's UPGMA algorithm will
+be used instead. This method is slower, but it will generate "smarter" trees
+and therefore is the default setting. Only applicable if Biopython is
+installed and available.}
 }
 \description{
-<Add Description>
+Creates a D3 JavaScript-based radial phylogram in RStudio or a
+browser window. Intended for use with relatively short amino acid sequences,
+particularly those representing the variable chains or complementary
+determining regions (CDRs) of antibody or T-cell receptors. Provides several
+parameters for customizing the phylogram by visually representing clonal
+expansion and/or visually representing phenotypic traits of individual cells
+or sequence populations. The phylogram is made available for download as a
+PNG.
+}
+\details{
+It is suggested to have Biopython installed and available to R when
+using this function. If Biopython is not available, a warning will be output
+when loading the package and running this function. Biopython is able to
+create a more visually appealing and "smarter" tree using the UPGMA
+algorithm. If Biopython is not available, \code{\link[ape]{BIONJ}} will be
+used to create a tree purely in R.
+
+It is important to note the difference between \code{canvas_size} and
+\code{scale} when adjusting those arguments. The phylogram is drawn on an SVG
+canvas. As more sequences, rings, or bars are added to the phylogram, the
+radius of the phylogram must increase in order to prevent all that
+information from overlapping. Consequently, the SVG canvas needs to grow to
+accommodate the growing phylogram. If the growth of the canvas does not keep
+up with the growth of the phylogram, the phylogram will either be cut off at
+the horizontal and vertical edges of the canvas (which is akin to an HTML
+\code{<div>}) or squashed the by small canvas. The argument
+\code{canvas_size} has everything to do with the initial draw of the
+phylogram. In contrast, \code{scale} has nothing to do with the size of the
+phylogram during its initial draw, but rather everything to do with the
+scaling of the phylogram \emph{after it has already been drawn}. The
+phylogram will only be drawn once, since scaling does not initiate a redraw.
+Therefore any anomolies in the drawing of the phylogram should be addressed
+using \code{canvas_size}.
+
+\strong{TIP:} When experimenting or crafting a large or complex phylogram,
+such as a condensed phylogram with several annotations, set \code{fast=TRUE}
+to iterate quickly and when the ideal settings have been found change to
+\code{fast=FALSE} to build the final phylogram.
+
+\strong{TIP:} If the desired outcome is a PNG image of the phylogram, set
+\code{scale=FALSE, browser=TRUE} and then use the "Download PNG" button in
+the upper-left of the browser window to save the phylogram as a full-sized
+PNG.
 }
 
