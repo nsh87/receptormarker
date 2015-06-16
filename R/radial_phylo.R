@@ -23,15 +23,31 @@ validate_canvas_size <- function(canvas_size) {
   )
 }
 
-#' @title Validate the data and sequence column for a radial phylogram
-#' @description An internal function that creates an error if the data and
-#'   sequence column supplied by the user are invalid or if the data cannot be
-#'   subset using the provided sequence column.
+#' @title Validate protein or DNA sequences
+#' @description An internal function that creates an error if sequences contain
+#'   characters outisde the alphabet.
+#' @param seqs A character vector of sequences.
+#' @keywords internal
+validate_sequences <- function(seqs) {
+  # Make sure sequences are only alpha characters
+  seqs_col_err <- "Sequences must only contain characters from A-Z and a-z"
+  g <- grepl("[^A-Za-z]", as.character(seqs))
+  if (sum(g) > 0) {
+    stop(seqs_col_err, call.=FALSE)
+  }
+}
+
+
+#' @title Validate the data, sequence column, and sequences for a phylogram
+#' @description An internal function that raises an error if the arguments are
+#'   invalid, the data cannot be subset using the provided sequence column, or
+#'   the sequences extracted are invalid.
 #' @template -d
 #' @template -seqs_col
 #' @keywords internal
 validate_d_seqs <- function(d, seqs_col) {
   tryCatch({
+    # First check the arguments:
     if (!(class(d) %in% c("data.frame", "character"))) {
       err <- "Argument 'd' must be a data.frame or a character vector"
       stop(err, call.=FALSE)
@@ -57,42 +73,26 @@ validate_d_seqs <- function(d, seqs_col) {
       err <- paste0(c("Data does not have column named '", seqs_col, "'"),
                     collapse="")
       stop(err, call.=FALSE)
-    }
-  },
-  error = function(e) {
-    stop(e)  
-  }
-  )
-}
-
-
-#' @title Extract a column of sequences for a radial phylogram
-#' @description An internal function that error-checks the user-supplied data
-#'   and sequence column before extracting the sequences.
-#' @template -d
-#' @template -seqs_col
-#' @return A character vector containing the sequences.
-#' @keywords internal
-extract_sequences <- function(d, seqs_col) {
-  validate_d_seqs(d, seqs_col)
- 
-  # Return the sequences
-  tryCatch({
-    # If d is single-column data frame return the sequences
-    if (class(d) == "data.frame" && dim(d)[2] == 1) {
+      # Now check the sequences:
+    } else if (class(d) == "data.frame" && dim(d)[2] == 1) {
+      # If d is single-column data frame...
       seqs <- as.character(d[, 1])
-      return(seqs)
-    # Otherwise check if d is a vector, return it if so
+      validate_sequences(seqs)
+      return()
+    # If d is a vector...
     } else if (class(d) == "character") {
-      return(d)
-    # If data is >1D data.frame return the sequences column by header name
+      validate_sequences(d)
+      return()
+    # If dis >1D data frame...
     } else if (typeof(seqs_col) == "character" && seqs_col %in% names(d)) {
       seqs <- as.character(d[, seqs_col])
-      return(seqs)
-    # Or if data is >1D data.frame return the sequences column by index
+      validate_sequences(seqs)
+      return()
+    # If d is >1D data frame...
     } else if (seqs_col == floor(seqs_col) && length(seqs_col) == 1) {
       seqs <- as.character(d[, seqs_col])
-      return(seqs)
+      validate_sequences(seqs)
+      return()
     } else {
       err <- paste0(c("Unexpected error retrieving sequences. Please check",
                       "parameters 'd' and 'seqs_col'."), collapse=" ")
@@ -106,28 +106,28 @@ extract_sequences <- function(d, seqs_col) {
 }
 
 
-validate_sequences <- function(seqs) {
-  # Make sure sequences are only alpha characters
-  seqs_col_err <- "Sequences must only contain characters from A-Z and a-z"
-  g <- grepl("[^A-Za-z]", as.character(seqs))
-  if (sum(g) > 0) {
-    stop(seqs_col_err, call.=FALSE)
-  }
-}
-
-
-clean_d <- function(d, seqs_col, verbose, verbose_dir) {
+#' @title Clean the data for a phylogram and extract the sequences
+#' @description An internal function that removes rows of data where the
+#'   sequence column is \code{NA} or an empty string.
+#' @template -d
+#' @template -seqs_col
+#' @param verbose \code{TRUE} or \code{FALSE}, depending on whether or not the
+#'   cleaned sequences should be written to the \code{verbose_dir} in FASTA
+#'   format.
+#' @param verbose_dir A directory to write files to when \code{verbose} is
+#'   \code{TRUE}.
+#' @return A named list containing the cleaned \code{"seqs"} and \code{"d"}.
+#' @keywords internal
+clean_data <- function(d, seqs_col, verbose, verbose_dir) {
+  # If d is a >1D data frame
   if (class(d) == "data.frame" && dim(d)[2] > 1) {
     d_clean <- d[d[, seqs_col] != "", ]  # Remove rows with no sequences
     d_clean <- d_clean[complete.cases(d_clean[, seqs_col]), ]  # Remove NA rows
     d_clean <- d_clean[with(d_clean, order(d_clean[, seqs_col])), ]
     seqs <- as.character(d_clean[, seqs_col])
-  } else if (class(d) == "data.frame" && dim(d)[2] == 1) {
-    d_clean <- d[d != ""]  # Remove blank sequences
-    d_clean <- d_clean[!is.na(d_clean)]  # Remove NA's
-    d_clean <- sort(d_clean)
-    seqs <- as.character(d_clean)
-  } else if (class(d) == "character") {
+  # If d is a 1D data frame or vector
+  } else if ((class(d) == "data.frame" && dim(d)[2] == 1) ||
+             (class(d) == "character")) {
     d_clean <- d[d != ""]  # Remove blank sequences
     d_clean <- d_clean[!is.na(d_clean)]  # Remove NA's
     d_clean <- sort(d_clean)
@@ -136,16 +136,9 @@ clean_d <- function(d, seqs_col, verbose, verbose_dir) {
   # Write the sequences if the user wants them
   if (verbose == TRUE) {
     if (class(d_clean) == "data.frame") {
-      seqs_fasta <- with(d_clean,
-                         paste0(">", seqs, "\n",
-                                seqs,
-                                collapse="\n"
-                                )
-      )
+      seqs_fasta <- with(d_clean, paste0(">", seqs, "\n", seqs, collapse="\n"))
     } else if (class(d_clean) == "character") {
-      seqs_fasta <- paste0(">", seqs, "\n",
-                           seqs,
-                           collapse="\n")
+      seqs_fasta <- paste0(">", seqs, "\n", seqs, collapse="\n")
     }
     seqs_file <- tempfile(pattern="sequences-", tmpdir=verbose_dir,
                           fileext=".txt")
@@ -155,21 +148,42 @@ clean_d <- function(d, seqs_col, verbose, verbose_dir) {
 }
 
 
-msa <- function(seqs, dedupe_hash, verbose, verbose_dir) {
+#' @title Perform multiple sequence alignment on sequences
+#' @description An internal function that utilizes Bioconductor's MUSCLE for
+#'   MSA. Writes the alignment in addition to returning it so the file can be
+#'   loaded by Biopython.
+#' @param seqs A character vector containing sequences, preferably cleaned by
+#'   \code{\link{clean_data}}.
+#' @param verbose \code{TRUE} or \code{FALSE}, depending on whether or not the
+#'   output of the MSA should be printed and the alignment file should be copied
+#'   to the \code{verbose_dir}.
+#' @template -verbose_dir
+#' @param dedupe_hash A random string to use to deduplicate sequence names
+#'   when writing the MSA to FASTA. This is necessary to prevent Biopython from
+#'   complaining about duplicate names when reading the MSA. By passing this
+#'   value in, it can later be removed from any subsequent files, such as the
+#'   final PhyloXML.
+#' @return A named list containing the multiple sequence alignment
+#'   \code{"as_string"} (a \emph{MultipleAlignment} class) and a path to the MSA
+#'   FASTA \code{"file"}.
+#' @keywords internal
+msa <- function(seqs, verbose, verbose_dir, dedupe_hash=NULL) {
   seqs_biostring <- Biostrings::AAStringSet(seqs)
-  # Create unique names for the sequences to be written to file so Biopython
-  # doesn't complain about duplicate sequence names. We use the counts of each
-  # sequence to add a suffix (e.g. if 'CASHT' if found 3 times they will become
-  # 'CASHT.1', 'CASHT.2', 'CASHT.3'); and we prepend that with a hash so that
-  # we can reliably find our own dedupe sequence and remove it later. If we
-  # didn't have the has and just tried to remove '.1', '.2', and '.3' later we
-  # might end up removing part of the user's sequence name.
   seqs_rle <- rle(seqs)
-  seqs_unique <- paste0(rep(seqs_rle[["values"]], times=seqs_rle[["lengths"]]),
-                        ".", dedupe_hash, "-",
-                        unlist(lapply(seqs_rle[["lengths"]], seq_len)))
+  if (!is.null(dedupe_hash)) {
+      # Use the counts of each sequence to add a suffix (e.g. if 'CASHT' if
+      # found 3 times they will become 'CASHT.1', 'CASHT.2', 'CASHT.3'); and we
+      # prepend that with the dedupe_hash so that we can reliably find our own
+      # dedupe sequence and remove it later. If we didn't have the hash and just
+      # tried to remove '.1', '.2', and '.3' later we might end up removing part
+      # of the user's sequence name.
+      seqs_unique <- paste0(rep(seqs_rle[["values"]],
+                                times=seqs_rle[["lengths"]]),
+                            ".", dedupe_hash, "-",
+                            unlist(lapply(seqs_rle[["lengths"]], seq_len)))
+  } else seqs_unique <- seqs
   names(seqs_biostring) <- seqs_unique
-  if (verbose == TRUE) print("MUSCLE multiple sequence alignment:")
+  if (verbose == TRUE) message("MUSCLE multiple sequence alignment:")
   ms_alignment <- muscle::muscle(stringset=seqs_biostring, quiet=!verbose)
   # Write the alignment to file in case Biopython needs it
   aa_str_set <- as(ms_alignment, "AAStringSet")
@@ -183,6 +197,14 @@ msa <- function(seqs, dedupe_hash, verbose, verbose_dir) {
 }
 
 
+#' @title Compute a distance matrix from a MSA
+#' @description An internal function that uses the \emph{seqinr} package to
+#'   compute an identity distance matrix.
+#' @param ms_alignment A multiple sequence alignment of class
+#'   \emph{MultipleAlignment}, likely created by the \code{\link{msa}} function.
+#' @template -seqs
+#' @return A distance matrix of class \emph{dist}.
+#' @keywords internal
 compute_dist_matrix <- function(ms_alignment, seqs) {
   # Need to turn the MSA into class 'alignment'
   alignment <- seqinr::as.alignment(nb=nrow(ms_alignment),
@@ -628,8 +650,7 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
   validate_font_size(font_size)
   validate_true_false(c(condense=condense, scale=scale, browser=browser,
                         verbose=verbose, fast=fast))
-  seqs <- extract_sequences (d, seqs_col)
-  validate_sequences(seqs)
+  validate_d_seqs(d, seqs_col)
   validate_rings(rings, d)
   
   # Not necessary to have as func parameters; these will get set automatically
@@ -642,15 +663,15 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
     dir.create(verbose_dir)
   }
   
-  # Step 1: Clean the data.frame and get the cleaned sequences
-  clean <- clean_d(d, seqs_col, verbose, verbose_dir)
+  # Step 1: Clean the user-supplied and the sequences
+  clean <- clean_data(d, seqs_col, verbose, verbose_dir)
   seqs <- clean[["seqs"]]
   if (condense == TRUE) {
     seqs <- unique(seqs)
   }
   # Step 2: Do a multiple sequence alignment (MSA)
   dedupe_hash <- paste0(sample(c(0:9, letters), 10, replace=TRUE), collapse="")
-  ms_alignment <- msa(seqs, dedupe_hash, verbose, verbose_dir)
+  ms_alignment <- msa(seqs, verbose, verbose_dir, dedupe_hash)
   if (is.null(biopy_existence) || fast == TRUE) {
     # Step 3: Compute pairwise distances of the aligned sequences
     dist_matrix <- compute_dist_matrix(ms_alignment[["as_string"]], seqs)
