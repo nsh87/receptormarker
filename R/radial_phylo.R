@@ -1,3 +1,8 @@
+#' @title Validate a radial phylogram's canvas size
+#' @description An internal function that creates an error if \code{canvas_size}
+#'   is invalid.
+#' @param canvas_size
+#' @keywords internal
 validate_canvas_size <- function(canvas_size) {
   err <- "The argument 'canvas_size' is invalid"
   canvas_size_options <- "auto"
@@ -18,14 +23,18 @@ validate_canvas_size <- function(canvas_size) {
   )
 }
 
-
-extract_sequences <- function(d, seqs_col) {
-  # Validation checks
+#' @title Validate the data and sequence column for a radial phylogram
+#' @description An internal function that creates an error if the data and
+#'   sequence column supplied by the user are invalid or if the data cannot be
+#'   subset using the provided sequence column.
+#' @template -d
+#' @template -seqs_col
+#' @keywords internal
+validate_d_seqs <- function(d, seqs_col) {
   tryCatch({
-    if (is.null(d)) {
-      stop("Data cannot be NULL", call.=FALSE)
-    } else if (!(class(d) %in% c("data.frame", "character"))) {
-      stop("Data must be a data.frame or a character vector", call.=FALSE)
+    if (!(class(d) %in% c("data.frame", "character"))) {
+      err <- "Argument 'd' must be a data.frame or a character vector"
+      stop(err, call.=FALSE)
     } else if (class(d) == "data.frame" &&
                !(class(seqs_col) %in% c("character", "numeric"))) {
       err <- paste0(c("Argument 'seqs_col' must be a column index or a column",
@@ -37,10 +46,10 @@ extract_sequences <- function(d, seqs_col) {
       err <- "Argument 'seqs_col' expected to be NULL when data is a vector"
       stop(err, call.=FALSE)
     } else if (class(d) == "data.frame" && length(seqs_col) != 1) {
-      err <- "Argument 'seqs_col' must represent a single column, i.e. length = 1"
+      err <- paste0(c("Argument 'seqs_col' must represent a single",
+                      "column, i.e. length = 1"), collapse=" ")
       stop(err, call.=FALSE)
-    } else if (class(d) == "data.frame" &&
-               class(seqs_col) == "numeric" &&
+    } else if (class(d) == "data.frame" && class(seqs_col) == "numeric" &&
                seqs_col > ncol(d)) {
       stop("Argument 'seqs_col' is greater than the number of columns of data",
            call.=FALSE)
@@ -54,7 +63,19 @@ extract_sequences <- function(d, seqs_col) {
     stop(e)  
   }
   )
-  
+}
+
+
+#' @title Extract a column of sequences for a radial phylogram
+#' @description An internal function that error-checks the user-supplied data
+#'   and sequence column before extracting the sequences.
+#' @template -d
+#' @template -seqs_col
+#' @return A character vector containing the sequences.
+#' @keywords internal
+extract_sequences <- function(d, seqs_col) {
+  validate_d_seqs(d, seqs_col)
+ 
   # Return the sequences
   tryCatch({
     # If d is single-column data frame return the sequences
@@ -74,7 +95,7 @@ extract_sequences <- function(d, seqs_col) {
       return(seqs)
     } else {
       err <- paste0(c("Unexpected error retrieving sequences. Please check",
-                      "paraameters 'd' and 'seqs_col'."), collapse=" ")
+                      "parameters 'd' and 'seqs_col'."), collapse=" ")
       stop(err, call.=FALSE)
     }
   },
@@ -144,9 +165,9 @@ msa <- function(seqs, dedupe_hash, verbose, verbose_dir) {
   # didn't have the has and just tried to remove '.1', '.2', and '.3' later we
   # might end up removing part of the user's sequence name.
   seqs_rle <- rle(seqs)
-  seqs_unique <- paste0(rep(seqs_rle[['values']], times=seqs_rle[['lengths']]),
+  seqs_unique <- paste0(rep(seqs_rle[["values"]], times=seqs_rle[["lengths"]]),
                         ".", dedupe_hash, "-",
-                        unlist(lapply(seqs_rle[['lengths']], seq_len)))
+                        unlist(lapply(seqs_rle[["lengths"]], seq_len)))
   names(seqs_biostring) <- seqs_unique
   if (verbose == TRUE) print("MUSCLE multiple sequence alignment:")
   ms_alignment <- muscle::muscle(stringset=seqs_biostring, quiet=!verbose)
@@ -319,8 +340,7 @@ add_bars_to_condensed_phyloxml <- function(xml_file, seqs) {
   #     <desc>Expansions: 3</desc>  # This is the Unitip tooltip
   #   </annotation>
   # </clade>
-  node_parents <- lapply(named_nodes, function(n) { XML::xmlParent(n) })
-  node_parents <- lapply(named_nodes, function(n) {
+  lapply(named_nodes, function(n) {
     node_name <- XML::xmlValue(n)
     parent <- XML::xmlParent(n)
     
@@ -337,11 +357,10 @@ add_bars_to_condensed_phyloxml <- function(xml_file, seqs) {
     annotation_el <- XML::addChildren(annotation_el, kids=list(desc_el))
     parent <- XML::addChildren(parent, kids=list(chart_el,
                                                  annotation_el), append=FALSE)
-    parent
   })
   # Add the bar styles, which need to be appended to the phylogeny
-  phylogeny_set <- XML::getNodeSet(root,
-                                   "/ns:phyloxml/ns:phylogeny", namespaces=ns)
+  xpath <- "/ns:phyloxml/ns:phylogeny"  # nolint
+  phylogeny_set <- XML::getNodeSet(root, xpath, namespaces=ns)
   phylogeny <- phylogeny_set[[1]]
   # <render>
   #  <charts>
@@ -429,7 +448,7 @@ validate_true_false <- function(arg_list) {
 
 index_with_wrap <- function(index, v) {
   indx <- index %% length(v)
-  if (indx == 0 ) { indx = length(v) }
+  if (indx == 0 ) indx <- length(v)
   list(name=names(v)[indx], val=v[indx])
 }
 
@@ -478,7 +497,7 @@ add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
             # Add an XML node to color in the outer ring 
             outer_ring_name <- paste0(c("outergroup", j), collapse="")
             outer_ring_el <- XML::newXMLNode(outer_ring_name,
-                                             index_with_wrap(j, colors)[["name"]])
+                                           index_with_wrap(j, colors)[["name"]])
             rings_to_add[[j]] <- outer_ring_el
           }
         }
@@ -497,7 +516,7 @@ add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
           if (n_matches / length(this_attr) >= 0.5) {
             outer_ring_name <- paste0(c("outergroup", j), collapse="")
             outer_ring_el <- XML::newXMLNode(outer_ring_name,
-                                             index_with_wrap(j, colors)[["name"]])
+                                           index_with_wrap(j, colors)[["name"]])
             rings_to_add[[j]] <- outer_ring_el
           }
         }
@@ -518,8 +537,8 @@ add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
   # <charts> section yet. Have to create them both. <charts> section dictates
   # how the rings will be drawn and what data type they are. <style> matches
   # up with the colors ('orange', 'blue', etc.)
-  phylogeny_set <- XML::getNodeSet(root,
-                                   "/ns:phyloxml/ns:phylogeny", namespaces=ns)
+  xpath <- "/ns:phyloxml/ns:phylogeny"  # nolint
+  phylogeny_set <- XML::getNodeSet(root, xpath, namespaces=ns)
   phylogeny <- phylogeny_set[[1]]
   # Outer rings color styles
   outergroups <- vector(mode="list", length=length(rings))
@@ -543,13 +562,11 @@ add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
     render_el <- XML::addChildren(render_el, charts_el, styles_el)
     phylogeny <- XML::addChildren(phylogeny, render_el)
   } else if (condensed == TRUE) {
-    charts_el <- XML::getNodeSet(root,
-                                "/ns:phyloxml/ns:phylogeny/ns:render/ns:charts",
-                                namespaces=ns)[[1]]
+    xpath <- "/ns:phyloxml/ns:phylogeny/ns:render/ns:charts"  # nolint
+    charts_el <- XML::getNodeSet(root, xpath, namespaces=ns)[[1]]
     charts_el <- XML::addChildren(charts_el, kids=outergroups)
-    styles_el <- XML::getNodeSet(root,
-                                "/ns:phyloxml/ns:phylogeny/ns:render/ns:styles",
-                                namespaces=ns)[[1]]
+    xpath <- "/ns:phyloxml/ns:phylogeny/ns:render/ns:styles"  # nolint
+    styles_el <- XML::getNodeSet(root, xpath, namespaces=ns)[[1]]
     styles_el <- XML::addChildren(styles_el, kids=color_styles)
   }
   XML::saveXML(doc=doc, file=xml_file,
