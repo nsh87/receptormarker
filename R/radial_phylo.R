@@ -59,7 +59,8 @@ validate_font_size <- function(font_size) {
 #' @title Validate a radial phylogram's canvas size
 #' @description An internal function that creates an error if \code{canvas_size}
 #' is invalid.
-#' @param canvas_size
+#' @param canvas_size A \code{canvas_size} from the \code{\link{radial_phylo}}
+#' function.
 #' @keywords internal
 validate_canvas_size <- function(canvas_size) {
   err <- "The argument 'canvas_size' is invalid"

@@ -7,7 +7,8 @@
 validate_canvas_size(canvas_size)
 }
 \arguments{
-\item{canvas_size}{}
+\item{canvas_size}{A \code{canvas_size} from the \code{\link{radial_phylo}}
+function.}
 }
 \description{
 An internal function that creates an error if \code{canvas_size}
