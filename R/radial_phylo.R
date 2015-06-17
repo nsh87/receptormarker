@@ -8,7 +8,7 @@
 validate_true_false <- function(arg_list) {
   for (i in c(1:length(arg_list))) {
     a <- arg_list[[i]]
-    if (!(a %in% c(TRUE, FALSE)) || is.null(a) || is.na(a)) {
+    if (is.null(a) || !(a %in% c(TRUE, FALSE))) {
       err <- paste0("The argument '", names(arg_list)[[i]],
                 "' must be TRUE or FALSE", collapse="")
       stop(err, call.=FALSE)
@@ -846,7 +846,7 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
                          verbose=verbose, fast=fast))
   validate_canvas_size(canvas_size)
   validate_font_size(font_size)
-  validate_true_false(c(condense=condense, scale=scale, browser=browser,
+  validate_true_false(list(condense=condense, scale=scale, browser=browser,
                         verbose=verbose, fast=fast))
   validate_d_seqs(d, seqs_col)
   validate_rings(rings, d)
