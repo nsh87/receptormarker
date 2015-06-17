@@ -830,7 +830,8 @@ add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
 #' @examples
 #' # Create a condensed radial phylogram with outer-ring annotations
 #' data(tcr)  # Packaged data set, a data.frame from a CSV file
-#' radial_phylo(tcr, 'seqs', condense=TRUE, rings=c(FOXP3=1, GATA3=1))
+#' radial_phylo(tcr, 'seqs', condense=TRUE, rings=c(FOXP3=1, GATA3=1),
+#' browser=TRUE)
 #' @export
 radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
                          canvas_size="auto", font_size=12, scale=TRUE,
@@ -911,6 +912,7 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
     font_size = font_size
   )
   
+  
   # Add the phyloxml as an HTML dependency so it can get loaded in the browser
    phyloxml <- htmltools::htmlDependency(
      name = "phyloxml",
@@ -918,6 +920,8 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
      src = c(file=dirname(xml_file)),
      attachment = list(xml=basename(xml_file))
    )
+   
+  Sys.sleep(1)  # Should prevent some errors with the PhyloXML not being ready
    
   # Create widget
   htmlwidgets::createWidget(
