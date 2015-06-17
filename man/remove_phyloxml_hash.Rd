@@ -14,13 +14,13 @@ remove_phyloxml_hash(xml_file, hash)
 removed.}
 }
 \value{
-A path to the PhyloXML file the hash removed.
+A path to the PhyloXML file with the hash removed.
 }
 \description{
-An internaal function that looks for a hash in all \code{<name>}
-  nodes of a PhyloXMl and removes the hash and any remaining characters after
-  it. Used in conjuction with the function \code{\link{msa}} when its
-  argument \code{dedupe_hash} is used.
+An internal function that looks for a hash in all \code{<name>}
+nodes of a PhyloXMl and removes the hash and any remaining characters after
+it. Used in conjuction with the function \code{\link{msa}} when its argument
+\code{dedupe_hash} is used.
 }
 \seealso{
 \code{\link{msa}}

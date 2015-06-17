@@ -17,7 +17,9 @@ If the package is installed, returns the version number as a
 An internal function that retrieves the version of a R package
 }
 \examples{
+\dontrun{
 pkg_version('base')
+}
 }
 \keyword{internal}
 

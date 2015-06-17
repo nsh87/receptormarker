@@ -15,8 +15,8 @@ A path to the PhyloXML file.
 }
 \description{
 An internal function that utilizes the Forester Java library to
-  perform the conversion. The converted PhyloXML file will be saved to a
-  tempory directory.
+perform the conversion. The converted PhyloXML file will be saved to a
+tempory directory.
 }
 \keyword{internal}
 

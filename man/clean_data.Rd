@@ -26,7 +26,7 @@ A named list containing the cleaned \code{"seqs"} and \code{"d"}.
 }
 \description{
 An internal function that removes rows of data where the
-  sequence column is \code{NA} or an empty string.
+sequence column is \code{NA} or an empty string.
 }
 \keyword{internal}
 

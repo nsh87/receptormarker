@@ -16,8 +16,8 @@ that contains the sequences. If \code{d} is a character vector,
 }
 \description{
 An internal function that raises an error if the arguments are
-  invalid, the data cannot be subset using the provided sequence column, or
-  the sequences extracted are invalid.
+invalid, the data cannot be subset using the provided sequence column, or the
+sequences extracted are invalid.
 }
 \keyword{internal}
 

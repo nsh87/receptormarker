@@ -11,11 +11,7 @@ compute_dist_matrix(ms_alignment, seqs)
 \emph{MultipleAlignment}, likely created by the \code{\link{msa}}
 function.}
 
-<<<<<<< HEAD
 \item{seqs}{A character vector containing sequences, preferably cleaned by
-=======
-\item{A}{character vector containing sequences, preferably cleaned by
->>>>>>> 95497d3... WIP Build docs
 \code{\link{clean_data}}.}
 }
 \value{
@@ -23,7 +19,7 @@ A distance matrix of class \code{dist}.
 }
 \description{
 An internal function that uses the \emph{seqinr} package to
-  compute an identity distance matrix.
+compute an identity distance matrix.
 }
 \keyword{internal}
 

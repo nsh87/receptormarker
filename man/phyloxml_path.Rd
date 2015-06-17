@@ -11,10 +11,10 @@ A filepath that can be used to save a PhyloXML.
 }
 \description{
 An internal function that creates a temporary directory to hold
-  the PhyloXML file for a phylogram. The directory created is only intended
-  to hold the PhyloXML, and no other files, because in order for htmlwidgets
-  to make the PhyloXML available in the HTML it copies the entire parent
-  directory.
+the PhyloXML file for a phylogram. The directory created is only intended to
+hold the PhyloXML, and no other files, because in order for htmlwidgets to
+make the PhyloXML available in the HTML it copies the entire parent
+directory.
 }
 \keyword{internal}
 

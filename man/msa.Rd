@@ -7,12 +7,9 @@
 msa(seqs, verbose, verbose_dir, dedupe_hash = NULL)
 }
 \arguments{
-<<<<<<< HEAD
-=======
 \item{seqs}{A character vector containing sequences, preferably cleaned by
 \code{\link{clean_data}}.}
 
->>>>>>> 9707967... WIP Rebuild docs
 \item{verbose}{\code{TRUE} or \code{FALSE}, depending on whether or not the
 output of the MSA should be printed and the alignment file should be copied
 to the \code{verbose_dir}.}
@@ -20,30 +17,6 @@ to the \code{verbose_dir}.}
 \item{verbose_dir}{A directory to write files to when \code{verbose} is
 \code{TRUE}.}
 
-\item{dedupe_hash}{A random string to use to deduplicate sequence names
-when writing the MSA to FASTA. This is necessary to prevent Biopython from
-complaining about duplicate names when reading the MSA. By passing this
-value in, it can later be removed from any subsequent files, such as the
-final PhyloXML.}
-<<<<<<< HEAD
-
-\item{A}{character vector containing sequences, preferably cleaned by
-\code{\link{clean_data}}.}
-}
-\value{
-A named list containg the multiple sequence alignment
-  \code{"as_string"} (a \emph{MultipleAlignment} class) and a path to the MSA
-  FASTA \code{"file"}.
-}
-\value{
-A named list containing the multiple sequence alignment
-  \code{"as_string"} (a \emph{MultipleAlignment} class) and a path to the MSA
-  FASTA \code{"file"}.
-=======
->>>>>>> 9707967... WIP Rebuild docs
-<<<<<<< HEAD
-=======
-=======
 \item{dedupe_hash}{A random string to use to deduplicate sequence names when
 writing the MSA to FASTA. This is necessary to prevent Biopython from
 complaining about duplicate names when reading the MSA. By passing this value
@@ -54,16 +27,11 @@ PhyloXML.}
 A named list containing the multiple sequence alignment
 \code{"as_string"} (a \code{MultipleAlignment} class) and a path to the MSA
 FASTA \code{"file"}.
->>>>>>> d9534cd... WIP Rebuild docs
->>>>>>> 7ace410... WIP Complete radial phylo docs and build docs
 }
 \description{
 An internal function that utilizes Bioconductor's MUSCLE for
-  MSA. Writes the alignment in addition to returning it so the file can be
-  loaded by Biopython.
+MSA. Writes the alignment in addition to returning it so the file can be
+loaded by Biopython.
 }
-<<<<<<< HEAD
 \keyword{internal}
-=======
->>>>>>> 9707967... WIP Rebuild docs
 

@@ -82,7 +82,7 @@ It is suggested to have Biopython installed and available to R when
 using this function. If Biopython is not available, a warning will be output
 when loading the package and running this function. Biopython is able to
 create a more visually appealing and "smarter" tree using the UPGMA
-algorithm. If Biopython is not available, \code{\link[ape]{BIONJ}} will be
+algorithm. If Biopython is not available, \code{\link[ape]{bionj}} will be
 used to create a tree purely in R.
 
 It is important to note the difference between \code{canvas_size} and
@@ -111,5 +111,11 @@ to iterate quickly and when the ideal settings have been found change to
 \code{scale=FALSE, browser=TRUE} and then use the "Download PNG" button in
 the upper-left of the browser window to save the phylogram as a full-sized
 PNG.
+}
+\examples{
+# Create a condensed radial phylogram with outer-ring annotations
+data(tcr)  # Packaged data set, a data.frame from a CSV file
+radial_phylo(tcr, 'seqs', condense=TRUE, rings=c(FOXP3=1, GATA3=1),
+browser=TRUE)
 }
 

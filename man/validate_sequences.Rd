@@ -11,7 +11,7 @@ validate_sequences(seqs)
 }
 \description{
 An internal function that creates an error if sequences contain
-  characters outisde the alphabet.
+characters outisde the alphabet.
 }
 \keyword{internal}
 

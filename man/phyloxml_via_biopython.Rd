@@ -12,15 +12,15 @@ phyloxml_via_biopython(ms_alignment, verbose)
 function.}
 
 \item{verbose}{\code{TRUE} or \code{FALSE}, depending on whether or not the
-stdout and stderr of the Python command should be captured by R. As of
-now, seems to have no effect.}
+stdout and stderr of the Python command should be captured by R. As of now,
+seems to have no effect.}
 }
 \value{
 A path to the PhyloXML file.
 }
 \description{
 An internal function that utilizes a custom Python script and
-  Biopython to create a PhyloXML from a multiple sequence alignment.
+Biopython to create a PhyloXML from a multiple sequence alignment.
 }
 \keyword{internal}
 

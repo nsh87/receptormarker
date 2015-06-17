@@ -15,8 +15,8 @@ A path to a Newick file representing the phylogenetic tree.
 }
 \description{
 An internal function that uses the \emph{ape} package and the
-  BIONJ method (an improved NJ, or neighbor joining, method) to create a
-  phylogenetic tree.
+BIONJ method (an improved NJ, or neighbor joining, method) to create a
+phylogenetic tree.
 }
 \keyword{internal}
 

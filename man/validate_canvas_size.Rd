@@ -11,7 +11,7 @@ validate_canvas_size(canvas_size)
 }
 \description{
 An internal function that creates an error if \code{canvas_size}
-  is invalid.
+is invalid.
 }
 \keyword{internal}
 
