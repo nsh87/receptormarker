@@ -39,7 +39,8 @@
 #' @examples
 #' library(datasets)
 #' iris_cluster <- cluster_optimal(iris[, 1:4])
-cluster_optimal <- function(data, krange = 2:10, iter.max = 300, runs = 10, ...) {
+cluster_optimal <- function(data, krange = 2:10, iter.max = 300, runs = 10, 
+                            method = "kmeans", ...) {
   if (1 %in% krange) stop("The entire range for # of clusters is to be > 1.")
   data_dist <- dist(data)
   km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
