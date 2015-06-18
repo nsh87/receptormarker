@@ -3,6 +3,4 @@
 export(radial_phylo)
 export(radial_phyloOutput)
 export(renderRadial_phylo)
-import(Biostrings)
 import(htmlwidgets)
-import(muscle)

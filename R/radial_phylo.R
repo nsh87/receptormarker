@@ -239,8 +239,6 @@ clean_data <- function(d, seqs_col, verbose, verbose_dir) {
 #' @return A named list containing the multiple sequence alignment
 #' \code{"as_string"} (a \code{MultipleAlignment} class) and a path to the MSA
 #' FASTA \code{"file"}.
-#' @import Biostrings
-#' @import muscle
 #' @keywords internal
 msa <- function(seqs, verbose, verbose_dir, dedupe_hash=NULL) {
   seqs_biostring <- Biostrings::AAStringSet(seqs)
