@@ -24,7 +24,8 @@ Imports:
     seqinr (>= 3.1),
     ape (>=  3.2),
     XML (>= 3.98-1.2),
-    Biostrings(>= 2.36.1)
+    Biostrings(>= 2.36.1),
+    muscle(>= 3.10.0)
 Suggests:
     testthat (>= 0.9.1),
     lintr (>= 0.2.0)
