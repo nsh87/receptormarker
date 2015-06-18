@@ -9,7 +9,8 @@ err1="ERROR"
 err2="WARNING"
 err3="Failure (at"
 err4="Failure(@"
-if ! grep -q "$err1\|$err2\|$err3\|$err4" $log_file; then
+err5="Error: "
+if ! grep -q "$err1\|$err2\|$err3\|$err4\|$err5" $log_file; then
     echo "No errors, warnings, or failures found."
 else 
     printf "\n"
@@ -18,6 +19,7 @@ else
     grep -n "$err2" $log_file
     grep -n "$err3" $log_file
     grep -n "$err4" $log_file
+    grep -n "$err5" $log_file
     echo "ERROR, WARNING, or Failure found. See grep results above."
     printf "\n"
     exit 1
