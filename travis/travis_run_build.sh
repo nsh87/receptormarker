@@ -26,5 +26,4 @@ else
 fi
 
 # Run the same commands Travis runs by default
-R CMD build --no-build-vignettes --no-manual receptormarker
 R CMD check --no-build-vignettes --no-manual --as-cran receptormarker
