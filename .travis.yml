@@ -22,13 +22,13 @@ r_binary_packages:
   
 r_github_packages:
   - jimhester/lintr
-
-before_script: Rscript ./travis/travis_prep.R
-
+  
 bioc_packages:
   - muscle
 
-script: ./travis/travis_run_build.sh
+before_script:
+  - Rscript ./travis/travis_prep.R
+  - ./travis/travis_run_build.sh
 
 notifications:
   email:

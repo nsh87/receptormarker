@@ -24,6 +24,3 @@ else
     printf "\n"
     exit 1
 fi
-
-# Run the same commands Travis runs by default
-R CMD check --no-build-vignettes --no-manual --as-cran receptormarker
