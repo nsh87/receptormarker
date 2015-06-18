@@ -904,8 +904,18 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
 }
 
 
-#' Widget output function for use in Shiny
-#'
+#' @title Shiny bindings for radial phylograms
+#' @description Output and render functions for using radial_phylo within
+#' Shiny applications and interactive Rmd documents.
+#' @param outputId The output variable to read from.
+#' @param width,height A valid CSS unit, such as \code{"100\%"},
+#' \code{"600px"}, \code{"auto"}, or a number (which will be coerced to a string
+#' and have \code{"px"} appended to it).
+#' @param expr An expression that generates a radial phylogram.
+#' @param env The environment in which to evaluate \code{expr}
+#' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
+#' is useful if you want to save an expression in a variable.
+#' @name radial_phylo_shiny
 #' @export
 # nolint start
 radial_phyloOutput <- function(outputId, width = "100%", height = "400px"){
@@ -915,8 +925,7 @@ radial_phyloOutput <- function(outputId, width = "100%", height = "400px"){
 }
 
 
-#' Widget render function for use in Shiny
-#'
+#' @rdname radial_phylo_shiny
 #' @export
 # nolint start
 renderRadial_phylo <- function(expr, env = parent.frame(), quoted = FALSE) {
