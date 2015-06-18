@@ -828,7 +828,7 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
     dir.create(verbose_dir)
   }
   
-  # Step 1: Clean the user-supplied and the sequences
+  # Step 1: Clean the user-supplied data and the sequences
   clean <- clean_data(d, seqs_col, verbose, verbose_dir)
   seqs <- clean[["seqs"]]
   if (condense == TRUE) {
