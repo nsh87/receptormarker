@@ -68,7 +68,7 @@ and therefore is the default setting. Only applicable if Biopython is
 installed and available.}
 }
 \description{
-Creates a D3 JavaScript-based radial phylogram in RStudio or a
+Creates a JavaScript-based radial phylogram in RStudio or a
 browser window. Intended for use with relatively short amino acid sequences,
 particularly those representing the variable chains or complementary
 determining regions (CDRs) of antibody or T-cell receptors. Provides several

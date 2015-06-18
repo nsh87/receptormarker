@@ -717,7 +717,7 @@ add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
 
 
 #' @title Create an interactive radial phylogram
-#' @description Creates a D3 JavaScript-based radial phylogram in RStudio or a
+#' @description Creates a JavaScript-based radial phylogram in RStudio or a
 #' browser window. Intended for use with relatively short amino acid sequences,
 #' particularly those representing the variable chains or complementary
 #' determining regions (CDRs) of antibody or T-cell receptors. Provides several
