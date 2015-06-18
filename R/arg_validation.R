@@ -8,7 +8,7 @@
 validate_true_false <- function(arg_list) {
   for (i in c(1:length(arg_list))) {
     a <- arg_list[[i]]
-    if (is.null(a) || !(a %in% c(TRUE, FALSE))) {
+    if (is.null(a) || !(a %in% c(TRUE, FALSE)) || !(class(a) == "logical")) {
       err <- paste0("The argument '", names(arg_list)[[i]],
                 "' must be TRUE or FALSE", collapse="")
       stop(err, call.=FALSE)
