@@ -208,7 +208,7 @@ clean_data <- function(d, seqs_col, verbose, verbose_dir) {
     seqs <- as.character(d_clean)
   }
   # Write the sequences if the user wants them
-  if (verbose == TRUE) {
+  if (verbose) {
     if (class(d_clean) == "data.frame") {
       seqs_fasta <- with(d_clean, paste0(">", seqs, "\n", seqs, collapse="\n"))
     } else if (class(d_clean) == "character") {
@@ -256,14 +256,14 @@ msa <- function(seqs, verbose, verbose_dir, dedupe_hash=NULL) {
                             unlist(lapply(seqs_rle[["lengths"]], seq_len)))
   } else seqs_unique <- seqs
   names(seqs_biostring) <- seqs_unique
-  if (verbose == TRUE) message("MUSCLE multiple sequence alignment:")
+  if (verbose) message("MUSCLE multiple sequence alignment:")
   ms_alignment <- muscle::muscle(stringset=seqs_biostring, quiet=!verbose)
   # Write the alignment to file in case Biopython needs it
   aa_str_set <- as(ms_alignment, "AAStringSet")
   msa_file <- tempfile(pattern="msa-", tmpdir=tempdir(), fileext=".fasta")
   Biostrings::writeXStringSet(aa_str_set, file=msa_file)
   # Copy the alignment from the tmp dir to verbose dir if the user wants it
-  if (verbose == TRUE && file.exists(msa_file)) {
+  if (verbose && file.exists(msa_file)) {
     file.copy(msa_file, verbose_dir)
   }
   list(as_string=ms_alignment, file=msa_file)
@@ -340,7 +340,7 @@ newick_to_phyloxml <- function(newick_file, verbose, verbose_dir) {
     ), ignore.stdout=!verbose, ignore.stderr=!verbose
   )
   # Also write the phyloxml to the verbose folder if the user wants it
-  if (verbose == TRUE && file.exists(xml_file)) {
+  if (verbose && file.exists(xml_file)) {
     file.copy(xml_file, verbose_dir)
   }
   xml_file
@@ -821,7 +821,7 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
   height <- NULL
   
   # Create verbose dir
-  if (verbose == TRUE) {
+  if (verbose) {
     verbose_dir <- tempfile("radial_phylo-", tmpdir=getwd(), fileext="")
     dir.create(verbose_dir)
   }
@@ -861,7 +861,7 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
   }
   
   # Also write the phyloxml to the verbose folder if the user wants it
-  if (verbose == TRUE && file.exists(xml_file)) {
+  if (verbose && file.exists(xml_file)) {
     file.copy(xml_file, verbose_dir)
   }
   
