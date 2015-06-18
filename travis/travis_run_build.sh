@@ -1,26 +1,13 @@
 #!/usr/bin/env sh
-log_file="travis/travis_build.log"
 
-# Run custom commands, such as running your test cases
-eval "Rscript ./travis/travis_build.R | tee -a '$log_file'"
+# Build and check the package --as-cran
+echo "Building with R CMD build"
+R CMD build .
+export PKG_TARBALL=$(Rscript -e 'pkg <- devtools::as.package("."); cat(paste0(pkg$package, "_", pkg$version, ".tar.gz"));')
 
-# Search for errors in the output of your custom commands
-err1="ERROR"
-err2="WARNING"
-err3="Failure (at"
-err4="Failure(@"
-err5="Error: "
-if ! grep -q "$err1\|$err2\|$err3\|$err4\|$err5" $log_file; then
-    echo "No errors, warnings, or failures found."
-else 
-    printf "\n"
-    echo "*** grep results **********************"
-    grep -n "$err1" $log_file
-    grep -n "$err2" $log_file
-    grep -n "$err3" $log_file
-    grep -n "$err4" $log_file
-    grep -n "$err5" $log_file
-    echo "ERROR, WARNING, or Failure found. See grep results above."
-    printf "\n"
-    exit 1
-fi
+# Check the package
+echo "Testing with: R CMD check ${PKG_TARBALL} --as-cran"
+R CMD check "${PKG_TARBALL}" --as-cran
+# Check for warnings
+export RCHECK_DIR=$(Rscript -e 'cat(paste0(devtools::as.package(".")$package, ".Rcheck"))')
+grep -q -R "WARNING" "${RCHECK_DIR}/00check.log"; RETVAL=$?
