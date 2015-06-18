@@ -16,6 +16,7 @@ Description: Provides functions for executing computations on antibody receptor
     pipe data into these functions and then generate visualizations.
 License: BSD_2_clause + file LICENSE
 URL: https://github.com/nsh87/receptormarker
+LazyData: True
 Depends: R (>= 3.2.0)
 Imports:
     htmlwidgets (>= 0.4),
