@@ -19,9 +19,10 @@ URL: https://github.com/nsh87/receptormarker
 Depends: R (>= 3.2.0)
 Imports:
     htmlwidgets (>= 0.4),
+    htmltools (>= 0.2.6),
     seqinr (>= 3.1),
     ape (>=  3.2),
-    XML (>= 3.98-1.1)
+    XML (>= 3.98-1.2)
 Suggests:
     testthat (>= 0.9.1),
     lintr (>= 0.2.0)
