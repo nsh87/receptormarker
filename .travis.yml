@@ -29,6 +29,7 @@ bioc_packages:
   - muscle
 
 script:
+  - ./travis/travis_run_tests.sh
   - ./travis/travis_run_build.sh
 
 notifications:
