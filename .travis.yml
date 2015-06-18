@@ -15,6 +15,9 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libcurl4-openssl-dev libxml2-dev python python-setuptools python-dev python-numpy
   - sudo easy_install -f http://biopython.org/DIST/ biopython
+  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
+  - chmod 755 ./travis-tool.sh
+  - ./travis-tool.sh bootstrap
 
 r_binary_packages:
   - testthat
@@ -22,13 +25,18 @@ r_binary_packages:
   
 r_github_packages:
   - jimhester/lintr
-  
+
+before_script: Rscript ./travis/travis_prep.R
+
 bioc_packages:
   - muscle
 
-before_script:
-  - Rscript ./travis/travis_prep.R
+script:
   - ./travis/travis_run_build.sh
+  - ./travis-tool.sh run_tests
+  
+after_failure:
+  - ./travis-tool.sh dump_logs
 
 notifications:
   email:
