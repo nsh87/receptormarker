@@ -239,6 +239,8 @@ clean_data <- function(d, seqs_col, verbose, verbose_dir) {
 #' @return A named list containing the multiple sequence alignment
 #' \code{"as_string"} (a \code{MultipleAlignment} class) and a path to the MSA
 #' FASTA \code{"file"}.
+#' @import Biostrings
+#' @import muscle
 #' @keywords internal
 msa <- function(seqs, verbose, verbose_dir, dedupe_hash=NULL) {
   seqs_biostring <- Biostrings::AAStringSet(seqs)
@@ -885,8 +887,6 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
      src = c(file=dirname(xml_file)),
      attachment = list(xml=basename(xml_file))
    )
-   
-  Sys.sleep(1)  # Should prevent some errors with the PhyloXML not being ready
    
   # Create widget
   htmlwidgets::createWidget(
