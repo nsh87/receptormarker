@@ -48,31 +48,29 @@ cluster_optimal <- function(data, krange = 2:10, iter.max = 300, runs = 10,
   km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
              clust_gap = NULL, wss = NULL, k_best = NULL)
   for (k in krange) {
-    sil_max <- 0
-    sil_avg_max <- 0
     min_wss <- Inf
     km_opt <- NULL
     for (i in 1:runs) {
       kmm <- kmeans(data, k, iter.max = iter.max, nstart = 10)
-      swss <- kmm[['tot.withinss']]
+      swss <- kmm[["tot.withinss"]]
       if (swss < min_wss) {
         min_wss <- swss
         km_opt <- kmm
       }
     }
-    sil <- cluster::silhouette(km_opt[['cluster']], data_dist)
+    sil <- cluster::silhouette(km_opt[["cluster"]], data_dist)
     sil_sum <- summary(sil)
-    sil_avg <- sil_sum[['avg.width']]
+    sil_avg <- sil_sum[["avg.width"]]
     
-    km[['clust_model']][[k]] <- km_opt
-    km[['sil_avg']][[k]] <- sil_avg
-    km[['num_clust']][[k]] <- k
-    km[['sil']][[k]] <- sil
-    km[['wss']][[k]] <- min_wss
+    km[["clust_model"]][[k]] <- km_opt
+    km[["sil_avg"]][[k]] <- sil_avg
+    km[["num_clust"]][[k]] <- k
+    km[["sil"]][[k]] <- sil
+    km[["wss"]][[k]] <- min_wss
   }
-  km[['clust_gap']] <- cluster::clusGap(data, kmeans, 
-                                        K.max = length(km[['clust_model']]), 
+  km[["clust_gap"]] <- cluster::clusGap(data, kmeans, 
+                                        K.max = length(km[["clust_model"]]), 
                                         B = 15, verbose = FALSE)
-  km[['k_best']] <- which.max(km[['sil_avg']])
+  km[["k_best"]] <- which.max(km[["sil_avg"]])
   structure(km, class = "cluster_optimal")
 }

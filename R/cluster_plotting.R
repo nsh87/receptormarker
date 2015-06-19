@@ -23,7 +23,7 @@
 #' # Second, use object with wss_plot
 #' wss_plot(iris_cluster, optimal = TRUE)
 wss_plot <- function(clust_obj, optimal = FALSE, ...) {
-  wss <- clust_obj[['wss']]
+  wss <- clust_obj[["wss"]]
   start <- length(wss[is.na(wss)]) + 1 # We start the krange right after NA's
   end <- length(wss)
   krange <- start:end
@@ -33,7 +33,7 @@ wss_plot <- function(clust_obj, optimal = FALSE, ...) {
        main = "Within Sum of Squares by Cluster",
        ...)
   if (optimal) {
-    opti_clust <- clust_obj[['k_best']]
+    opti_clust <- clust_obj[["k_best"]]
     index <- opti_clust - (start - 1) # Account for removal of NA's
     points(opti_clust, wss[index], col = "red", pch = 1, cex = 3)
     legend("topright", "Optimal Clusters", col = "red", pch = 1)
@@ -67,11 +67,11 @@ wss_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' # Second, use object with clusGap_plot
 #' clusGap_plot(iris_cluster, optimal = TRUE)
 clusGap_plot <- function(clust_obj, optimal = FALSE, ...) {
-  plot(clust_obj[['clust_gap']], xlab = "# of Clusters", main = "Gap Analysis",
+  plot(clust_obj[["clust_gap"]], xlab = "# of Clusters", main = "Gap Analysis",
        ...)
   if (optimal) {
-    opti_clust <- clust_obj[['k_best']]
-    gap_best <- clust_obj[['clust_gap']]['Tab'][[1]][opti_clust, 3]
+    opti_clust <- clust_obj[["k_best"]]
+    gap_best <- clust_obj[["clust_gap"]]["Tab"][[1]][opti_clust, 3]
     points(opti_clust, gap_best, col = "red", pch = 1, cex = 3)
     legend("topleft", "Optimal Clusters", col = "red", pch = 1)
   }
@@ -109,8 +109,8 @@ clusGap_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' pca_plot(iris[, 1:4], iris_cluster, num_clust = 3)
 pca_plot <- function(data, clust_obj, num_clust, ...) {
   pca <- princomp(data)
-  clusters <- clust_obj[['clust_model']][[num_clust]][['cluster']]
-  plot(pca[['scores']][,1:2], col = rainbow(num_clust)[clusters],
+  clusters <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
+  plot(pca[["scores"]][,1:2], col = rainbow(num_clust)[clusters],
        xlab = "Principal Component 1",
        ylab = "Principal Component 2",
        main = "PCA Plot of Clusters",
@@ -144,7 +144,7 @@ pca_plot <- function(data, clust_obj, num_clust, ...) {
 #' # Second, use object with sil_plot
 #' sil_plot(iris_cluster, num_clust = 3)
 sil_plot <- function(clust_obj, num_clust, ...) {
-  sil <- clust_obj[['sil']][[num_clust]]
+  sil <- clust_obj[["sil"]][[num_clust]]
   plot(sil, main = "Silhouette Plot", ...)
 }
 
@@ -175,7 +175,7 @@ sil_plot <- function(clust_obj, num_clust, ...) {
 #' # Second, use object with avg_sil_plot
 #' avg_sil_plot(iris_cluster, optimal = TRUE)
 avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
-  sil <- clust_obj[['sil_avg']]
+  sil <- clust_obj[["sil_avg"]]
   start <- length(sil[is.na(sil)]) + 1 # We start the krange right after NA's
   end <- length(sil)
   krange <- start:end
@@ -185,7 +185,7 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
        main = "Average Silhouette Width by Cluster",
        ...)
   if (optimal) {
-    opti_clust <- clust_obj[['k_best']]
+    opti_clust <- clust_obj[["k_best"]]
     index <- opti_clust - (start - 1) # Account for removal of NA's
     points(opti_clust, sil[index], col = "red", pch = 1, cex = 3)
     legend("bottomright", "Optimal Clusters", col = "red", pch = 1)
@@ -225,10 +225,11 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' clust_boxplot(iris[, 1:4], iris_cluster, num_clust = 3)
 clust_boxplot <- function(data, clust_obj, num_clust, ...) {
   meas_vars <- colnames(data)
-  data['cluster'] <- clust_obj[['clust_model']][[num_clust]][['cluster']]
+  data["cluster"] <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
   m <- reshape2::melt(data, id.vars = "cluster", measure.vars = meas_vars)
   ggplot2::qplot(x = as.factor(cluster), y = value, data = m, geom = "boxplot", 
                  fill = as.factor(cluster), xlab = NULL, 
                  ylab = "Relative expression level", ...) + 
-    facet_wrap(~variable) + scale_fill_discrete(name = "Cluster")
+    ggplot2::facet_wrap(~variable) + 
+    ggplot2::scale_fill_discrete(name = "Cluster")
 }
