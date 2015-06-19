@@ -10,4 +10,4 @@ echo "Testing with: R CMD check ${PKG_TARBALL} --as-cran"
 R CMD check "${PKG_TARBALL}" --as-cran
 # Check for warnings
 export RCHECK_DIR=$(Rscript -e 'cat(paste0(devtools::as.package(".")$package, ".Rcheck"))')
-grep -q -R "WARNING" "${RCHECK_DIR}/00check.log"; RETVAL=$?
+grep -q -R "ERROR\|WARNING" "${RCHECK_DIR}/00check.log"; RETVAL=$?
