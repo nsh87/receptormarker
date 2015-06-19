@@ -19,7 +19,7 @@
 #'   does nothing, but functionality will be added in the future.
 #' @param ... Further arguments to be passed to \code{\link[stats]{kmeans}}.
 #'
-#' @return \code{cluster_optimal} returns an object of class "cluster_optimal"
+#' @return \code{multiClust} returns an object of class "multiClust"
 #'   that can be used for multiple plots. It is a list with at least the
 #'   following components:
 #'   \code{clust_model} A list of \code{\link[stats]{kmeans}} objects for each
@@ -40,8 +40,8 @@
 #'
 #' @examples
 #' library(datasets)
-#' iris_cluster <- cluster_optimal(iris[, 1:4])
-cluster_optimal <- function(data, krange = 2:10, iter.max = 300, runs = 10, 
+#' iris_cluster <- multiClust(iris[, 1:4])
+multiClust <- function(data, krange = 2:10, iter.max = 300, runs = 10, 
                             method = "kmeans", ...) {
   if (1 %in% krange) stop("The entire range for # of clusters is to be > 1.")
   data_dist <- dist(data)
@@ -72,5 +72,5 @@ cluster_optimal <- function(data, krange = 2:10, iter.max = 300, runs = 10,
                                         K.max = length(km[["clust_model"]]), 
                                         B = 15, verbose = FALSE)
   km[["k_best"]] <- which.max(km[["sil_avg"]])
-  structure(km, class = "cluster_optimal")
+  structure(km, class = "multiClust")
 }
