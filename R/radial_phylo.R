@@ -32,8 +32,9 @@ validate_canvas_size <- function(canvas_size) {
   tryCatch({
     if (length(canvas_size) != 1) {
       stop(err, call.=FALSE)
-    }
-    if (!is.element(canvas_size, canvas_size_options) &&
+    } else if (!(class(canvas_size) %in% c("character", "numeric"))) {
+      stop(err, call.=FALSE)
+    } else if (!is.element(canvas_size, canvas_size_options) &&
         canvas_size != floor(canvas_size)) {
       stop(err, call.=FALSE)
     } else if (canvas_size < 1) {
