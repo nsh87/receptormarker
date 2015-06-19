@@ -10,7 +10,6 @@ virtualenv:
 env:
   global:
     - CRAN: http://cran.rstudio.com
-    - BIOC_USE_DEVEL = "FALSE"
 
 before_install:
   - sudo apt-get update -qq
@@ -19,13 +18,19 @@ before_install:
 
 r_binary_packages:
   - testthat
+  - shiny
   
 r_github_packages:
   - jimhester/lintr
 
 before_script: Rscript ./travis/travis_prep.R
 
-script: ./travis/travis_run_build.sh
+bioc_packages:
+  - muscle
+
+script:
+  - ./travis/travis_run_tests.sh
+  - ./travis/travis_run_build.sh
 
 notifications:
   email:
