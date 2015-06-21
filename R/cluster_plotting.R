@@ -85,7 +85,7 @@ clusGap_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' the clusters based on the first two components. It is a wrapper on the 
 #' \code{\link[graphics]{plot}} function.
 #'
-#' @param data A numeric matrix of data, or an object that can be coerced to
+#' @param d A numeric matrix of data, or an object that can be coerced to
 #'   such a matrix (such as a numeric vector or a data frame with all numeric
 #'   columns). Note: This should be the same one used to generate 
 #'   \code{clust_obj}.
@@ -107,8 +107,8 @@ clusGap_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' iris_cluster <- multiClust(iris[, 1:4])
 #' # Second, use object with pca_plot
 #' pca_plot(iris[, 1:4], iris_cluster, num_clust = 3)
-pca_plot <- function(data, clust_obj, num_clust, ...) {
-  pca <- princomp(data)
+pca_plot <- function(d, clust_obj, num_clust, ...) {
+  pca <- princomp(d)
   clusters <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
   plot(pca[["scores"]][,1:2], col = rainbow(num_clust)[clusters],
        xlab = "Principal Component 1",
@@ -200,7 +200,7 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' \code{clust_obj} to show the box plots of each feature after using the
 #' \code{\link[reshape2]{melt}} function to get the correct form of \code{data}.
 #'
-#' @param data A numeric matrix of data, or an object that can be coerced to
+#' @param d A numeric matrix of data, or an object that can be coerced to
 #'   such a matrix (such as a numeric vector or a data frame with all numeric
 #'   columns). Note: This should be the same one used to generate 
 #'   \code{clust_obj}.
@@ -223,10 +223,10 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' iris_cluster <- multiClust(iris[, 1:4])
 #' # Second, use object with clust_boxplot
 #' clust_boxplot(iris[, 1:4], iris_cluster, num_clust = 3)
-clust_boxplot <- function(data, clust_obj, num_clust, ...) {
-  meas_vars <- colnames(data)
-  data["cluster"] <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
-  m <- reshape2::melt(data, id.vars = "cluster", measure.vars = meas_vars)
+clust_boxplot <- function(d, clust_obj, num_clust, ...) {
+  meas_vars <- colnames(d)
+  d["cluster"] <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
+  m <- reshape2::melt(d, id.vars = "cluster", measure.vars = meas_vars)
   ggplot2::qplot(x = as.factor(cluster), y = value, data = m, geom = "boxplot", 
                  fill = as.factor(cluster), xlab = NULL, 
                  ylab = "Relative expression level", ...) + 

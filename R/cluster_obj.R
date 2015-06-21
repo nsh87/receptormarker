@@ -6,7 +6,7 @@
 #' clusters overall based on average silhouette width from the 
 #' \code{\link[cluster]{silhouette}} function.
 #'
-#' @param data A numeric matrix of data, or an object that can be coerced to
+#' @param d A numeric matrix of data, or an object that can be coerced to
 #'   such a matrix (such as a numeric vector or a data frame with all numeric
 #'   columns).
 #' @param krange An integer vector. Numbers of clusters which are to be compared
@@ -41,24 +41,24 @@
 #' @examples
 #' library(datasets)
 #' iris_cluster <- multiClust(iris[, 1:4])
-multiClust <- function(data, krange = 2:10, iter.max = 300, runs = 10, 
+multiClust <- function(d, krange = 2:10, iter.max = 300, runs = 10, 
                             method = "kmeans", ...) {
   if (1 %in% krange) stop("The entire range for # of clusters is to be > 1.")
-  data_dist <- dist(data)
+  d_dist <- dist(d)
   km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
              clust_gap = NULL, wss = NULL, k_best = NULL)
   for (k in krange) {
     min_wss <- Inf
     km_opt <- NULL
     for (i in 1:runs) {
-      kmm <- stats::kmeans(data, k, iter.max = iter.max, nstart = 10)
+      kmm <- stats::kmeans(d, k, iter.max = iter.max, nstart = 10)
       swss <- kmm[["tot.withinss"]]
       if (swss < min_wss) {
         min_wss <- swss
         km_opt <- kmm
       }
     }
-    sil <- cluster::silhouette(km_opt[["cluster"]], data_dist)
+    sil <- cluster::silhouette(km_opt[["cluster"]], d_dist)
     sil_sum <- summary(sil)
     sil_avg <- sil_sum[["avg.width"]]
     
@@ -68,7 +68,7 @@ multiClust <- function(data, krange = 2:10, iter.max = 300, runs = 10,
     km[["sil"]][[k]] <- sil
     km[["wss"]][[k]] <- min_wss
   }
-  km[["clust_gap"]] <- cluster::clusGap(data, kmeans, 
+  km[["clust_gap"]] <- cluster::clusGap(d, kmeans, 
                                         K.max = length(km[["clust_model"]]), 
                                         B = 15, verbose = FALSE)
   km[["k_best"]] <- which.max(km[["sil_avg"]])
