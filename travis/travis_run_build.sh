@@ -16,7 +16,7 @@ err2="WARNING"
 err3="Failure (at"
 err4="Failure(@"
 err5="Error: "
-if ! grep-q -R "$err1\|$err2\|$err3\|$err4\|$err5" "${RCHECK_DIR}/00check.log"; then
+if ! grep -q -R "$err1\|$err2\|$err3\|$err4\|$err5" "${RCHECK_DIR}/00check.log"; then
     echo "No errors or warnings found when checking the package"
 else
     printf "\n"
