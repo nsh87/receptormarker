@@ -51,7 +51,7 @@ multiClust <- function(data, krange = 2:10, iter.max = 300, runs = 10,
     min_wss <- Inf
     km_opt <- NULL
     for (i in 1:runs) {
-      kmm <- kmeans(data, k, iter.max = iter.max, nstart = 10)
+      kmm <- stats::kmeans(data, k, iter.max = iter.max, nstart = 10)
       swss <- kmm[["tot.withinss"]]
       if (swss < min_wss) {
         min_wss <- swss
