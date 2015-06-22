@@ -7,7 +7,7 @@
 avg_sil_plot(clust_obj, optimal = FALSE, ...)
 }
 \arguments{
-\item{clust_obj}{A \code{\link{cluster_optimal}} object from which to extract
+\item{clust_obj}{A \code{\link{multiClust}} object from which to extract
 \code{clust_gap}.}
 
 \item{optimal}{Logical. If \code{TRUE}, the optimal number of clusters as
@@ -24,14 +24,14 @@ clusters present in \code{clust_obj}. It provides a wrapper on
 \code{clust_obj} and plotting it.
 }
 \examples{
-# First, create a cluster_optimal object
+# First, create a multiClust object
 library(datasets)
-iris_cluster <- cluster_optimal(iris[, 1:4])
+iris_cluster <- multiClust(iris[, 1:4])
 # Second, use object with avg_sil_plot
 avg_sil_plot(iris_cluster, optimal = TRUE)
 }
 \seealso{
-\code{\link[graphics]{plot}}, \code{\link{cluster_optimal}},
+\code{\link[graphics]{plot}}, \code{\link{multiClust}},
   \code{\link[cluster]{silhouette}}
 }
 

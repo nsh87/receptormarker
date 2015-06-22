@@ -7,12 +7,12 @@
 sil_plot(clust_obj, num_clust, ...)
 }
 \arguments{
-\item{clust_obj}{A \code{\link{cluster_optimal}} object from which to extract
+\item{clust_obj}{A \code{\link{multiClust}} object from which to extract
 \code{clust_model} based on the argument \code{num_clust}}
 
 \item{num_clust}{An integer. The desired number of clusters to be used. Note:
 This integer should fall within the krange used to generate the
-\code{\link{cluster_optimal}} object.}
+\code{\link{multiClust}} object.}
 
 \item{...}{Further arguments to be passed to the \code{\link{plot}}
   function (besides \code{xlab}, \code{ylab}, \code{main}).}
@@ -24,14 +24,14 @@ the special way that the \code{\link[graphics]{plot}} function handles a
 \code{\link[cluster]{silhouette}} object.
 }
 \examples{
-# First, create a cluster_optimal object
+# First, create a multiClust object
 library(datasets)
-iris_cluster <- cluster_optimal(iris[, 1:4])
+iris_cluster <- multiClust(iris[, 1:4])
 # Second, use object with sil_plot
 sil_plot(iris_cluster, num_clust = 3)
 }
 \seealso{
-\code{\link[graphics]{plot}}, \code{\link{cluster_optimal}},
+\code{\link[graphics]{plot}}, \code{\link{multiClust}},
 \code{\link[cluster]{silhouette}}
 }
 

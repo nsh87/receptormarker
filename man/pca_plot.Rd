@@ -4,20 +4,20 @@
 \alias{pca_plot}
 \title{Plot of first two principal components.}
 \usage{
-pca_plot(data, clust_obj, num_clust, ...)
+pca_plot(d, clust_obj, num_clust, ...)
 }
 \arguments{
-\item{data}{A numeric matrix of data, or an object that can be coerced to
+\item{d}{A numeric matrix of data, or an object that can be coerced to
 such a matrix (such as a numeric vector or a data frame with all numeric
 columns). Note: This should be the same one used to generate
 \code{clust_obj}.}
 
-\item{clust_obj}{A \code{\link{cluster_optimal}} object from which to extract
+\item{clust_obj}{A \code{\link{multiClust}} object from which to extract
 \code{clust_model} based on the argument \code{num_clust}}
 
 \item{num_clust}{An integer. The desired number of clusters to be used. Note:
 This integer should fall within the krange used to generate the
-\code{\link{cluster_optimal}} object.}
+\code{\link{multiClust}} object.}
 
 \item{...}{Further arguments to be passed to the \code{\link{plot}}
   function (besides \code{xlab}, \code{ylab}, \code{main}).}
@@ -30,13 +30,13 @@ the clusters based on the first two components. It is a wrapper on the
 \code{\link[graphics]{plot}} function.
 }
 \examples{
-# First, create a cluster_optimal object
+# First, create a multiClust object
 library(datasets)
-iris_cluster <- cluster_optimal(iris[, 1:4])
+iris_cluster <- multiClust(iris[, 1:4])
 # Second, use object with pca_plot
 pca_plot(iris[, 1:4], iris_cluster, num_clust = 3)
 }
 \seealso{
-\code{\link[graphics]{plot}}, \code{\link{cluster_optimal}},
+\code{\link[graphics]{plot}}, \code{\link{multiClust}},
 }
 
