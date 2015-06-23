@@ -4,7 +4,7 @@
 #' \code{\link[graphics]{plot}} by extracting \code{wss} from \code{clust_obj}
 #' and plotting it.
 #'
-#' @param clust_obj A \code{\link{multiClust}} object from which to extract
+#' @param clust_obj A \code{multiClust} object from which to extract
 #'   \code{wss}.
 #' @param optimal Logical. If \code{TRUE}, the optimal number of clusters as
 #'   extracted from \code{clust_obj}, based on average silhouette width, is
@@ -14,12 +14,12 @@
 #'
 #' @export
 #' 
-#' @seealso \code{\link[graphics]{plot}}, \code{\link{multiClust}}
+#' @seealso \code{\link[graphics]{plot}}, \code{\link{multi_clust}}
 #'
 #' @examples
 #' # First, create a multiClust object
 #' library(datasets)
-#' iris_cluster <- multiClust(iris[, 1:4])
+#' iris_cluster <- multi_clust(iris[, 1:4])
 #' # Second, use object with wss_plot
 #' wss_plot(iris_cluster, optimal = TRUE)
 wss_plot <- function(clust_obj, optimal = FALSE, ...) {
@@ -47,7 +47,7 @@ wss_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' \code{\link[cluster]{clusGap}} object, and leveraging the custom plotting
 #' method that it has.
 #'
-#' @param clust_obj A \code{\link{multiClust}} object from which to extract
+#' @param clust_obj A \code{multiClust} object from which to extract
 #'   \code{clust_gap}.
 #' @param optimal Logical. If \code{TRUE}, the optimal number of clusters as
 #'   extracted from \code{clust_obj}, based on average silhouette width, is
@@ -57,13 +57,13 @@ wss_plot <- function(clust_obj, optimal = FALSE, ...) {
 #'
 #' @export
 #'
-#' @seealso \code{\link[graphics]{plot}}, \code{\link{multiClust}},
+#' @seealso \code{\link[graphics]{plot}}, \code{\link{multi_clust}},
 #'   \code{\link[cluster]{clusGap}}
 #'
 #' @examples
 #' # First, create a multiClust object
 #' library(datasets)
-#' iris_cluster <- multiClust(iris[, 1:4])
+#' iris_cluster <- multi_clust(iris[, 1:4])
 #' # Second, use object with clusGap_plot
 #' clusGap_plot(iris_cluster, optimal = TRUE)
 clusGap_plot <- function(clust_obj, optimal = FALSE, ...) {
@@ -89,22 +89,22 @@ clusGap_plot <- function(clust_obj, optimal = FALSE, ...) {
 #'   such a matrix (such as a numeric vector or a data frame with all numeric
 #'   columns). Note: This should be the same one used to generate 
 #'   \code{clust_obj}.
-#' @param clust_obj A \code{\link{multiClust}} object from which to extract
+#' @param clust_obj A \code{multiClust} object from which to extract
 #'   \code{clust_model} based on the argument \code{num_clust}
 #' @param num_clust An integer. The desired number of clusters to be used. Note:
 #'   This integer should fall within the krange used to generate the 
-#'   \code{\link{multiClust}} object.
+#'   \code{multiClust} object.
 #' @param ... Further arguments to be passed to the \code{\link{plot}} 
 #'   function (besides \code{xlab}, \code{ylab}, \code{main}).
 #'
 #' @export
 #'
-#' @seealso \code{\link[graphics]{plot}}, \code{\link{multiClust}},
+#' @seealso \code{\link[graphics]{plot}}, \code{\link{multi_clust}},
 #'
 #' @examples
 #' # First, create a multiClust object
 #' library(datasets)
-#' iris_cluster <- multiClust(iris[, 1:4])
+#' iris_cluster <- multi_clust(iris[, 1:4])
 #' # Second, use object with pca_plot
 #' pca_plot(iris[, 1:4], iris_cluster, num_clust = 3)
 pca_plot <- function(d, clust_obj, num_clust, ...) {
@@ -124,23 +124,23 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
 #' the special way that the \code{\link[graphics]{plot}} function handles a
 #' \code{\link[cluster]{silhouette}} object.
 #'
-#' @param clust_obj A \code{\link{multiClust}} object from which to extract
+#' @param clust_obj A \code{multiClust} object from which to extract
 #'   \code{clust_model} based on the argument \code{num_clust}
 #' @param num_clust An integer. The desired number of clusters to be used. Note:
 #'   This integer should fall within the krange used to generate the 
-#'   \code{\link{multiClust}} object.
+#'   \code{multiClust} object.
 #' @param ... Further arguments to be passed to the \code{\link{plot}} 
 #'   function (besides \code{xlab}, \code{ylab}, \code{main}).
 #'
 #' @export
 #'
-#' @seealso \code{\link[graphics]{plot}}, \code{\link{multiClust}},
+#' @seealso \code{\link[graphics]{plot}}, \code{\link{multi_clust}},
 #' \code{\link[cluster]{silhouette}}
 #'
 #' @examples
 #' # First, create a multiClust object
 #' library(datasets)
-#' iris_cluster <- multiClust(iris[, 1:4])
+#' iris_cluster <- multi_clust(iris[, 1:4])
 #' # Second, use object with sil_plot
 #' sil_plot(iris_cluster, num_clust = 3)
 sil_plot <- function(clust_obj, num_clust, ...) {
@@ -155,23 +155,23 @@ sil_plot <- function(clust_obj, num_clust, ...) {
 #' \code{\link[graphics]{plot}} by extracting \code{sil_avg} from 
 #' \code{clust_obj} and plotting it.
 #'
-#' @param clust_obj A \code{\link{multiClust}} object from which to extract
+#' @param clust_obj A \code{multiClust} object from which to extract
 #'   \code{clust_gap}.
 #' @param optimal Logical. If \code{TRUE}, the optimal number of clusters as
 #'   extracted from \code{clust_obj}, based on average silhouette width, is
 #'   circled in the plot.
-#' @param ... Further arguments to be passed to the \code{\link{plot}}
+#' @param ... Further arguments to be passed to the \code{\link[graphics]{plot}}
 #'   function (besides \code{xlab}, \code{ylab}, \code{main}).
 #'
 #' @export
 #'
-#' @seealso \code{\link[graphics]{plot}}, \code{\link{multiClust}},
+#' @seealso \code{\link[graphics]{plot}}, \code{\link{multi_clust}},
 #'   \code{\link[cluster]{silhouette}}
 #'
 #' @examples
 #' # First, create a multiClust object
 #' library(datasets)
-#' iris_cluster <- multiClust(iris[, 1:4])
+#' iris_cluster <- multi_clust(iris[, 1:4])
 #' # Second, use object with avg_sil_plot
 #' avg_sil_plot(iris_cluster, optimal = TRUE)
 avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
@@ -204,23 +204,23 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
 #'   such a matrix (such as a numeric vector or a data frame with all numeric
 #'   columns). Note: This should be the same one used to generate 
 #'   \code{clust_obj}.
-#' @param clust_obj A \code{\link{multiClust}} object from which to extract
+#' @param clust_obj A \code{multiClust} object from which to extract
 #'   \code{clust_model} based on the argument \code{num_clust}
 #' @param num_clust An integer. The desired number of clusters to be used. Note:
 #'   This integer should fall within the krange used to generate the 
-#'   \code{\link{multiClust}} object.
+#'   \code{multiClust} object.
 #' @param ... Further arguments to be passed to the \code{\link{qplot}} 
 #'   function (besides \code{xlab}, \code{ylab}).
 #'
 #' @export
 #'
-#' @seealso \code{\link[ggplot2]{qplot}}, \code{\link{multiClust}},
+#' @seealso \code{\link[ggplot2]{qplot}}, \code{\link{multi_clust}},
 #'   \code{\link[reshape2]{melt}}
 #'
 #' @examples
 #' # First, create a multiClust object
 #' library(datasets)
-#' iris_cluster <- multiClust(iris[, 1:4])
+#' iris_cluster <- multi_clust(iris[, 1:4])
 #' # Second, use object with clust_boxplot
 #' clust_boxplot(iris[, 1:4], iris_cluster, num_clust = 3)
 clust_boxplot <- function(d, clust_obj, num_clust, ...) {
