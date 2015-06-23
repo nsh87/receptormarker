@@ -7,7 +7,7 @@
 wss_plot(clust_obj, optimal = FALSE, ...)
 }
 \arguments{
-\item{clust_obj}{A \code{\link{multiClust}} object from which to extract
+\item{clust_obj}{A \code{multiClust} object from which to extract
 \code{wss}.}
 
 \item{optimal}{Logical. If \code{TRUE}, the optimal number of clusters as
@@ -25,11 +25,11 @@ and plotting it.
 \examples{
 # First, create a multiClust object
 library(datasets)
-iris_cluster <- multiClust(iris[, 1:4])
+iris_cluster <- multi_clust(iris[, 1:4])
 # Second, use object with wss_plot
 wss_plot(iris_cluster, optimal = TRUE)
 }
 \seealso{
-\code{\link[graphics]{plot}}, \code{\link{multiClust}}
+\code{\link[graphics]{plot}}, \code{\link{multi_clust}}
 }
 

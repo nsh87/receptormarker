@@ -7,14 +7,14 @@
 avg_sil_plot(clust_obj, optimal = FALSE, ...)
 }
 \arguments{
-\item{clust_obj}{A \code{\link{multiClust}} object from which to extract
+\item{clust_obj}{A \code{multiClust} object from which to extract
 \code{clust_gap}.}
 
 \item{optimal}{Logical. If \code{TRUE}, the optimal number of clusters as
 extracted from \code{clust_obj}, based on average silhouette width, is
 circled in the plot.}
 
-\item{...}{Further arguments to be passed to the \code{\link{plot}}
+\item{...}{Further arguments to be passed to the \code{\link[graphics]{plot}}
   function (besides \code{xlab}, \code{ylab}, \code{main}).}
 }
 \description{
@@ -26,12 +26,12 @@ clusters present in \code{clust_obj}. It provides a wrapper on
 \examples{
 # First, create a multiClust object
 library(datasets)
-iris_cluster <- multiClust(iris[, 1:4])
+iris_cluster <- multi_clust(iris[, 1:4])
 # Second, use object with avg_sil_plot
 avg_sil_plot(iris_cluster, optimal = TRUE)
 }
 \seealso{
-\code{\link[graphics]{plot}}, \code{\link{multiClust}},
+\code{\link[graphics]{plot}}, \code{\link{multi_clust}},
   \code{\link[cluster]{silhouette}}
 }
 

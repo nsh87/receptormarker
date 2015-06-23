@@ -7,12 +7,12 @@
 sil_plot(clust_obj, num_clust, ...)
 }
 \arguments{
-\item{clust_obj}{A \code{\link{multiClust}} object from which to extract
+\item{clust_obj}{A \code{multiClust} object from which to extract
 \code{clust_model} based on the argument \code{num_clust}}
 
 \item{num_clust}{An integer. The desired number of clusters to be used. Note:
 This integer should fall within the krange used to generate the
-\code{\link{multiClust}} object.}
+\code{multiClust} object.}
 
 \item{...}{Further arguments to be passed to the \code{\link{plot}}
   function (besides \code{xlab}, \code{ylab}, \code{main}).}
@@ -26,12 +26,12 @@ the special way that the \code{\link[graphics]{plot}} function handles a
 \examples{
 # First, create a multiClust object
 library(datasets)
-iris_cluster <- multiClust(iris[, 1:4])
+iris_cluster <- multi_clust(iris[, 1:4])
 # Second, use object with sil_plot
 sil_plot(iris_cluster, num_clust = 3)
 }
 \seealso{
-\code{\link[graphics]{plot}}, \code{\link{multiClust}},
+\code{\link[graphics]{plot}}, \code{\link{multi_clust}},
 \code{\link[cluster]{silhouette}}
 }
 

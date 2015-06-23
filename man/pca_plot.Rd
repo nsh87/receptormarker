@@ -12,12 +12,12 @@ such a matrix (such as a numeric vector or a data frame with all numeric
 columns). Note: This should be the same one used to generate
 \code{clust_obj}.}
 
-\item{clust_obj}{A \code{\link{multiClust}} object from which to extract
+\item{clust_obj}{A \code{multiClust} object from which to extract
 \code{clust_model} based on the argument \code{num_clust}}
 
 \item{num_clust}{An integer. The desired number of clusters to be used. Note:
 This integer should fall within the krange used to generate the
-\code{\link{multiClust}} object.}
+\code{multiClust} object.}
 
 \item{...}{Further arguments to be passed to the \code{\link{plot}}
   function (besides \code{xlab}, \code{ylab}, \code{main}).}
@@ -32,11 +32,11 @@ the clusters based on the first two components. It is a wrapper on the
 \examples{
 # First, create a multiClust object
 library(datasets)
-iris_cluster <- multiClust(iris[, 1:4])
+iris_cluster <- multi_clust(iris[, 1:4])
 # Second, use object with pca_plot
 pca_plot(iris[, 1:4], iris_cluster, num_clust = 3)
 }
 \seealso{
-\code{\link[graphics]{plot}}, \code{\link{multiClust}},
+\code{\link[graphics]{plot}}, \code{\link{multi_clust}},
 }
 
