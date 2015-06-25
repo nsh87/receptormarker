@@ -23,6 +23,9 @@
 #' # Second, use object with wss_plot
 #' wss_plot(iris_cluster, optimal = TRUE)
 wss_plot <- function(clust_obj, optimal = FALSE, ...) {
+  validate_not_null(list(clust_obj = clust_obj, optimal = optimal))
+  validate_true_false(list(optimal = optimal))
+  validate_multi_clust(clust_obj)
   wss <- clust_obj[["wss"]]
   start <- length(wss[is.na(wss)]) + 1 # We start the krange right after NA's
   end <- length(wss)
@@ -67,6 +70,9 @@ wss_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' # Second, use object with clusGap_plot
 #' clusGap_plot(iris_cluster, optimal = TRUE)
 clusGap_plot <- function(clust_obj, optimal = FALSE, ...) {
+  validate_not_null(list(clust_obj = clust_obj, optimal = optimal))
+  validate_true_false(list(optimal = optimal))
+  validate_multi_clust(clust_obj)
   plot(clust_obj[["clust_gap"]], xlab = "# of Clusters", main = "Gap Analysis",
        ...)
   if (optimal) {
@@ -108,6 +114,9 @@ clusGap_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' # Second, use object with pca_plot
 #' pca_plot(iris[, 1:4], iris_cluster, num_clust = 3)
 pca_plot <- function(d, clust_obj, num_clust, ...) {
+  validate_num_data(d)
+  validate_multi_clust(clust_obj)
+  validate_pos_num(list(num_clust = num_clust))
   pca <- princomp(d)
   clusters <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
   plot(pca[["scores"]][,1:2], col = rainbow(num_clust)[clusters],
@@ -144,6 +153,8 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
 #' # Second, use object with sil_plot
 #' sil_plot(iris_cluster, num_clust = 3)
 sil_plot <- function(clust_obj, num_clust, ...) {
+  validate_multi_clust(clust_obj)
+  validate_pos_num(list(num_clust = num_clust))
   sil <- clust_obj[["sil"]][[num_clust]]
   plot(sil, main = "Silhouette Plot", ...)
 }
@@ -175,6 +186,9 @@ sil_plot <- function(clust_obj, num_clust, ...) {
 #' # Second, use object with avg_sil_plot
 #' avg_sil_plot(iris_cluster, optimal = TRUE)
 avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
+  validate_not_null(list(clust_obj = clust_obj, optimal = optimal))
+  validate_true_false(list(optimal = optimal))
+  validate_multi_clust(clust_obj)
   sil <- clust_obj[["sil_avg"]]
   start <- length(sil[is.na(sil)]) + 1 # We start the krange right after NA's
   end <- length(sil)
@@ -224,6 +238,9 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' # Second, use object with clust_boxplot
 #' clust_boxplot(iris[, 1:4], iris_cluster, num_clust = 3)
 clust_boxplot <- function(d, clust_obj, num_clust, ...) {
+  validate_num_data(d)
+  validate_multi_clust(clust_obj)
+  validate_pos_num(list(num_clust = num_clust))
   meas_vars <- colnames(d)
   d["cluster"] <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
   m <- reshape2::melt(d, id.vars = "cluster", measure.vars = meas_vars)

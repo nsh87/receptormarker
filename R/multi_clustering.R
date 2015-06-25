@@ -43,7 +43,11 @@
 #' iris_cluster <- multi_clust(iris[, 1:4])
 multi_clust <- function(d, krange = 2:10, iter.max = 300, runs = 10, 
                             method = "kmeans", ...) {
-  if (1 %in% krange) stop("The entire range for # of clusters is to be > 1.")
+  validate_not_null(list(d = d, krange = krange, iter.max = iter.max, 
+                         runs = runs, method = method))
+  validate_num_data(d)
+  krange <- validate_sort_range(krange) # returns sorted krange by ascending
+  validate_pos_num(list(iter.max = iter.max, runs = runs))
   d_dist <- dist(d)
   km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
              clust_gap = NULL, wss = NULL, k_best = NULL)
@@ -73,4 +77,50 @@ multi_clust <- function(d, krange = 2:10, iter.max = 300, runs = 10,
                                         B = 15, verbose = FALSE)
   km[["k_best"]] <- which.max(km[["sil_avg"]])
   structure(km, class = "multiClust")
+}
+
+#' @title Validate and sort an argument that is a range of integers
+#' @description An internal function that raises an error if the argument is not
+#' a positive, non-duplicate range of integers beginning > 1. It is sorted into
+#' ascending order.
+#' @param n_range An item to be checked to make sure it is a valid range.
+#' @keywords internal
+validate_sort_range <- function(n_range) {
+  if (class(n_range) != "integer" || length(n_range <= 1)) {
+    stop("The argument 'krange' must be a range of integers.", call.=FALSE)
+  } else if (any(n_range <= 1)) {
+    stop("The argument 'krange' must contain only values greater than one.", 
+         call.=FALSE)
+  } else if (anyDuplicated(n_range) != 0) {
+    stop("The argument 'krange' must not contain any duplicate values.",
+         call.=FALSE)
+  }
+  sort(n_range)
+}
+
+#' @title Validate that an argument contains positive integers
+#' @description An internal function that raises an error if the argument does
+#' not contain positive integers.
+#' @param n A named list of items to be checked.
+#' @keywords internal
+validate_pos_num <- function(n) {
+  lapply(1:length(n), 
+         function(i) {
+           if (class(n[[i]]) != "integer" || length(n[[i]]) > 1) {
+             err <- paste0("The argument '", names(n)[[i]],
+                           "' must be a positive integer", collapse="")
+             stop(err, call.=FALSE)
+           }
+         })
+
+#' @title Validate that an object is of class \emph{multiClust}
+#' @description An internal function that raises an error if the argument is not
+#' of class \emph{multiClust}.
+#' @param clust_obj An item to be checked for class membership.
+#' @keywords internal
+validate_multi_clust <- function(clust_obj) {
+  if (class(clust_obj) != "multiClust") {
+    stop("The argument 'clust_obj' must be an object of class 'multiClust",
+         call.=FALSE)
+  }
 }
