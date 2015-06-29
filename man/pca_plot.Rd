@@ -24,10 +24,24 @@ This integer should fall within the krange used to generate the
 }
 \description{
 This function plots the instances of \code{data} using the first two
-principal components as the x and y axes, respectively. It represents each
-cluster with a different color so that one can understand the distribution of
-the clusters based on the first two components. It is a wrapper on the
+principal components as the x and y axes, respectively. These components are
+calculated using \code{\link[stats]{princomp}}. It represents each cluster
+with a different color so that one can understand the distribution of the
+clusters based on the first two components. It is a wrapper on the
 \code{\link[graphics]{plot}} function.
+}
+\details{
+This function is intended to be used to view the shape of a given
+  clustering to use for analysis. Principal component analysis looks for the
+  way to represent the data such that the most variance is explained using a
+  linear combination of the features. See \code{\link[stats]{princomp}} for
+  further details on its calculation. Here it is used strictly for its
+  ability to represent the data relatively well in just a couple dimensions.
+  One may pass in the \code{k_best} element from the \code{multiClust} object
+  for \code{num_clust}, or use a different value. This is where other
+  visualizations can be useful.
+  See the \emph{Details} section for the \code{\link{multi_clust}} function
+  and view the \emph{TIP} for a suggested workflow.
 }
 \examples{
 # First, create a multiClust object
@@ -37,6 +51,8 @@ iris_cluster <- multi_clust(iris[, 1:4])
 pca_plot(iris[, 1:4], iris_cluster, num_clust = 3)
 }
 \seealso{
-\code{\link[graphics]{plot}}, \code{\link{multi_clust}},
+\code{\link{multi_clust}}, \code{\link{wss_plot}},
+  \code{\link{clusGap_plot}}, \code{\link{sil_plot}},
+  \code{\link{avg_sil_plot}}, \code{\link{clust_boxplot}}
 }
 

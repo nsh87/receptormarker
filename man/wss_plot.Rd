@@ -22,6 +22,18 @@ This function plots within sum of squares. It provides a wrapper on
 \code{\link[graphics]{plot}} by extracting \code{wss} from \code{clust_obj}
 and plotting it.
 }
+\details{
+This function is intended to be used as part of deciding the ideal
+  number of clusters to use for analysis. Within sum of squares (WSS) tells
+  one how tightly the data points within a cluster are clustered. Typically,
+  one looks for an "elbow" at which the WSS drops significantly. Sometimes,
+  the elbow in the WSS still does not contain enough clusters to understand
+  the data well. This is where other visualizations can be useful.
+  Choosing \code{optimal = TRUE} will circle the optimal number of clusters
+  based on average silhouette width. See the \emph{Details} section for the
+  \code{\link{multi_clust}} function and view the \emph{TIP} for a suggested
+  workflow.
+}
 \examples{
 # First, create a multiClust object
 library(datasets)
@@ -30,6 +42,8 @@ iris_cluster <- multi_clust(iris[, 1:4])
 wss_plot(iris_cluster, optimal = TRUE)
 }
 \seealso{
-\code{\link[graphics]{plot}}, \code{\link{multi_clust}}
+\code{\link{multi_clust}}, \code{\link{clusGap_plot}},
+  \code{\link{pca_plot}}, \code{\link{sil_plot}}, \code{\link{avg_sil_plot}},
+  \code{\link{clust_boxplot}}
 }
 

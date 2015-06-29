@@ -23,6 +23,19 @@ This function plots gap analysis. It provides a wrapper on
 \code{\link[cluster]{clusGap}} object, and leveraging the custom plotting
 method that it has.
 }
+\details{
+This function is intended to be used as part of deciding the ideal
+  number of clusters to use for analysis. The cluster gap statistic tells
+  one the goodness of a given clustering using the gap statistic. Typically,
+  one looks for the peak before which the gap rises significantly. See
+  \code{\link[cluster]{clusGap}} for further details on its calculation.
+  Sometimes, the peak in the gap still does not contain enough clusters to
+  understand the data well. This is where other visualizations can be useful.
+  Choosing \code{optimal = TRUE} will circle the optimal number of clusters
+  based on average silhouette width. See the \emph{Details} section for the
+  \code{\link{multi_clust}} function and view the \emph{TIP} for a suggested
+  workflow.
+}
 \examples{
 # First, create a multiClust object
 library(datasets)
@@ -31,7 +44,8 @@ iris_cluster <- multi_clust(iris[, 1:4])
 clusGap_plot(iris_cluster, optimal = TRUE)
 }
 \seealso{
-\code{\link[graphics]{plot}}, \code{\link{multi_clust}},
-  \code{\link[cluster]{clusGap}}
+\code{\link{multi_clust}}, \code{\link{wss_plot}},
+  \code{\link{pca_plot}}, \code{\link{sil_plot}}, \code{\link{avg_sil_plot}},
+  \code{\link{clust_boxplot}}
 }
 

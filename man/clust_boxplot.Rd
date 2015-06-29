@@ -23,11 +23,24 @@ This integer should fall within the krange used to generate the
   function (besides \code{xlab}, \code{ylab}).}
 }
 \description{
-This function plots cluster membership for each feature of \code{data} using
-box plots. It utlizes \code{facet_wrap} in the \code{\link[ggplot2]{qplot}}
+This function plots cluster membership for each feature of \code{d} using box
+plots. It utlizes \code{facet_wrap} in the \code{\link[ggplot2]{qplot}}
 function and the desired \code{clust_model} from the argument
 \code{clust_obj} to show the box plots of each feature after using the
-\code{\link[reshape2]{melt}} function to get the correct form of \code{data}.
+\code{\link[reshape2]{melt}} function to get the correct form of \code{d}.
+}
+\details{
+This function is intended to be used to view the shape of a given
+  clustering to use for analysis. One can view which features (likely
+  phenotypic markers) are found in each cluster and how the values (likely
+  relative expression level) are distributed. This function is primarily
+  intended to try to uncover what sort of underlying structure a given
+  clustering has found in the data.
+  One may pass in the \code{k_best} element from the \code{multiClust} object
+  for \code{num_clust}, or use a different value. This is where other
+  visualizations can be useful.
+  See the \emph{Details} section for the \code{\link{multi_clust}} function
+  and view the \emph{TIP} for a suggested workflow.
 }
 \examples{
 # First, create a multiClust object
@@ -37,7 +50,8 @@ iris_cluster <- multi_clust(iris[, 1:4])
 clust_boxplot(iris[, 1:4], iris_cluster, num_clust = 3)
 }
 \seealso{
-\code{\link[ggplot2]{qplot}}, \code{\link{multi_clust}},
-  \code{\link[reshape2]{melt}}
+\code{\link{multi_clust}}, \code{\link{wss_plot}},
+  \code{\link{clusGap_plot}}, \code{\link{pca_plot}}, \code{\link{sil_plot}},
+  \code{\link{avg_sil_plot}}
 }
 

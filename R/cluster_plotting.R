@@ -309,8 +309,9 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
 #'
 #' @export
 #'
-#' @seealso \code{\link[ggplot2]{qplot}}, \code{\link{multi_clust}},
-#'   \code{\link[reshape2]{melt}}
+#' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
+#'   \code{\link{clusGap_plot}}, \code{\link{pca_plot}}, \code{\link{sil_plot}},
+#'   \code{\link{avg_sil_plot}}
 #'
 #' @examples
 #' # First, create a multiClust object
