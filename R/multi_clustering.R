@@ -86,7 +86,7 @@ multi_clust <- function(d, krange = 2:10, iter.max = 300, runs = 10,
 #' @param n_range An item to be checked to make sure it is a valid range.
 #' @keywords internal
 validate_sort_range <- function(n_range) {
-  if (class(n_range) != "integer" || length(n_range <= 1)) {
+  if (class(n_range) != "integer" || length(n_range) <= 1) {
     stop("The argument 'krange' must be a range of integers.", call.=FALSE)
   } else if (any(n_range <= 1)) {
     stop("The argument 'krange' must contain only values greater than one.", 
@@ -97,21 +97,6 @@ validate_sort_range <- function(n_range) {
   }
   sort(n_range)
 }
-
-#' @title Validate that an argument contains positive integers
-#' @description An internal function that raises an error if the argument does
-#' not contain positive integers.
-#' @param n A named list of items to be checked.
-#' @keywords internal
-validate_pos_num <- function(n) {
-  lapply(1:length(n), 
-         function(i) {
-           if (class(n[[i]]) != "integer" || length(n[[i]]) > 1) {
-             err <- paste0("The argument '", names(n)[[i]],
-                           "' must be a positive integer", collapse="")
-             stop(err, call.=FALSE)
-           }
-         })
 
 #' @title Validate that an object is of class \emph{multiClust}
 #' @description An internal function that raises an error if the argument is not

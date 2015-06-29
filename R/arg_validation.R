@@ -71,7 +71,15 @@ validate_num_data <- function(d) {
 validate_pos_num <- function(n) {
   lapply(1:length(n), 
          function(i) {
-           if (class(n[[i]]) != "integer" || length(n[[i]]) > 1) {
+           if (class(n[[i]]) != "numeric" || length(n[[i]]) > 1) {
+             err <- paste0("The argument '", names(n)[[i]],
+                           "' must be a positive integer", collapse="")
+             stop(err, call.=FALSE)
+           } else if (n[[i]] < 1) {
+             err <- paste0("The argument '", names(n)[[i]],
+                           "' must be a positive integer", collapse="")
+             stop(err, call.=FALSE)
+           } else if (floor(n[[i]]) != n[[i]]) {
              err <- paste0("The argument '", names(n)[[i]],
                            "' must be a positive integer", collapse="")
              stop(err, call.=FALSE)
