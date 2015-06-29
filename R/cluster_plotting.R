@@ -3,6 +3,17 @@
 #' This function plots within sum of squares. It provides a wrapper on 
 #' \code{\link[graphics]{plot}} by extracting \code{wss} from \code{clust_obj}
 #' and plotting it.
+#' 
+#' @details This function is intended to be used as part of deciding the ideal
+#'   number of clusters to use for analysis. Within sum of squares (WSS) tells
+#'   one how tightly the data points within a cluster are clustered. Typically,
+#'   one looks for an "elbow" at which the WSS drops significantly. Sometimes,
+#'   the elbow in the WSS still does not contain enough clusters to understand
+#'   the data well. This is where other visualizations can be useful.  
+#'   Choosing \code{optimal = TRUE} will circle the optimal number of clusters
+#'   based on average silhouette width. See the \emph{Details} section for the
+#'   \code{\link{multi_clust}} function and view the \emph{TIP} for a suggested
+#'   workflow.
 #'
 #' @param clust_obj A \code{multiClust} object from which to extract
 #'   \code{wss}.
@@ -14,7 +25,9 @@
 #'
 #' @export
 #' 
-#' @seealso \code{\link[graphics]{plot}}, \code{\link{multi_clust}}
+#' @seealso \code{\link{multi_clust}}, \code{\link{clusGap_plot}}, 
+#'   \code{\link{pca_plot}}, \code{\link{sil_plot}}, \code{\link{avg_sil_plot}},
+#'   \code{\link{clust_boxplot}}
 #'
 #' @examples
 #' # First, create a multiClust object
@@ -49,6 +62,18 @@ wss_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' \code{\link[graphics]{plot}} by extracting \code{clust_gap}, a 
 #' \code{\link[cluster]{clusGap}} object, and leveraging the custom plotting
 #' method that it has.
+#' 
+#' @details This function is intended to be used as part of deciding the ideal
+#'   number of clusters to use for analysis. The cluster gap statistic tells
+#'   one the goodness of a given clustering using the gap statistic. Typically,
+#'   one looks for the peak before which the gap rises significantly. See
+#'   \code{\link[cluster]{clusGap}} for further details on its calculation.
+#'   Sometimes, the peak in the gap still does not contain enough clusters to
+#'   understand the data well. This is where other visualizations can be useful.  
+#'   Choosing \code{optimal = TRUE} will circle the optimal number of clusters
+#'   based on average silhouette width. See the \emph{Details} section for the
+#'   \code{\link{multi_clust}} function and view the \emph{TIP} for a suggested
+#'   workflow.
 #'
 #' @param clust_obj A \code{multiClust} object from which to extract
 #'   \code{clust_gap}.
@@ -60,8 +85,9 @@ wss_plot <- function(clust_obj, optimal = FALSE, ...) {
 #'
 #' @export
 #'
-#' @seealso \code{\link[graphics]{plot}}, \code{\link{multi_clust}},
-#'   \code{\link[cluster]{clusGap}}
+#' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
+#'   \code{\link{pca_plot}}, \code{\link{sil_plot}}, \code{\link{avg_sil_plot}},
+#'   \code{\link{clust_boxplot}}
 #'
 #' @examples
 #' # First, create a multiClust object
@@ -86,10 +112,23 @@ clusGap_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' Plot of first two principal components.
 #' 
 #' This function plots the instances of \code{data} using the first two
-#' principal components as the x and y axes, respectively. It represents each
-#' cluster with a different color so that one can understand the distribution of
-#' the clusters based on the first two components. It is a wrapper on the 
+#' principal components as the x and y axes, respectively. These components are
+#' calculated using \code{\link[stats]{princomp}}. It represents each cluster
+#' with a different color so that one can understand the distribution of the
+#' clusters based on the first two components. It is a wrapper on the
 #' \code{\link[graphics]{plot}} function.
+#' 
+#' @details This function is intended to be used to view the shape of a given
+#'   clustering to use for analysis. Principal component analysis looks for the
+#'   way to represent the data such that the most variance is explained using a
+#'   linear combination of the features. See \code{\link[stats]{princomp}} for
+#'   further details on its calculation. Here it is used strictly for its
+#'   ability to represent the data relatively well in just a couple dimensions.  
+#'   One may pass in the \code{k_best} element from the \code{multiClust} object
+#'   for \code{num_clust}, or use a different value. This is where other
+#'   visualizations can be useful.  
+#'   See the \emph{Details} section for the \code{\link{multi_clust}} function
+#'   and view the \emph{TIP} for a suggested workflow.
 #'
 #' @param d A numeric matrix of data, or an object that can be coerced to
 #'   such a matrix (such as a numeric vector or a data frame with all numeric
@@ -105,7 +144,9 @@ clusGap_plot <- function(clust_obj, optimal = FALSE, ...) {
 #'
 #' @export
 #'
-#' @seealso \code{\link[graphics]{plot}}, \code{\link{multi_clust}},
+#' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
+#'   \code{\link{clusGap_plot}}, \code{\link{sil_plot}},
+#'   \code{\link{avg_sil_plot}}, \code{\link{clust_boxplot}}
 #'
 #' @examples
 #' # First, create a multiClust object
@@ -132,6 +173,19 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
 #' from \code{clust_obj} by extracting a given \code{sil} from it and leveraging
 #' the special way that the \code{\link[graphics]{plot}} function handles a
 #' \code{\link[cluster]{silhouette}} object.
+#' 
+#' @details This function is intended to be used as part of deciding the ideal
+#'   number of clusters to use for analysis. The silhouette score tells
+#'   one the goodness of a given clustering looking at a given data points 
+#'   dissimilarity within and outside of its cluster. See
+#'   \code{\link[cluster]{silhouette}} for further details on its calculation.  
+#'   This plot allows one to see how well the individual clusters of a given
+#'   clustering perform according to silhouette width. One may pass in the
+#'   \code{k_best} element from the \code{multiClust} object for
+#'   \code{num_clust}, or use a different value. This is where other
+#'   visualizations can be useful.  
+#'   See the \emph{Details} section for the \code{\link{multi_clust}} function
+#'   and view the \emph{TIP} for a suggested workflow.
 #'
 #' @param clust_obj A \code{multiClust} object from which to extract
 #'   \code{clust_model} based on the argument \code{num_clust}
@@ -143,8 +197,9 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
 #'
 #' @export
 #'
-#' @seealso \code{\link[graphics]{plot}}, \code{\link{multi_clust}},
-#' \code{\link[cluster]{silhouette}}
+#' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
+#'   \code{\link{clusGap_plot}}, \code{\link{pca_plot}},
+#'   \code{\link{avg_sil_plot}}, \code{\link{clust_boxplot}}
 #'
 #' @examples
 #' # First, create a multiClust object
@@ -165,6 +220,19 @@ sil_plot <- function(clust_obj, num_clust, ...) {
 #' clusters present in \code{clust_obj}. It provides a wrapper on 
 #' \code{\link[graphics]{plot}} by extracting \code{sil_avg} from 
 #' \code{clust_obj} and plotting it.
+#' 
+#' @details This function is intended to be used as part of deciding the ideal
+#'   number of clusters to use for analysis. The average silhouette score tells
+#'   one the goodness of a given clustering looking at a given data points 
+#'   dissimilarity within and outside of its cluster. Typically, one looks for a
+#'   peak before which the average silhouette score rises significantly. See
+#'   \code{\link[cluster]{silhouette}} for further details on its calculation.
+#'   Sometimes, the peak in the score still does not contain enough clusters to
+#'   understand the data well. This is where other visualizations can be useful.  
+#'   Choosing \code{optimal = TRUE} will circle the optimal number of clusters
+#'   based on average silhouette width. See the \emph{Details} section for the
+#'   \code{\link{multi_clust}} function and view the \emph{TIP} for a suggested
+#'   workflow.
 #'
 #' @param clust_obj A \code{multiClust} object from which to extract
 #'   \code{clust_gap}.
@@ -176,8 +244,9 @@ sil_plot <- function(clust_obj, num_clust, ...) {
 #'
 #' @export
 #'
-#' @seealso \code{\link[graphics]{plot}}, \code{\link{multi_clust}},
-#'   \code{\link[cluster]{silhouette}}
+#' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
+#'   \code{\link{clusGap_plot}}, \code{\link{pca_plot}}, \code{\link{sil_plot}},
+#'   \code{\link{clust_boxplot}}
 #'
 #' @examples
 #' # First, create a multiClust object
@@ -208,12 +277,24 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
 
 #' Plot cluster membership for each feature.
 #' 
-#' This function plots cluster membership for each feature of \code{data} using
-#' box plots. It utlizes \code{facet_wrap} in the \code{\link[ggplot2]{qplot}}
+#' This function plots cluster membership for each feature of \code{d} using box
+#' plots. It utlizes \code{facet_wrap} in the \code{\link[ggplot2]{qplot}}
 #' function and the desired \code{clust_model} from the argument 
 #' \code{clust_obj} to show the box plots of each feature after using the
-#' \code{\link[reshape2]{melt}} function to get the correct form of \code{data}.
-#'
+#' \code{\link[reshape2]{melt}} function to get the correct form of \code{d}.
+#' 
+#' @details This function is intended to be used to view the shape of a given
+#'   clustering to use for analysis. One can view which features (likely
+#'   phenotypic markers) are found in each cluster and how the values (likely
+#'   relative expression level) are distributed. This function is primarily
+#'   intended to try to uncover what sort of underlying structure a given
+#'   clustering has found in the data.  
+#'   One may pass in the \code{k_best} element from the \code{multiClust} object
+#'   for \code{num_clust}, or use a different value. This is where other
+#'   visualizations can be useful.  
+#'   See the \emph{Details} section for the \code{\link{multi_clust}} function
+#'   and view the \emph{TIP} for a suggested workflow.
+#' 
 #' @param d A numeric matrix of data, or an object that can be coerced to
 #'   such a matrix (such as a numeric vector or a data frame with all numeric
 #'   columns). Note: This should be the same one used to generate 
