@@ -365,7 +365,8 @@ clust_boxplot <- function(d, clust_obj, num_clust, ...) {
   validate_pos_num(list(num_clust = num_clust))
   axis_label_size 
   meas_vars <- colnames(d)
-  d["cluster"] <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
+  d <- transform(d, cluster = 
+                   clust_obj[["clust_model"]][[num_clust]][["cluster"]])
   m <- reshape2::melt(d, id.vars = "cluster", measure.vars = meas_vars)
   ggplot2::qplot(x = as.factor(cluster), y = value, data = m, geom = "boxplot", 
                  fill = as.factor(cluster), xlab = NULL, 
