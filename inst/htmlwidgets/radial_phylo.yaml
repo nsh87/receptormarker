@@ -42,7 +42,7 @@ dependencies:
     - ./images/clear.gif
     - ./images/TipCap.png
     - ./images/TipMid.png
-    - ./TipPoint.png
+    - ./images/TipPoint.png
 - name: custom-css
   version: 1.0
   src: htmlwidgets/lib/css
