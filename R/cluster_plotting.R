@@ -25,7 +25,7 @@
 #'
 #' @export
 #' 
-#' @seealso \code{\link{multi_clust}}, \code{\link{clusGap_plot}}, 
+#' @seealso \code{\link{multi_clust}}, \code{\link{gap_plot}}, 
 #'   \code{\link{pca_plot}}, \code{\link{sil_plot}}, \code{\link{avg_sil_plot}},
 #'   \code{\link{clust_boxplot}}
 #'
@@ -93,9 +93,9 @@ wss_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' # First, create a multiClust object
 #' library(datasets)
 #' iris_cluster <- multi_clust(iris[, 1:4])
-#' # Second, use object with clusGap_plot
-#' clusGap_plot(iris_cluster, optimal = TRUE)
-clusGap_plot <- function(clust_obj, optimal = FALSE, ...) {
+#' # Second, use object with gap_plot
+#' gap_plot(iris_cluster, optimal = TRUE)
+gap_plot <- function(clust_obj, optimal = FALSE, ...) {
   validate_not_null(list(clust_obj = clust_obj, optimal = optimal))
   validate_true_false(list(optimal = optimal))
   validate_multi_clust(clust_obj)
@@ -145,7 +145,7 @@ clusGap_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' @export
 #'
 #' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
-#'   \code{\link{clusGap_plot}}, \code{\link{sil_plot}},
+#'   \code{\link{gap_plot}}, \code{\link{sil_plot}},
 #'   \code{\link{avg_sil_plot}}, \code{\link{clust_boxplot}}
 #'
 #' @examples
@@ -198,7 +198,7 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
 #' @export
 #'
 #' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
-#'   \code{\link{clusGap_plot}}, \code{\link{pca_plot}},
+#'   \code{\link{gap_plot}}, \code{\link{pca_plot}},
 #'   \code{\link{avg_sil_plot}}, \code{\link{clust_boxplot}}
 #'
 #' @examples
@@ -245,7 +245,7 @@ sil_plot <- function(clust_obj, num_clust, ...) {
 #' @export
 #'
 #' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
-#'   \code{\link{clusGap_plot}}, \code{\link{pca_plot}}, \code{\link{sil_plot}},
+#'   \code{\link{gap_plot}}, \code{\link{pca_plot}}, \code{\link{sil_plot}},
 #'   \code{\link{clust_boxplot}}
 #'
 #' @examples
@@ -310,7 +310,7 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' @export
 #'
 #' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
-#'   \code{\link{clusGap_plot}}, \code{\link{pca_plot}}, \code{\link{sil_plot}},
+#'   \code{\link{gap_plot}}, \code{\link{pca_plot}}, \code{\link{sil_plot}},
 #'   \code{\link{avg_sil_plot}}
 #'
 #' @examples

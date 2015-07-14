@@ -46,7 +46,7 @@ avg_sil_plot(iris_cluster, optimal = TRUE)
 }
 \seealso{
 \code{\link{multi_clust}}, \code{\link{wss_plot}},
-  \code{\link{clusGap_plot}}, \code{\link{pca_plot}}, \code{\link{sil_plot}},
+  \code{\link{gap_plot}}, \code{\link{pca_plot}}, \code{\link{sil_plot}},
   \code{\link{clust_boxplot}}
 }
 
