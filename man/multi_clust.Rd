@@ -82,7 +82,7 @@ The \code{multiClust} object is primarily intended for use with
   \enumerate{
     \item Create a \code{multiClust} object.
     \item Send this object to the \code{\link{wss_plot}},
-      \code{\link{clusGap_plot}}, and \code{\link{avg_sil_plot}} with
+      \code{\link{}}, and \code{\link{avg_sil_plot}} with
       \code{optimal = TRUE} to see which number of clusters is recommended
       and compare it to these respective plots.
     \item Choose the number of clusters to be used.
@@ -101,7 +101,7 @@ library(datasets)
 iris_cluster <- multi_clust(iris[, 1:4])
 }
 \seealso{
-\code{\link{wss_plot}}, \code{\link{clusGap_plot}},
+\code{\link{wss_plot}}, \code{\link{}},
   \code{\link{pca_plot}}, \code{\link{sil_plot}}, \code{\link{avg_sil_plot}},
   \code{\link{clust_boxplot}}
 }

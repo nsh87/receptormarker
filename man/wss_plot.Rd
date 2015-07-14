@@ -42,7 +42,7 @@ iris_cluster <- multi_clust(iris[, 1:4])
 wss_plot(iris_cluster, optimal = TRUE)
 }
 \seealso{
-\code{\link{multi_clust}}, \code{\link{clusGap_plot}},
+\code{\link{multi_clust}}, \code{\link{gap_plot}},
   \code{\link{pca_plot}}, \code{\link{sil_plot}}, \code{\link{avg_sil_plot}},
   \code{\link{clust_boxplot}}
 }
