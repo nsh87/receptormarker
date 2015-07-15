@@ -123,7 +123,12 @@ multi_clust <- function(d, krange = 2:10, iter.max = 300, runs = 10,
   km[["clust_gap"]] <- cluster::clusGap(d, kmeans, 
                                         K.max = length(km[["clust_model"]]), 
                                         B = 15, verbose = FALSE)
-  km[["k_best"]] <- which.max(km[["sil_avg"]])
+  nb_best <- NbClust::NbClust(d, min.nc = krange[1],
+                              max.nc = krange[length(krange)],
+                              method = "average")
+  best <- aggregate(nb_best$Best.nc[1,], by=list(nb_best$Best.nc[1,]), length)
+  index <- which.max(best[[2]])
+  km[["k_best"]] <- best[index, 1] 
   structure(km, class = "multiClust")
 }
 
