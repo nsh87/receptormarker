@@ -28,6 +28,7 @@ Imports:
     cluster (>= 2.0.2),
     ggplot2 (>= 1.0.1),
     reshape2 (>= 1.4.1),
+    NbClust (>= 3.0),
     muscle(>= 3.10.0)
 Suggests:
     testthat (>= 0.9.1),
