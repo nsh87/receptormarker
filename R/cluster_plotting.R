@@ -166,7 +166,7 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
   plot(pca[["scores"]][, 1:2], col = rainbow(num_clust)[clusters],
        xlab = "Principal Component 1",
        ylab = "Principal Component 2",
-       main = "PCA Plot of Clusters",
+       main = main,
        ...)
 }
 
@@ -232,7 +232,7 @@ pca_plot3d <- function(d, clust_obj, num_clust, ...){
                                xlab = "PC 1",
                                ylab = "PC 2",
                                zlab = "PC 3",
-                               main = "PCA Plot of Clusters",
+                               main = main,
                                ...)
 }
 
