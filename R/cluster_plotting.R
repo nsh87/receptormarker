@@ -275,6 +275,24 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
   }
 }
 
+#' Calculate axis label font size for boxplot
+#' 
+#' This is an internal function that returns a font size for the
+#' \code{\link{clust_boxplot}} function that should minimize overlapping of
+#' axis labels.
+#' @param num_clust The num_clust argument from \code{\link{clust_boxplot}}
+#' @return An integer value for the font size
+#' @keywords internal
+axis_label_size <- function(num_clust) {
+  if (num_clust <= 10) {
+    return(12)
+  } else if (num_clust <= 15) {
+    return (10)
+  } else if (num_clust <= 20) {
+    return (8)
+  } 
+}
+
 #' Plot cluster membership for each feature.
 #' 
 #' This function plots cluster membership for each feature of \code{d} using box
@@ -323,6 +341,7 @@ clust_boxplot <- function(d, clust_obj, num_clust, ...) {
   validate_num_data(d)
   validate_multi_clust(clust_obj)
   validate_pos_num(list(num_clust = num_clust))
+  axis_label_size 
   meas_vars <- colnames(d)
   d["cluster"] <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
   m <- reshape2::melt(d, id.vars = "cluster", measure.vars = meas_vars)
@@ -330,5 +349,8 @@ clust_boxplot <- function(d, clust_obj, num_clust, ...) {
                  fill = as.factor(cluster), xlab = NULL, 
                  ylab = "Relative expression level", ...) + 
     ggplot2::facet_wrap(~variable) + 
-    ggplot2::scale_fill_discrete(name = "Cluster")
+    ggplot2::scale_fill_discrete(name = "Cluster") +
+    ggplot2::theme(
+      axis.text=ggplot2::element_text(size=axis_label_size(num_clust))
+    )
 }
