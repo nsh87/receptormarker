@@ -348,7 +348,7 @@ clust_boxplot <- function(d, clust_obj, num_clust, ...) {
   ggplot2::qplot(x = as.factor(cluster), y = value, data = m, geom = "boxplot", 
                  fill = as.factor(cluster), xlab = NULL, 
                  ylab = "Relative expression level", ...) + 
-    ggplot2::facet_wrap(~variable) + 
+    ggplot2::facet_wrap(~variable, ncol=4) + 
     ggplot2::scale_fill_discrete(name = "Cluster") +
     ggplot2::theme(
       axis.text=ggplot2::element_text(size=axis_label_size(num_clust))
