@@ -29,6 +29,7 @@ Imports:
     ggplot2 (>= 1.0.1),
     reshape2 (>= 1.4.1),
     NbClust (>= 3.0),
+    scatterplot3d (>= 0.3-35),
     muscle(>= 3.10.0)
 Suggests:
     testthat (>= 0.9.1),
