@@ -293,6 +293,28 @@ axis_label_size <- function(num_clust) {
   } 
 }
 
+#' Calculate axis label font size for boxplot
+#' 
+#' This is an internal function that returns a number of columns for the
+#' \code{\link{clust_boxplot}} function that should minimize tightness of
+#' plot for high number of clusters.
+#' @param num_clust The num_clust argument from \code{\link{clust_boxplot}}
+#' @return An integer value for the number of columns
+#' @keywords internal
+boxplot_num_cols <- function(num_clust) {
+  if (num_clust <= 10) {
+    return(5)
+  } else if (num_clust <= 15) {
+    return (4)
+  } else if (num_clust <= 20) {
+    return (3)
+  } else if (num_clust <= 25) {
+    return (2)
+  } else if (num_clust <= 30) {
+    return (1)
+  }
+}
+
 #' Plot cluster membership for each feature.
 #' 
 #' This function plots cluster membership for each feature of \code{d} using box
@@ -348,7 +370,7 @@ clust_boxplot <- function(d, clust_obj, num_clust, ...) {
   ggplot2::qplot(x = as.factor(cluster), y = value, data = m, geom = "boxplot", 
                  fill = as.factor(cluster), xlab = NULL, 
                  ylab = "Relative expression level", ...) + 
-    ggplot2::facet_wrap(~variable, ncol=4) + 
+    ggplot2::facet_wrap(~variable, ncol=boxplot_num_cols(num_clust)) + 
     ggplot2::scale_fill_discrete(name = "Cluster") +
     ggplot2::theme(
       axis.text=ggplot2::element_text(size=axis_label_size(num_clust))
