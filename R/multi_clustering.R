@@ -91,7 +91,7 @@
 #'
 #' @seealso \code{\link{wss_plot}}, \code{\link{gap_plot}}, 
 #'   \code{\link{pca_plot}}, \code{\link{sil_plot}}, \code{\link{avg_sil_plot}},
-#'   \code{\link{clust_boxplot}}
+#'   \code{\link{clust_boxplot}}, \code{\link{pca_plot3d}}
 #'
 #' @examples
 #' library(datasets)

@@ -27,7 +27,7 @@
 #' 
 #' @seealso \code{\link{multi_clust}}, \code{\link{gap_plot}}, 
 #'   \code{\link{pca_plot}}, \code{\link{sil_plot}}, \code{\link{avg_sil_plot}},
-#'   \code{\link{clust_boxplot}}
+#'   \code{\link{clust_boxplot}}, \code{\link{pca_plot3d}}
 #'
 #' @examples
 #' # First, create a multiClust object
@@ -87,7 +87,7 @@ wss_plot <- function(clust_obj, optimal = FALSE, ...) {
 #'
 #' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
 #'   \code{\link{pca_plot}}, \code{\link{sil_plot}}, \code{\link{avg_sil_plot}},
-#'   \code{\link{clust_boxplot}}
+#'   \code{\link{clust_boxplot}}, \code{\link{pca_plot3d}}
 #'
 #' @examples
 #' # First, create a multiClust object
@@ -111,7 +111,7 @@ gap_plot <- function(clust_obj, optimal = FALSE, ...) {
 
 #' Plot of first two principal components.
 #' 
-#' This function plots the instances of \code{data} using the first two
+#' This function plots the instances of \code{d} using the first two
 #' principal components as the x and y axes, respectively. These components are
 #' calculated using \code{\link[stats]{princomp}}. It represents each cluster
 #' with a different color so that one can understand the distribution of the
@@ -139,13 +139,13 @@ gap_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' @param num_clust An integer. The desired number of clusters to be used. Note:
 #'   This integer should fall within the krange used to generate the 
 #'   \code{multiClust} object.
-#' @param ... Further arguments to be passed to the \code{\link{plot}} 
+#' @param ... Further arguments to be passed to the \code{\link[graphics]{plot}} 
 #'   function (besides \code{xlab}, \code{ylab}, \code{main}).
 #'
 #' @export
 #'
 #' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
-#'   \code{\link{gap_plot}}, \code{\link{sil_plot}},
+#'   \code{\link{gap_plot}}, \code{\link{sil_plot}}, \code{\link{pca_plot3d}},
 #'   \code{\link{avg_sil_plot}}, \code{\link{clust_boxplot}}
 #'
 #' @examples
@@ -158,13 +158,82 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
   validate_num_data(d)
   validate_multi_clust(clust_obj)
   validate_pos_num(list(num_clust = num_clust))
-  pca <- princomp(d)
+  pca <- stats::princomp(d)
+  sdev <- pca[["sdev"]]
+  prop_var <- sdev ^ 2 / sum(sdev ^ 2)
+  main <- paste0("PCA Plot (", round(sum(prop_var[1:2]) * 100), "% Variance)")
   clusters <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
-  plot(pca[["scores"]][,1:2], col = rainbow(num_clust)[clusters],
+  plot(pca[["scores"]][, 1:2], col = rainbow(num_clust)[clusters],
        xlab = "Principal Component 1",
        ylab = "Principal Component 2",
        main = "PCA Plot of Clusters",
        ...)
+}
+
+#' Plot of first three principal components.
+#' 
+#' This function plots the instances of \code{d} using the first three
+#' principal components as the x, y, z axes, respectively. These components are
+#' calculated using \code{\link[stats]{princomp}}. It represents each cluster
+#' with a different color so that one can understand the distribution of the
+#' clusters based on the first three components. It is a wrapper on the
+#' \code{\link[scatterplot3d]{scatterplot3d}} function.
+#' 
+#' @details This function is intended to be used to view the shape of a given
+#'   clustering to use for analysis. Principal component analysis looks for the
+#'   way to represent the data such that the most variance is explained using a
+#'   linear combination of the features. See \code{\link[stats]{princomp}} for
+#'   further details on its calculation. Here it is used strictly for its
+#'   ability to represent the data relatively well in just a few dimensions.  
+#'   One may pass in the \code{k_best} element from the \code{multiClust} object
+#'   for \code{num_clust}, or use a different value. This is where other
+#'   visualizations can be useful.  
+#'   See the \emph{Details} section for the \code{\link{multi_clust}} function
+#'   and view the \emph{TIP} for a suggested workflow.
+#'
+#' @param d A numeric matrix of data, or an object that can be coerced to
+#'   such a matrix (such as a numeric vector or a data frame with all numeric
+#'   columns). Note: This should be the same one used to generate 
+#'   \code{clust_obj}.
+#' @param clust_obj A \code{multiClust} object from which to extract
+#'   \code{clust_model} based on the argument \code{num_clust}
+#' @param num_clust An integer. The desired number of clusters to be used. Note:
+#'   This integer should fall within the krange used to generate the 
+#'   \code{multiClust} object.
+#' @param ... Further arguments to be passed to the 
+#'   \code{\link[scatterplot3d]{scatterplot3d}} function (besides \code{xlab},
+#'   \code{ylab}, \code{main}), \code{color}.
+#'
+#' @export
+#'
+#' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
+#'   \code{\link{gap_plot}}, \code{\link{sil_plot}}, \code{\link{pca_plot}}
+#'   \code{\link{avg_sil_plot}}, \code{\link{clust_boxplot}}
+#'
+#' @examples
+#' # First, create a multiClust object
+#' library(datasets)
+#' iris_cluster <- multi_clust(iris[, 1:4])
+#' # Second, use object with pca_plot3d
+#' pca_plot3d(iris[, 1:4], iris_cluster, num_clust = 3)
+pca_plot3d <- function(d, clust_obj, num_clust, ...){
+  validate_num_data(d)
+  validate_multi_clust(clust_obj)
+  validate_pos_num(list(num_clust = num_clust))
+  pca <- stats::princomp(d)
+  sdev <- pca[["sdev"]]
+  prop_var <- sdev ^ 2 / sum(sdev ^ 2)
+  main <- paste0("PCA Plot (", round(sum(prop_var[1:3]) * 100), "% Variance)")
+  clusters <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
+  scatterplot3d::scatterplot3d(pca[["scores"]][, 1], 
+                               pca[["scores"]][, 2],
+                               pca[["scores"]][, 3],
+                               color = rainbow(num_clust)[clusters],
+                               xlab = "PC 1",
+                               ylab = "PC 2",
+                               zlab = "PC 3",
+                               main = "PCA Plot of Clusters",
+                               ...)
 }
 
 #' Plot silhouette scores for a given clustering of data.
@@ -198,7 +267,7 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
 #' @export
 #'
 #' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
-#'   \code{\link{gap_plot}}, \code{\link{pca_plot}},
+#'   \code{\link{gap_plot}}, \code{\link{pca_plot}}, \code{\link{pca_plot3d}},
 #'   \code{\link{avg_sil_plot}}, \code{\link{clust_boxplot}}
 #'
 #' @examples
@@ -246,7 +315,7 @@ sil_plot <- function(clust_obj, num_clust, ...) {
 #'
 #' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
 #'   \code{\link{gap_plot}}, \code{\link{pca_plot}}, \code{\link{sil_plot}},
-#'   \code{\link{clust_boxplot}}
+#'   \code{\link{clust_boxplot}}, \code{\link{pca_plot3d}}
 #'
 #' @examples
 #' # First, create a multiClust object
@@ -351,7 +420,7 @@ boxplot_num_cols <- function(num_clust) {
 #'
 #' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
 #'   \code{\link{gap_plot}}, \code{\link{pca_plot}}, \code{\link{sil_plot}},
-#'   \code{\link{avg_sil_plot}}
+#'   \code{\link{avg_sil_plot}}, \code{\link{pca_plot3d}}
 #'
 #' @examples
 #' # First, create a multiClust object
