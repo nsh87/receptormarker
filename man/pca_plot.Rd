@@ -19,11 +19,11 @@ columns). Note: This should be the same one used to generate
 This integer should fall within the krange used to generate the
 \code{multiClust} object.}
 
-\item{...}{Further arguments to be passed to the \code{\link[graphics]{plot}}
+\item{...}{Further arguments to be passed to the \code{\link{plot}}
   function (besides \code{xlab}, \code{ylab}, \code{main}).}
 }
 \description{
-This function plots the instances of \code{d} using the first two
+This function plots the instances of \code{data} using the first two
 principal components as the x and y axes, respectively. These components are
 calculated using \code{\link[stats]{princomp}}. It represents each cluster
 with a different color so that one can understand the distribution of the
@@ -52,7 +52,7 @@ pca_plot(iris[, 1:4], iris_cluster, num_clust = 3)
 }
 \seealso{
 \code{\link{multi_clust}}, \code{\link{wss_plot}},
-  \code{\link{gap_plot}}, \code{\link{sil_plot}}, \code{\link{pca_plot3d}},
+  \code{\link{gap_plot}}, \code{\link{sil_plot}},
   \code{\link{avg_sil_plot}}, \code{\link{clust_boxplot}}
 }
 
