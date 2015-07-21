@@ -90,7 +90,8 @@ The \code{multiClust} object is primarily intended for use with
       clusters to confirm the choice.
     \item View the \code{\link{pca_plot}} using the chosen number of clusters
       to see the shape of the them within the data based on using the first
-      two principal components for axes.
+      two principal components for axes. Also, view \code{\link{pca_plot3d}}
+      to see the shape of the data with the first three principal components.
     \item View the \code{\link{clust_boxplot}} using the chosen number of
       clusters to see the cluster membership of each feature (likely
       phenotypic markers). This should yield useful conclusions.
@@ -103,6 +104,6 @@ iris_cluster <- multi_clust(iris[, 1:4])
 \seealso{
 \code{\link{wss_plot}}, \code{\link{gap_plot}},
   \code{\link{pca_plot}}, \code{\link{sil_plot}}, \code{\link{avg_sil_plot}},
-  \code{\link{clust_boxplot}}
+  \code{\link{clust_boxplot}}, \code{\link{pca_plot3d}}
 }
 

@@ -52,6 +52,6 @@ clust_boxplot(iris[, 1:4], iris_cluster, num_clust = 3)
 \seealso{
 \code{\link{multi_clust}}, \code{\link{wss_plot}},
   \code{\link{gap_plot}}, \code{\link{pca_plot}}, \code{\link{sil_plot}},
-  \code{\link{avg_sil_plot}}
+  \code{\link{avg_sil_plot}}, \code{\link{pca_plot3d}}
 }
 
