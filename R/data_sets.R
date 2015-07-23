@@ -72,4 +72,3 @@
 #' @keywords datasets
 #' @docType data
 "fluidigm"
-
