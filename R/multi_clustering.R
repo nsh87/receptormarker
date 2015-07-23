@@ -153,7 +153,7 @@ validate_sort_range <- function(n_range) {
 #' @keywords internal
 validate_multi_clust <- function(clust_obj) {
   if (class(clust_obj) != "multiClust") {
-    stop("The argument 'clust_obj' must be an object of class 'multiClust",
+    stop("The argument 'clust_obj' must be an object of class 'multiClust'",
          call.=FALSE)
   }
 }

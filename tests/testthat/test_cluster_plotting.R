@@ -19,9 +19,9 @@ test_that("making sure validation functions work properly in wss_plot", {
 
 
 test_that("making sure validation functions work properly in clusGap_plot", {
-  expect_error(clusGap_plot(NULL), "clust_obj")
-  expect_error(clusGap_plot(f_clust, optimal=1), "optimal")
-  expect_error(clusGap_plot(1), "object of class 'multiClust'")
+  expect_error(gap_plot(NULL), "clust_obj")
+  expect_error(gap_plot(f_clust, optimal=1), "optimal")
+  expect_error(gap_plot(1), "object of class 'multiClust'")
 })
 
 
