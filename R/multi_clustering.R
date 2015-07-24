@@ -134,7 +134,7 @@ multi_clust <- function(d, krange = 2:10, iter.max = 300, runs = 10,
 #' @param n_range An item to be checked to make sure it is a valid range.
 #' @keywords internal
 validate_sort_range <- function(n_range) {
-  if (class(n_range) != "integer" || length(n_range) <= 1) {
+  if (!(class(n_range) %in% c("integer", "numeric")) || length(n_range) <= 1) {
     stop("The argument 'krange' must be a range of integers.", call.=FALSE)
   } else if (any(n_range <= 1)) {
     stop("The argument 'krange' must contain only values greater than one.", 
