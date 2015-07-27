@@ -90,7 +90,7 @@
 #' library(datasets)
 #' iris_cluster <- multi_clust(iris[, 1:4])
 multi_clust <- function(d, krange = 2:10, iter.max = 300, runs = 10, 
-                            method = "kmeans", ...) {
+                        method = "kmeans", ...) {
   validate_not_null(list(d = d, krange = krange, iter.max = iter.max, 
                          runs = runs, method = method))
   validate_num_data(d)
@@ -100,16 +100,8 @@ multi_clust <- function(d, krange = 2:10, iter.max = 300, runs = 10,
   km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
              clust_gap = NULL, wss = NULL, k_best = NULL)
   for (k in krange) {
-    min_wss <- Inf
-    km_opt <- NULL
-    for (i in 1:runs) {
-      kmm <- stats::kmeans(d, k, iter.max = iter.max, nstart = 10)
-      swss <- kmm[["tot.withinss"]]
-      if (swss < min_wss) {
-        min_wss <- swss
-        km_opt <- kmm
-      }
-    }
+    km_opt <- stats::kmeans(d, k, iter.max = iter.max, nstart = runs, ...)
+    min_wss <- km_opt[["tot.withinss"]]
     sil <- cluster::silhouette(km_opt[["cluster"]], d_dist)
     sil_sum <- summary(sil)
     sil_avg <- sil_sum[["avg.width"]]
