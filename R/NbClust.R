@@ -636,12 +636,12 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   
   ################ # ccc, scott, marriot, trcovw, tracew, friedman and rubin # #
 
-  Indices.WBT <- function(x,cl,P,s,vv) 
+  Indices.WBT <- function(x, cl, P, s, vv) 
   {
     n <- dim(x)[1]
     pp <- dim(x)[2]
     qq <- max(cl)
-    z <- matrix(0,ncol=qq,nrow=n)
+    z <- matrix(0, ncol = qq, nrow = n)
     clX <- as.matrix(cl)
     for (i in 1:n) for (j in 1:qq) {
       z[i, j] <- 0
@@ -656,7 +656,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     trcovw <- sum(diag(cov(W)))
     tracew <- sum(diag(W))
     if (det(W) != 0) 
-      scott <- n * log(det(P) / det(W)) else {
+      scott <- n * log(det(P) / det(W))
+    else {
       message("Error: division by zero!")
     }
     friedman <- sum(diag(solve(W) * B))
