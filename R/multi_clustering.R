@@ -96,6 +96,7 @@ multi_clust <- function(d, krange = 2:10, iter.max = 300, runs = 10,
   validate_num_data(d)
   krange <- validate_sort_range(krange) # returns sorted krange by ascending
   validate_pos_num(list(iter.max = iter.max, runs = runs))
+  d <- d[complete.cases(d), ]
   d_dist <- dist(d)
   km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
              clust_gap = NULL, wss = NULL, k_best = NULL)
