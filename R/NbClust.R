@@ -278,7 +278,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
                                                  sqrt(variance.clusters[u, ] %*%
                                                         variance.clusters[u, ]))
     # Standard deviation
-    stdev<-(1/k)*sqrt(Somme.variance.clusters)
+    stdev<-(1 / k)*sqrt(Somme.variance.clusters)
     
     # Average scattering for clusters
     scat <- (1 / k) * (Somme.variance.clusters / sqrt(variance.matrix %*%
@@ -838,7 +838,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     }
     
     indice.ball <- function(x, cl, d = NULL, centrotypes = "centroids") {
-      wgssB <- gss(x, cl, d)$wgss
+      wgssB <- gss(x, cl, d)[["wgss"]]
       qq <- max(cl)
       ball <- wgssB / qq
       return(ball)
