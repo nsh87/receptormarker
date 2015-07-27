@@ -41,7 +41,7 @@
 #' @keywords internal
 NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
                     min.nc = 2, max.nc = 15, method = NULL, index = "all",
-                    alphaBeale = 0.1, plots = TRUE) {
+                    alphaBeale = 0.1, plots = FALSE) {
   x <- 0
   min_nc <- min.nc
   max_nc <- max.nc
@@ -105,8 +105,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     nn <- numberObsAfter <- dim(jeu)[1]
     pp <- dim(jeu)[2]
     TT <- t(jeu) %*% jeu
-    sizeEigenTT <- length(eigen(TT)[["value"]])
-    eigenValues <- eigen(TT / (nn - 1))[["value"]]
+    sizeEigenTT <- length(eigen(TT)[["values"]])
+    eigenValues <- eigen(TT / (nn - 1))[["values"]]
     
     # Only for indices using vv : CCC, Scott, marriot, tracecovw, tracew,
     # friedman, rubin
@@ -187,11 +187,12 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   # Methods # #
   # &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&#
 
-  res <- array(0, c(max_nc-min_nc+1,30))
+  res <- array(0, c(max_nc - min_nc + 1, 30))
   x_axis <- min_nc:max_nc
-  resCritical <- array(0, c(max_nc-min_nc+1,4))
+  resCritical <- array(0, c(max_nc - min_nc + 1, 4))
   rownames(resCritical) <- min_nc:max_nc
-  colnames(resCritical) <- c("CritValue_Duda", "CritValue_PseudoT2", "Fvalue_Beale", "CritValue_Gap")
+  colnames(resCritical) <- c("CritValue_Duda", "CritValue_PseudoT2",
+                             "Fvalue_Beale", "CritValue_Gap")
   rownames(res) <- min_nc:max_nc
   colnames(res) <- c("KL", "CH", "Hartigan", "CCC", "Scott", "Marriot",
                      "TrCovW", "TraceW", "Friedman", "Rubin", "Cindex", "DB",
@@ -297,7 +298,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     distance <- matrix(0, ncol = 1, nrow = n)
     density <- matrix(0, ncol = 1, nrow = k)
     centers.matrix <- centers(cl, x)
-    stdev <- Average.scattering(cl, x)[["stdev "]]
+    stdev <- Average.scattering(cl, x)[["stdev"]]
     for (i in 1:n) {
       u <- 1
       while (cl[i] != u) u <- u + 1
@@ -468,18 +469,13 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     cluster.size <- within.dist1 <- between.dist1 <- numeric(0)
     separation.matrix <- matrix(0, ncol = cn1, nrow = cn1)
     di <- list()
-    for (u in 1:cn1) 
-    {
+    for (u in 1:cn1) {
       cluster.size[u] <- sum(cl1 == u)
       du <- as.dist(dmat[cl1 == u, cl1 == u])
       within.dist1 <- c(within.dist1, du)
-      #average.distance[u] <- mean(du)
-      #median.distance[u] <- median(du)
-      #bv <- numeric(0)
       for (v in 1:cn1) {
         if (v != u) {
           suv <- dmat[cl1 == u, cl1 == v]
-          #bv <- c(bv, suv)
           if (u < v) {
             separation.matrix[u, v] <- separation.matrix[v, u] <- min(suv)
             between.dist1 <- c(between.dist1, suv)
@@ -498,8 +494,6 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       cluster.size[w] <- sum(cl2 == w)
       dw <- as.dist(dmat[cl2 == w, cl2 == w])
       within.dist2 <- c(within.dist2, dw)
-      #average.distance[w] <- mean(dw)
-      #median.distance[w] <- median(dw)
       bx <- numeric(0)
       for (x in 1:cn2) {
         if (x != w) {
@@ -1263,7 +1257,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
                                                cl2 = cl2)[["pseudot2"]]
     }
     ########### Indices.WKWL-beale - 16e colonne de res ############
-    if (any((indice == 16) || (indice == 31) || (indice == 32))) {
+    if (any((indice == 16))) {
       res[nc - min_nc + 1, 16] <- beale <- Indices.WKWL(x = jeu, cl1 = cl1, 
         cl2 = cl2)[["beale"]]
     }
@@ -1284,7 +1278,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         resCritical[nc - min_nc + 1, 2] <- ((1 - critValue) / critValue) * 
           (NK + NL - 2)
       }
-      if (any((indice == 16) || (indice == 31) || (indice == 32))) {
+      if (any((indice == 16))) {
         df2 <- (NM - 2) * pp
         resCritical[nc - min_nc + 1, 3] <- 1 - pf(beale, pp, df2)
       }
@@ -1542,7 +1536,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     }
   }
   nc.Beale <- indice.Beale <- 0
-  if (any((indice == 16) || (indice == 31) || (indice == 32))) {
+  if (any(indice == 16)) {
     foundBeale <- FALSE
     for (ncB in min_nc:max_nc) {
       if ((resCritical[ncB - min_nc + 1, 3] >= alphaBeale) && (!foundBeale)) {
@@ -1907,8 +1901,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     for (i in min.nc:max.nc) {
       vect <- which(BestCluster == i)
       if (length(vect) > 0) 
-        message("*", length(vect), "proposed", i,
-                "as the best number of clusters", "\n")
+        message("*", length(vect), " proposed ", i,
+                " as the best number of clusters", "\n")
       if (c < length(vect)) {
         j <- i
         c <- length(vect)
