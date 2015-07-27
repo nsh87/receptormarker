@@ -108,8 +108,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     sizeEigenTT <- length(eigen(TT)[["value"]])
     eigenValues <- eigen(TT / (nn - 1))[["value"]]
     
-    # Only for indices using vv : CCC, Scott, marriot, tracecovw, tracew, friedman,
-    # rubin
+    # Only for indices using vv : CCC, Scott, marriot, tracecovw, tracew,
+    # friedman, rubin
     
     if (any((indice == 4) || (indice == 5) || (indice == 6) || (indice == 7) || 
       (indice == 8) || (indice == 9) || (indice == 10) || (indice == 31) || 
@@ -452,7 +452,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     Index.Gamma <- (s.plus - s.moins) / (s.plus + s.moins)
     Index.Gplus <- (2 * s.moins) / (n1 * (n1 - 1))
     t.tau <- (nwithin1 * nbetween1) - (s.plus + s.moins)
-    Index.Tau <- (s.plus - s.moins) / (((n1 * (n1 - 1)/2 - t.tau) *
+    Index.Tau <- (s.plus - s.moins) / (((n1 * (n1 - 1) / 2 - t.tau) *
                                           (n1 * (n1 - 1) / 2)) ^ (1 / 2))
     results <- list(gamma = Index.Gamma, gplus = Index.Gplus, tau = Index.Tau)
     return(results)
@@ -464,7 +464,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     cn1 <- max(cl1)
     n1 <- length(cl1)
     dmat <- as.matrix(md)
-    average.distance <- median.distance <- separation <- cluster.size <- within.dist1 <- between.dist1 <- numeric(0)
+    average.distance <- median.distance <- separation <- numeric(0)
+    cluster.size <- within.dist1 <- between.dist1 <- numeric(0)
     separation.matrix <- matrix(0, ncol = cn1, nrow = cn1)
     di <- list()
     for (u in 1:cn1) 
@@ -489,7 +490,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     cn2 <- max(cl2)
     n2 <- length(cl2)
     dmat <- as.matrix(md)
-    average.distance <- median.distance <- separation <- cluster.size <- within.dist2 <- between.dist2 <- numeric(0)
+    average.distance <- median.distance <- separation <- numeric(0)
+    cluster.size <- within.dist2 <- between.dist2 <- numeric(0)
     separation.matrix <- matrix(0, ncol = cn2, nrow = cn2)
     di <- list()
     for (w in 1:cn2) {
@@ -531,7 +533,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     
     md2 <- as.matrix(md)
     m01 <- array(NA, c(nn,nn))
-    nbr <- (nn*(nn-1))/2
+    nbr <- (nn*(nn-1)) / 2
     pb <- array(0,c(nbr,2))
     
     m3 <- 1
@@ -568,7 +570,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       ind <- y == levs[level]
       diff.mu <- mean(x[ind]) - mean(x[!ind])
       prob <- mean(ind)
-      diff.mu * sqrt(prob * (1 - prob))/sd(x)
+      diff.mu * sqrt(prob * (1 - prob)) / sd(x)
     }
     ptbiserial <- biserial.cor(x = pb[, 2], y = pb[, 1], level = 2)
     return(ptbiserial)
@@ -595,8 +597,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         centers[1, ] <- apply(x, 2, mean)
       }
       
-      x.2 <- sweep(x,2,centers[1,],"-")
-      withins <- sum(x.2^2)
+      x.2 <- sweep(x,2,centers[1,], "-")
+      withins <- sum(x.2 ^ 2)
       wss <- sum(withins)
       return(wss)
     }
@@ -627,7 +629,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     BKL <- WM - WK - WL
     pseudot2 <- BKL / ((WK + WL) / (NK + NL - 2))
     beale <- (BKL / (WK + WL)) / (((NM - 1) / (NM - 2)) * (2 ^ (2 / dim2) - 1))
-    results <- list(duda = duda, pseudot2 = pseudot2, NM = NM, NK = NK, NL = NL, 
+    results <- list(duda = duda, pseudot2 = pseudot2, NM = NM, NK = NK, NL = NL,
       beale = beale)
     return(results)
   }
@@ -681,8 +683,9 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       ccc <- log((1 - E_R2) / (1 - R2)) * (sqrt(n * pp / 2) /
                                              ((0.001 + E_R2) ^ 1.2))
     }
-    results <- list(ccc = ccc, scott = scott, marriot = marriot, trcovw = trcovw, 
-      tracew = tracew, friedman = friedman, rubin = rubin)
+    results <- list(ccc = ccc, scott = scott, marriot = marriot,
+                    trcovw = trcovw, tracew = tracew, friedman = friedman,
+                    rubin = rubin)
     return(results)
   }
   
@@ -716,7 +719,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         }
         if (is.null(dim(x[cl == i, ])))
         {
-          bb <- matrix(x[cl == i, ],byrow=FALSE,nrow=1,ncol=ncol(x))
+          bb <- matrix(x[cl == i, ], byrow = FALSE, nrow = 1, ncol = ncol(x))
           centers[i, ] <- apply(bb, 2, mean)
         }
         else 
@@ -727,9 +730,9 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       }
       allmean <- apply(x, 2, mean)
       dmean <- sweep(x, 2, allmean, "-")
-      allmeandist <- sum(dmean^2)
+      allmeandist <- sum(dmean ^ 2)
       withins <- rep(0, k)
-      x.2 <- (x - centers[cl, ])^2
+      x.2 <- (x - centers[cl, ]) ^ 2
       for (i in 1:k) {
         withins[i] <- sum(x.2[cl == i, ])
       }
@@ -750,7 +753,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       for (l in 1:nvar) varallmean[l] <- mean(x[, l])
       vardmean <- sweep(x, 2, varallmean, "-")
       for (l in 1:nvar) {
-        varallmeandist[l] <- sum((vardmean[, l])^2)
+        varallmeandist[l] <- sum((vardmean[, l]) ^ 2)
         varwgss[l] <- sum(varwithins[, l])
       }
       varbgss <- varallmeandist - varwgss
@@ -762,7 +765,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       nrow <- dim(centers)[1]
       nvar <- dim(x)[2]
       varwithins <- matrix(0, nrow, nvar)
-      x <- (x - centers[cluster, ])^2
+      x <- (x - centers[cluster, ]) ^ 2
       for (l in 1:nvar) {
         for (k in 1:nrow) {
           varwithins[k, l] <- sum(x[cluster == k, l])
@@ -784,9 +787,6 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         }
         row.names(d) <- row.names(x)
       }
-      #if (is.null(dim(x))) {
-      #	    dim(x) <- c(length(x), 1)
-      #}
       m <- ncol(x)
       g <- k <- max(clall[, 2])
       KL <- abs((g - 1) ^ (2 / m) * gss(x, clall[, 1], d)[["wgss"]] -
@@ -801,18 +801,16 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         CH <- NA
       }
       if (sum(c("centroids", "medoids") == centrotypes) == 0) 
-        stop("Wrong centrotypes argument")
+        stop("Wrong centrotypes argument", call. = FALSE)
       if ("medoids" == centrotypes && is.null(d)) 
-        stop("For argument centrotypes = 'medoids' d cannot be null")
+        stop("For argument centrotypes = 'medoids' d cannot be null",
+             call. = FALSE)
       if (!is.null(d)) {
         if (!is.matrix(d)) {
           d <- as.matrix(d)
         }
         row.names(d) <- row.names(x)
       }
-      #if (is.null(dim(x))) {
-      #	    dim(x) <- c(length(x), 1)
-      #}
       n <- length(cl)
       k <- max(cl)
       CH <- (gss(x, cl, d)[["bgss"]] / (k - 1)) / (gss(x, cl, d)[["wgss"]] / 
@@ -832,9 +830,6 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         }
         row.names(d) <- row.names(x)
       }
-      #if (is.null(dim(x))) {
-      #    dim(x) <- c(length(x), 1)
-      #}
       n <- nrow(x)
       g <- max(clall[, 1])
       HART <- (gss(x, clall[, 2], d)[["wgss"]] /
@@ -842,17 +837,17 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       return(HART)
     }
     
-    indice.ball <- function(x, cl, d = NULL, centrotypes = "centroids"){
+    indice.ball <- function(x, cl, d = NULL, centrotypes = "centroids") {
       wgssB <- gss(x, cl, d)$wgss
       qq <- max(cl)
       ball <- wgssB / qq
       return(ball)
     }
     
-    indice.ratkowsky <- function(x, cl, d, centrotypes = "centroids"){
+    indice.ratkowsky <- function(x, cl, d, centrotypes = "centroids") {
       qq <- max(cl)
       clsize <- table(cl)
-      centers <- gss(x, cl, d)$centers
+      centers <- gss(x, cl, d)[["centers"]]
       varwithins <- varwithinss(x, centers, cl)
       zvargss <- vargss(x, clsize, varwithins)
       ratio <- mean(sqrt(zvargss[["varbgss"]] / zvargss[["vartss"]]))
@@ -915,7 +910,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   Indice.DB <- function(x, cl, d = NULL, centrotypes = "centroids", p = 2,
                         q = 2) {
     if (sum(c("centroids") == centrotypes) == 0) 
-      stop("Wrong centrotypes argument")
+      stop("Wrong centrotypes argument", call. = FALSE)
     if (!is.null(d)) {
       if (!is.matrix(d)) {
         d <- as.matrix(d)
@@ -1039,12 +1034,14 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         if (bb == 1) {
           pp <- cl
           if (ClassNr == length(cl)) 
-          pp2 <- 1:ClassNr else if (method == "k-means") {
-          set.seed(1)
-          pp2 <- kmeans(Xnew, ClassNr, 100)[["cluster"]]
-          } else if (method == "single" || method == "complete" || method == 
-            "average" || method == "ward.D2" || method == "mcquitty" ||
-            method == "median" || method == "centroid" || method == "ward.D") 
+            pp2 <- 1:ClassNr 
+          else if (method == "k-means") {
+            set.seed(1)
+            pp2 <- kmeans(Xnew, ClassNr, 100)[["cluster"]]
+          } else if (method == "single" || method == "complete" ||
+                     method == "average" || method == "ward.D2" ||
+                     method == "mcquitty" || method == "median" ||
+                     method == "centroid" || method == "ward.D") 
             pp2 <- cutree(hclust(dist(Xnew), method = method), ClassNr)
           else stop("Wrong clustering method", call. = FALSE)
           if (ClassNr > 1) {
@@ -1068,9 +1065,10 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
           else if (method == "k-means") {
             set.seed(1)
             pp2 <- kmeans(Xnew, ClassNr, 100)[["cluster"]]
-          } else if (method == "single" || method == "complete" || method == 
-            "average" || method == "ward.D2" || method == "mcquitty" || method == 
-            "median" || method == "centroid" || method == "ward.D") 
+          } else if (method == "single" || method == "complete" || 
+                     method == "average" || method == "ward.D2" ||
+                     method == "mcquitty" || method == "median" ||
+                     method == "centroid" || method == "ward.D") 
             pp2 <- cutree(hclust(dist(Xnew), method = method), ClassNr)
           else stop("Wrong clustering method", call. = FALSE)
           if (ClassNr > 1) {
@@ -1220,37 +1218,37 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     }
     ########### Cubic Clustering Criterion-CCC - 4e colonne de res ############
     if (any((indice == 4) || (indice == 31) || (indice == 32))) {
-      res[nc - min_nc + 1, 4] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss, 
+      res[nc - min_nc + 1, 4] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss,
         vv = vv)[["ccc"]]
     }
     ########### Scott and Symons - 5e colonne de res ############
     if (any((indice == 5) || (indice == 31) || (indice == 32))) {
-      res[nc - min_nc + 1, 5] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss, 
+      res[nc - min_nc + 1, 5] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss,
         vv = vv)[["scott"]]
     }
     ########### Marriot - 6e colonne de res ############
     if (any((indice == 6) || (indice == 31) || (indice == 32))) {
-      res[nc - min_nc + 1, 6] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss, 
+      res[nc - min_nc + 1, 6] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss,
         vv = vv)[["marriot"]]
     }
     ########### Trace Cov W - 7e colonne de res ############
     if (any((indice == 7) || (indice == 31) || (indice == 32))) {
-      res[nc - min_nc + 1, 7] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss, 
+      res[nc - min_nc + 1, 7] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss,
         vv = vv)[["trcovw"]]
     }
     ########### Trace W - 8e colonne de res ############
     if (any((indice == 8) || (indice == 31) || (indice == 32))) {
-      res[nc - min_nc + 1, 8] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss, 
+      res[nc - min_nc + 1, 8] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss,
         vv = vv)[["tracew"]]
     }
     ########### Friedman - 9e colonne de res ############
     if (any((indice == 9) || (indice == 31) || (indice == 32))) {
-      res[nc - min_nc + 1, 9] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss, 
+      res[nc - min_nc + 1, 9] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss,
         vv = vv)[["friedman"]]
     }
     ########### Rubin - 10e colonne de res ############
     if (any((indice == 10) || (indice == 31) || (indice == 32))) {
-      res[nc - min_nc + 1, 10] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss, 
+      res[nc - min_nc + 1, 10] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss,
         vv = vv)[["rubin"]]
     }
     ########### Indices.WKWL-duda - 14e colonne de res ############
