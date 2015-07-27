@@ -41,6 +41,11 @@ This function is intended to be used to view the shape of a given
   visualizations can be useful.
   See the \emph{Details} section for the \code{\link{multi_clust}} function
   and view the \emph{TIP} for a suggested workflow.
+
+  \emph{NOTE:} If boolean data is passed in for \code{d}, \code{TRUE} should
+  be represented with a \code{1} and \code{FALSE} should be represented with
+  a \code{0}. Also, all columns should be boolean in this case so that the
+  scaling is correct.
 }
 \examples{
 # First, create a multiClust object

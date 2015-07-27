@@ -90,7 +90,7 @@
 #' library(datasets)
 #' iris_cluster <- multi_clust(iris[, 1:4])
 multi_clust <- function(d, krange = 2:10, iter.max = 300, runs = 10, 
-                            method = "kmeans", ...) {
+                        method = "kmeans", ...) {
   validate_not_null(list(d = d, krange = krange, iter.max = iter.max, 
                          runs = runs, method = method))
   validate_num_data(d)
