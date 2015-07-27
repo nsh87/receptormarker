@@ -12,7 +12,8 @@ err2="WARNING"
 err3="Failure (at"
 err4="Failure(@"
 err5="Error: "
-if ! grep -q "$err1\|$err2\|$err3\|$err4\|$err5" $log_file; then
+err6="Execution halted"
+if ! grep -q "$err1\|$err2\|$err3\|$err4\|$err5\|$err6" $log_file; then
     echo "No errors, warnings, or failures found when running unit tests."
 else 
     printf "\n"
@@ -22,6 +23,7 @@ else
     grep -n "$err3" $log_file
     grep -n "$err4" $log_file
     grep -n "$err5" $log_file
+    grep -n "$err6" $log_file
     echo "ERROR, WARNING, or Failure found in unit tests. See grep results above."
     printf "\n"
     exit 1
