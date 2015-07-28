@@ -123,9 +123,16 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
   km[["clust_gap"]] <- cluster::clusGap(d, kmeans, 
                                         K.max = length(km[["clust_model"]]), 
                                         B = 15, verbose = FALSE)
-  nb_best <- suppressMessages(NbClust(d, min.nc = krange[1], index = "alllong",
-                     max.nc = krange[length(krange)],
-                     method = "average"))
+  tryCatch({
+    nb_best <- suppressWarnings(suppressMessages(NbClust(d, min.nc = krange[1],
+                                        index = "alllong",
+                                        max.nc = krange[length(krange)],
+                                        method = "average")))
+  }, error=function(cond) {
+    stop("There is not enough data instances for proper evaluation of",
+         "clustering.", call. = FALSE)
+  }
+  )
   best <- aggregate(nb_best[["Best.nc"]][1, ], 
                     by = list(nb_best[["Best.nc"]][1,]), length)
   index <- which.max(best[[2]])
