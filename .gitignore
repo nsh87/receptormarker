@@ -9,3 +9,6 @@
 # Vim
 *.swo
 *.swp
+
+# Travis CI
+travis/travis_build.log

@@ -1,38 +1,32 @@
 #!/usr/bin/env sh
-log_file="travis/travis_build.log"
-#R CMD BATCH ./travis_build.R $log_file 
-#cat $log_file
 
-# touch $log_file
-# 
-# # run tail -f in background
-# tail -f $log_file # > out 2>&1 &
-# 
-# # process id of tail command
-# tailpid=$!
-# 
-# # run build
-# R CMD BATCH ./travis_build.R $log_file 
-# 
-# # now kill the tail process
-# kill $tailpid
+# Build and check the package --as-cran
+echo "Building the package with: R CMD build"
+R CMD build .
+export PKG_TARBALL=$(Rscript -e 'pkg <- devtools::as.package("."); cat(paste0(pkg$package, "_", pkg$version, ".tar.gz"));')
 
-# run checks
-eval "Rscript ./travis/travis_build.R | tee -a '$log_file'"
+# Check the package
+echo "Checking the package with: R CMD check ${PKG_TARBALL} --as-cran"
+R CMD check "${PKG_TARBALL}" --as-cran
 
-# search for errors
+# search for errors in the output of the package check log
+export RCHECK_DIR=$(Rscript -e 'cat(paste0(devtools::as.package(".")$package, ".Rcheck"))')
 err1="ERROR"
 err2="WARNING"
 err3="Failure (at"
 err4="Failure(@"
-if ! grep -q "$err1\|$err2\|$err3\|$err4" $log_file; then
-    echo "No errors, warnings, or failures found."
-else 
-    echo "*** grep results **********************"
-    grep -n "$err1" $log_file
-    grep -n "$err2" $log_file
-    grep -n "$err3" $log_file
-    grep -n "$err4" $log_file
-    echo "ERROR, WARNING, or Failure found. See grep results above."
+err5="Error: "
+if ! grep -q -R "$err1\|$err2\|$err3\|$err4\|$err5" "${RCHECK_DIR}/00check.log"; then
+    echo "No errors or warnings found when checking the package"
+else
+    printf "\n"
+    echo "*** grep results from package check ********************"
+    grep -n "$err1" "${RCHECK_DIR}/00check.log"
+    grep -n "$err2" "${RCHECK_DIR}/00check.log"
+    grep -n "$err3" "${RCHECK_DIR}/00check.log"
+    grep -n "$err4" "${RCHECK_DIR}/00check.log"
+    grep -n "$err5" "${RCHECK_DIR}/00check.log"
+    echo "The package contains errors or warnings. See grep results above."
+    printf "\n"
     exit 1
 fi
