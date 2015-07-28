@@ -3,7 +3,7 @@ context("Unit test cluster plotting")
 tryCatch({
   set.seed(1)
   data(fluidigm)
-  fluidigm <- fluidigm[1:25,]
+  fluidigm <- fluidigm[1:50, ]
   f_clust <- multi_clust(fluidigm, krange = 2:4)
 },
 finally = {
