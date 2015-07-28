@@ -1,5 +1,16 @@
 context("Unit test multi_clust and validation for it")
 
+tryCatch({
+  set.seed(1)
+  data(fluidigm)
+  fluidigm <- fluidigm[1:25,]
+  f_clust <- multi_clust(fluidigm, krange = 2:4)
+},
+finally = {
+  set.seed(NULL)  # Turn off seed
+}
+)
+
 test_that("making sure argument is acceptable range works properly", {
   arg_list <- list("test", NULL, NA, as.factor(2:10), TRUE, 2, data.frame(a=1),
                    list(1), matrix(3:6))
@@ -16,10 +27,6 @@ test_that("making sure argument is acceptable range works properly", {
   expect_that(validate_sort_range(2:10), not(throws_error()))
 })
 
-
-data(fluidigm)
-fluidigm <- fluidigm[1:25,]
-f_clust <- multi_clust(fluidigm, krange=2:4)
 
 test_that("making sure argument is multiClust object works properly", {
   arg_list <- list("test", NULL, NA, as.factor(2:10), TRUE, 2, data.frame(a=1),
