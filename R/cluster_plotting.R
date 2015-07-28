@@ -315,6 +315,24 @@ boxplot_num_cols <- function(num_clust) {
   }
 }
 
+#' Check if all columns of data.frame are boolean
+#' 
+#' This is an internal function that returns if \code{d} is boolean for the
+#' \code{\link{clust_boxplot}} function that determines if a barplot should be
+#' used.
+#' @param d The data argument from \code{\link{clust_boxplot}}
+#' @return A boolean value indicating if all columns are boolean
+#' @keywords internal
+check_boolean <- function(d) {
+  for (col in d) {
+    if (!(identical(unique(col), c(0, 1)) || identical(unique(col), 0) ||
+          identical(unique(col), 1) || identical(unique(col), c(1, 0)))) {
+      return (FALSE)
+    }
+  }
+  return (TRUE)
+}
+
 #' Plot cluster membership for each feature.
 #' 
 #' This function plots cluster membership for each feature of \code{d} using box
@@ -334,6 +352,11 @@ boxplot_num_cols <- function(num_clust) {
 #'   visualizations can be useful.  
 #'   See the \emph{Details} section for the \code{\link{multi_clust}} function
 #'   and view the \emph{TIP} for a suggested workflow.
+#'   
+#'   \emph{NOTE:} If boolean data is passed in for \code{d}, \code{TRUE} should
+#'   be represented with a \code{1} and \code{FALSE} should be represented with
+#'   a \code{0}. Also, all columns should be boolean in this case so that the
+#'   scaling is correct.
 #' 
 #' @param d A numeric matrix of data, or an object that can be coerced to
 #'   such a matrix (such as a numeric vector or a data frame with all numeric
@@ -363,17 +386,29 @@ clust_boxplot <- function(d, clust_obj, num_clust, ...) {
   validate_num_data(d)
   validate_multi_clust(clust_obj)
   validate_pos_num(list(num_clust = num_clust))
-  axis_label_size 
   meas_vars <- colnames(d)
-  d <- transform(d, cluster = 
-                   clust_obj[["clust_model"]][[num_clust]][["cluster"]])
-  m <- reshape2::melt(d, id.vars = "cluster", measure.vars = meas_vars)
-  ggplot2::qplot(x = as.factor(cluster), y = value, data = m, geom = "boxplot", 
-                 fill = as.factor(cluster), xlab = NULL, 
-                 ylab = "Relative expression level", ...) + 
-    ggplot2::facet_wrap(~variable, ncol=boxplot_num_cols(num_clust)) + 
-    ggplot2::scale_fill_discrete(name = "Cluster") +
-    ggplot2::theme(
-      axis.text=ggplot2::element_text(size=axis_label_size(num_clust))
-    )
+  d["cluster"] <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
+  if (check_boolean(d[meas_vars])) {
+    d_bool <- aggregate(. ~ cluster, data = d, sum)
+    d_bool[meas_vars] <- d_bool[meas_vars] / nrow(d)
+    m <- reshape2::melt(d_bool, id.vars = "cluster", measure.vars = meas_vars)
+    ggplot2::qplot(x = as.factor(cluster), y = value, data = m, geom = "bar", 
+                   stat = "identity", fill = as.factor(cluster), xlab = NULL, 
+                   ylab = "Proportion expressed", ...) + 
+      ggplot2::facet_wrap(~variable, ncol=boxplot_num_cols(num_clust)) + 
+      ggplot2::scale_fill_discrete(name = "Cluster") +
+      ggplot2::theme(
+        axis.text=ggplot2::element_text(size=axis_label_size(num_clust))
+      )
+  } else {
+    m <- reshape2::melt(d, id.vars = "cluster", measure.vars = meas_vars)
+    ggplot2::qplot(x = as.factor(cluster), y = value, data = m,
+                   geom = "boxplot", fill = as.factor(cluster), xlab = NULL, 
+                   ylab = "Relative expression level", ...) + 
+      ggplot2::facet_wrap(~variable, ncol=boxplot_num_cols(num_clust)) + 
+      ggplot2::scale_fill_discrete(name = "Cluster") +
+      ggplot2::theme(
+        axis.text=ggplot2::element_text(size=axis_label_size(num_clust))
+      )
+  }
 }
