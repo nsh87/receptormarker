@@ -1,5 +1,17 @@
 context("Unit test multi_clust and validation for it")
 
+tryCatch({
+  set.seed(1)
+  data(fluidigm)
+  fluidigm <- fluidigm[1:50, ]
+  f_25 <- fluidigm[1:25, ]
+  f_clust <- multi_clust(fluidigm, krange = 2:4, runs = 2)
+},
+finally = {
+  set.seed(NULL)  # Turn off seed
+}
+)
+
 test_that("making sure argument is acceptable range works properly", {
   arg_list <- list("test", NULL, NA, as.factor(2:10), TRUE, 2, data.frame(a=1),
                    list(1), matrix(3:6))
@@ -17,15 +29,13 @@ test_that("making sure argument is acceptable range works properly", {
 })
 
 
-data(fluidigm)
-fluidigm <- fluidigm[1:25,]
-f_clust <- multi_clust(fluidigm, krange=2:4)
-
 test_that("making sure argument is multiClust object works properly", {
   arg_list <- list("test", NULL, NA, as.factor(2:10), TRUE, 2, data.frame(a=1),
                    list(1), matrix(3:6))
   lapply(arg_list, function(elem) expect_error(validate_multi_clust(elem),
                                                "object of class 'multiClust'"))
+  expect_error(multi_clust(f_25, krange = 2:4, runs = 2),
+               "not enough data instances")
   expect_that(validate_multi_clust(f_clust), not(throws_error()))
 })
 
@@ -57,7 +67,6 @@ test_that("making sure multiClust object works properly", {
   expect_equal(length(f_clust[["wss"]]), 4)
   expect_is(f_clust[["clust_gap"]], "clusGap")
   expect_equal(length(f_clust[["clust_gap"]]), 4)
-  expect_is(f_clust[["k_best"]], "integer")
+  expect_is(f_clust[["k_best"]], "numeric")
   expect_equal(length(f_clust[["k_best"]]), 1)
-  expect_equal(f_clust[["k_best"]], which.max(f_clust[["sil_avg"]]))
 })
