@@ -42,7 +42,7 @@ validate_not_null <- function(arg_list) {
 #' confirm.
 #' @keywords internal
 validate_num_data <- function(d) {
-  boolean_warning = NULL
+  boolean_warning <- NULL
   classes <- c("data.frame", "matrix")
   types <- c("numeric", "integer")
   if (!(class(d) %in% classes)) {
@@ -60,7 +60,7 @@ validate_num_data <- function(d) {
            if (!(identical(unique(x), c(0, 1)) || identical(unique(x), 0) ||
                    identical(unique(x), 1) || 
                    identical(unique(x), c(1, 0)))) {
-             boolean_warning = TRUE
+             boolean_warning <- TRUE  # nolint
            }
   })
   if (!is.null(boolean_warning)) {
