@@ -124,8 +124,9 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
                                         K.max = length(km[["clust_model"]]), 
                                         B = 15, verbose = FALSE)
   tryCatch({
-    nb_best <- suppressWarnings(suppressMessages(NbClust(d, min.nc = krange[1],
-                                        index = "alllong",
+    nb_best <- suppressWarnings(suppressMessages(receptormarker::NbClust(d,
+                                        min.nc = krange[1],
+                                        index = "all",
                                         max.nc = krange[length(krange)],
                                         method = "average")))
   }, 
