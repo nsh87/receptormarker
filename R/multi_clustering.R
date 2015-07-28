@@ -131,8 +131,8 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
                                         method = "average")))
   }, 
   error=function(cond) {
-    stop("There is not enough data instances for proper evaluation of",
-         "clustering.", call. = FALSE)
+    stop("There are not enough rows of data to evaluate for clustering.",
+         call. = FALSE)
   }
   )
   best <- aggregate(nb_best[["Best.nc"]][1, ], 

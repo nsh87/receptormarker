@@ -35,7 +35,7 @@ test_that("making sure argument is multiClust object works properly", {
   lapply(arg_list, function(elem) expect_error(validate_multi_clust(elem),
                                                "object of class 'multiClust'"))
   expect_error(multi_clust(f_25, krange = 2:4, runs = 2),
-               "not enough data instances")
+               "not enough rows of data to evaluate")
   expect_that(validate_multi_clust(f_clust), not(throws_error()))
 })
 
