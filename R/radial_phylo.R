@@ -433,7 +433,7 @@ calculate_canvas_size <- function(xml_file, condensed, rings) {
   if (num_elements == 0) {
     stop("Cannot generate phylogram: no sequences to plot", call.=FALSE)
   } else if (num_elements <= 30) {
-    base_size <- 1300
+    base_size <- 1450
   } else if (num_elements <= 50) {
     base_size <- 1100
   } else if (num_elements <= 185) {
@@ -462,6 +462,9 @@ calculate_canvas_size <- function(xml_file, condensed, rings) {
   # Need to add extra room if there are outer rings (~100 pixels per ring works)
   if (!is.null(rings)) {
     canvas_size <- canvas_size + length(rings) * 100
+  }
+  if (!(is.null(rings)) && num_elements <= 90) {
+    canvas_size <- canvas_size + 200
   }
   if (condensed == TRUE) {
     canvas_size <- canvas_size + 200
