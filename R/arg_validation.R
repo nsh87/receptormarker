@@ -42,6 +42,7 @@ validate_not_null <- function(arg_list) {
 #' confirm.
 #' @keywords internal
 validate_num_data <- function(d) {
+  boolean_warning = NULL
   classes <- c("data.frame", "matrix")
   types <- c("numeric", "integer")
   if (!(class(d) %in% classes)) {
@@ -56,11 +57,15 @@ validate_num_data <- function(d) {
          })
   lapply(d,
          function(x) {
-           if (identical(unique(x), c(0, 1))) {
-             warning("At least one column of 'd' contains only values 0 and 1.",
-                     call.=FALSE)
+           if (!(identical(unique(x), c(0, 1)) || identical(unique(x), 0) ||
+                   identical(unique(x), 1) || 
+                   identical(unique(x), c(1, 0)))) {
+             boolean_warning = TRUE
            }
-         })
+  })
+  if (!is.null(boolean_warning)) {
+    message("At least one column of 'd' contains only values 0 and 1.")
+  }
 }
 
 #' @title Validate that an argument contains positive integers
