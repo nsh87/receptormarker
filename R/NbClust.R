@@ -625,8 +625,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   
   ################ # ccc, scott, marriot, trcovw, tracew, friedman and rubin # #
   
-  Indices.WBT <- function(x, cl, P, s, vv) 
-  {
+  Indices.WBT <- function(x, cl, P, s, vv) {
     n <- dim(x)[1]
     pp <- dim(x)[2]
     qq <- max(cl)
