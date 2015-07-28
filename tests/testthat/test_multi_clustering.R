@@ -59,5 +59,4 @@ test_that("making sure multiClust object works properly", {
   expect_equal(length(f_clust[["clust_gap"]]), 4)
   expect_is(f_clust[["k_best"]], "integer")
   expect_equal(length(f_clust[["k_best"]]), 1)
-  expect_equal(f_clust[["k_best"]], which.max(f_clust[["sil_avg"]]))
 })
