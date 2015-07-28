@@ -5,7 +5,7 @@ tryCatch({
   data(fluidigm)
   fluidigm <- fluidigm[1:50, ]
   f_25 <- fluidigm[1:25, ]
-  f_clust <- multi_clust(fluidigm, krange = 2:4)
+  f_clust <- multi_clust(fluidigm, krange = 2:4, runs = 2)
 },
 finally = {
   set.seed(NULL)  # Turn off seed
@@ -34,7 +34,8 @@ test_that("making sure argument is multiClust object works properly", {
                    list(1), matrix(3:6))
   lapply(arg_list, function(elem) expect_error(validate_multi_clust(elem),
                                                "object of class 'multiClust'"))
-  expect_error(multi_clust(f_25, krange = 2:4), "not enough data instances")
+  expect_error(multi_clust(f_25, krange = 2:4, runs = 2),
+               "not enough data instances")
   expect_that(validate_multi_clust(f_clust), not(throws_error()))
 })
 

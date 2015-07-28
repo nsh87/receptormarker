@@ -128,7 +128,8 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
                                         index = "alllong",
                                         max.nc = krange[length(krange)],
                                         method = "average")))
-  }, error=function(cond) {
+  }, 
+  error=function(cond) {
     stop("There is not enough data instances for proper evaluation of",
          "clustering.", call. = FALSE)
   }
