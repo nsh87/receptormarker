@@ -1,15 +1,8 @@
 context("Unit test cluster plotting")
 
-tryCatch({
-  set.seed(1)
-  data(fluidigm)
-  fluidigm <- fluidigm[1:50, ]
-  f_clust <- multi_clust(fluidigm, krange = 2:4, runs = 2)
-},
-finally = {
-  set.seed(NULL)  # Turn off seed
-}
-)
+# Load pre-computed multiClust object from fluidigm data set. This same object
+# should be used in 'test_multi_clustering.R' test cases.
+load(system.file("extdata", "f_clust.rda", package="receptormarker"))
 
 test_that("making sure validation functions work properly in wss_plot", {
   expect_error(wss_plot(NULL), "clust_obj")

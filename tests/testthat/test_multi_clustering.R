@@ -1,16 +1,9 @@
 context("Unit test multi_clust and validation for it")
 
-tryCatch({
-  set.seed(1)
-  data(fluidigm)
-  fluidigm <- fluidigm[1:50, ]
-  f_25 <- fluidigm[1:25, ]
-  f_clust <- multi_clust(fluidigm, krange = 2:4, runs = 2)
-},
-finally = {
-  set.seed(NULL)  # Turn off seed
-}
-)
+data(fluidigm)
+# Load pre-computed multiClust object from fluidigm data set. This same object
+# should be used in 'test_cluster_plotting.R' test cases.
+load(system.file("extdata", "f_clust.rda", package="receptormarker"))
 
 test_that("making sure argument is acceptable range works properly", {
   arg_list <- list("test", NULL, NA, as.factor(2:10), TRUE, 2, data.frame(a=1),
@@ -34,7 +27,7 @@ test_that("making sure argument is multiClust object works properly", {
                    list(1), matrix(3:6))
   lapply(arg_list, function(elem) expect_error(validate_multi_clust(elem),
                                                "object of class 'multiClust'"))
-  expect_error(multi_clust(f_25, krange = 2:4, runs = 2),
+  expect_error(multi_clust(fluidigm[1:25, ], krange = 2:4, runs = 2),
                "not enough rows of data to evaluate")
   expect_that(validate_multi_clust(f_clust), not(throws_error()))
 })
