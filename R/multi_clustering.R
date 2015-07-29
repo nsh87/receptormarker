@@ -130,9 +130,13 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
                                         max.nc = krange[length(krange)],
                                         method = "average")))
   }, 
-  error=function(cond) {
-    stop("There are not enough rows of data to evaluate for clustering.",
-         call. = FALSE)
+  error=function(e) {
+    if("computationally singular" %in% e) {
+      stop("There are not enough rows of data to evaluate for clustering.",
+           call. = FALSE)
+    } else {
+      stop(e, call. = FALSE)
+    }
   }
   )
   best <- aggregate(nb_best[["Best.nc"]][1, ], 
