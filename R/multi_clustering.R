@@ -124,7 +124,7 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
                                         method = "average")))
   }, 
   error=function(e) {
-    if("computationally singular" %in% e) {
+    if(grepl("computationally singular", e)) {
       stop("There are not enough rows of data to evaluate for clustering.",
            call. = FALSE)
     } else {
