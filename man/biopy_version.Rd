@@ -12,11 +12,12 @@ If Biopython is installed the version number will be returned as a
   returns \code{NULL}.
 }
 \description{
-Get the major and minor version of the installed Biopython package.
+Get the major and minor version of the installed Biopython
+  package.
 }
 \details{
-This is an internal function for checking to see whether or not Biopython is
-installed on the system during the \code{.onLoad()} hook.
+This is an internal function for checking to see whether or not
+  Biopython is installed on the system during the \code{.onLoad()} hook.
 }
 \keyword{internal}
 
