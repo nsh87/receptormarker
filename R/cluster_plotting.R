@@ -158,7 +158,7 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
   validate_num_data(d)
   validate_multi_clust(clust_obj)
   validate_pos_num(list(num_clust = num_clust))
-  pca <- princomp(d)
+  pca <- stats::princomp(d)
   sdev <- pca[["sdev"]]
   prop_var <- sdev ^ 2 / sum(sdev ^ 2)
   main <- paste0("PCA Plot (", round(sum(prop_var[1:3]) * 100), "% Variance)")
