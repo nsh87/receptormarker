@@ -59,7 +59,7 @@ validate_num_data <- function(d) {
          function(x) {
            b <- grepl("^[^0|1]", x)
            if (sum(b) > 0) {
-             boolean_warning <- TRUE
+             boolean_warning <- TRUE  # nolint
            }
   })
   if (!is.null(boolean_warning)) {
