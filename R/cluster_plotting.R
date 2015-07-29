@@ -328,7 +328,7 @@ boxplot_num_cols <- function(num_clust) {
 #' @keywords internal
 check_boolean <- function(d) {
   for (col in d) {
-    b <- grepl("^[^0|1]", col)
+    b <- grepl("[^0|1]", col)
     if (sum(b) > 0) {
       return (FALSE)
     }
