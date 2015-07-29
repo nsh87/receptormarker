@@ -5,6 +5,8 @@ data(fluidigm)
 # should be used in 'test_cluster_plotting.R' test cases. It was generated
 # using 'data(fluidigm); f_clust <- fluidigm[1:50, ].
 load(system.file("extdata", "f_clust.rda", package="receptormarker"))
+# Load TCR data set with only data points and all data points as 0 or 1.
+load(system.file("extdata", "tcr_binary_data.rda", package="receptormarker"))
 
 test_that("making sure argument is acceptable range works properly", {
   arg_list <- list("test", NULL, NA, as.factor(2:10), TRUE, 2, data.frame(a=1),
@@ -63,4 +65,13 @@ test_that("making sure multiClust object works properly", {
   expect_equal(length(f_clust[["clust_gap"]]), 4)
   expect_is(f_clust[["k_best"]], "numeric")
   expect_equal(length(f_clust[["k_best"]]), 1)
+})
+
+
+test_that("multiClust object can be generated with boolean data", {
+  expect_that(multi_clust(tcr_binary_data), not(throws_error()))
+})
+
+test_that("multiClust object can be generated with non-boolean data", {
+  expect_that(multi_clust(fluidigm[1:40, ]), not(throws_error()))
 })
