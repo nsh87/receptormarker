@@ -41,20 +41,14 @@ does nothing, but functionality will be added in the future.}
     \code{\link[stats]{kmeans}} objects stored in \code{clust_model}.
   \code{clust_gap} A \code{\link[cluster]{clusGap}} object that uses the
     highest number of \code{krange} for the \code{K.max} argument.
-  \code{k_best} The optimal number of clusters based on 30 methods: "kl",
-    "ch", "hartigan", "ccc", "scott", "marriot", "trcovw", "tracew",
-    "friedman", "rubin", "cindex", "db", "silhouette", "duda", "pseudot2",
-    "beale", "ratkowsky", "ball", "ptbiserial", frey", "mcclain", "dunn",
-    "hubert", "sdindex", "dindex", "sdbw", "gap", "gamma", "tau", "gplus".
-    Please see \code{\link[NbClust]{NbClust}} for further details on how each
-    method works.
+  \code{k_best} The optimal number of clusters based on silhouette score.
 }
 \description{
 This calls the function \code{\link[stats]{kmeans}} to perform kmeans
 clustering, but initializes multiple times. It chooses the best one for each
 number of clusters using within sum of squares, and the best number of
-clusters overall based on the 30 methods used in the
-\code{\link[NbClust]{NbClust}} function.
+clusters overall based on average silhouette width from the
+\code{\link[cluster]{silhouette}} function.
 }
 \details{
 The \code{multiClust} object is primarily intended for use with
@@ -67,7 +61,6 @@ The \code{multiClust} object is primarily intended for use with
   in a variable called \code{clust_obj}, one could access the
   \code{\link[stats]{kmeans}} object for 3 clusters with the following call:
   \code{clust_obj[["clust_model"]][[3]]}
-
   This can be done similarly to access the \code{sil_avg}, \code{num_clust},
   \code{sil}, and \code{wss}. However, both \code{clust_gap} and
   \code{k_best} only contain single items. Thus, \code{clust_gap} can be

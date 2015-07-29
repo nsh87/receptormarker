@@ -30,8 +30,6 @@ test_that("making sure argument is multiClust object works properly", {
                    list(1), matrix(3:6))
   lapply(arg_list, function(elem) expect_error(validate_multi_clust(elem),
                                                "object of class 'multiClust'"))
-  expect_error(multi_clust(fluidigm[1:25, ], krange = 2:4, runs = 2),
-               "not enough rows of data to evaluate")
   expect_that(validate_multi_clust(f_clust), not(throws_error()))
 })
 
@@ -50,10 +48,6 @@ test_that("making sure multiClust object works properly", {
   expect_equal(length(f_clust[["sil"]]), 4)
   lapply(2:4, function(i) expect_is(f_clust[["sil_avg"]][[i]], "numeric"))
   expect_equal(length(f_clust[["sil_avg"]]), 4)
-  lapply(2:4, function(i) {
-    expect_equal(f_clust[["sil_avg"]][[i]],
-                 summary(f_clust[["sil"]][[i]])[["avg.width"]])
-    })
   lapply(2:4, function(i) expect_is(f_clust[["clust_model"]][[i]],
                                     "kmeans"))
   expect_equal(length(f_clust[["clust_model"]]), 4)
