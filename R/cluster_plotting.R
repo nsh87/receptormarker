@@ -305,7 +305,7 @@ axis_label_size <- function(num_clust) {
 #' @return An integer value for the number of columns
 #' @keywords internal
 boxplot_num_cols <- function(num_clust) {
-  if (num_clust <= 10) {
+  if (num_clust < 10) {
     return(5)
   } else if (num_clust <= 15) {
     return (4)
