@@ -2,7 +2,8 @@ context("Unit test multi_clust and validation for it")
 
 data(fluidigm)
 # Load pre-computed multiClust object from fluidigm data set. This same object
-# should be used in 'test_cluster_plotting.R' test cases.
+# should be used in 'test_cluster_plotting.R' test cases. It was generated
+# using 'data(fluidigm); f_clust <- fluidigm[1:50, ].
 load(system.file("extdata", "f_clust.rda", package="receptormarker"))
 
 test_that("making sure argument is acceptable range works properly", {
