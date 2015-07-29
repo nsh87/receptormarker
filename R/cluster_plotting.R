@@ -159,11 +159,14 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
   validate_multi_clust(clust_obj)
   validate_pos_num(list(num_clust = num_clust))
   pca <- princomp(d)
+  sdev <- pca[["sdev"]]
+  prop_var <- sdev ^ 2 / sum(sdev ^ 2)
+  main <- paste0("PCA Plot (", round(sum(prop_var[1:3]) * 100), "% Variance)")
   clusters <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
-  plot(pca[["scores"]][,1:2], col = rainbow(num_clust)[clusters],
+  plot(pca[["scores"]][, 1:2], col = rainbow(num_clust)[clusters],
        xlab = "Principal Component 1",
        ylab = "Principal Component 2",
-       main = "PCA Plot of Clusters",
+       main = main,
        ...)
 }
 
