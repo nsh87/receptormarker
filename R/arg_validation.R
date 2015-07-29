@@ -57,10 +57,9 @@ validate_num_data <- function(d) {
          })
   lapply(d,
          function(x) {
-           if (!(identical(unique(x), c(0, 1)) || identical(unique(x), 0) ||
-                   identical(unique(x), 1) || 
-                   identical(unique(x), c(1, 0)))) {
-             boolean_warning <- TRUE  # nolint
+           b <- grepl("[^0-1]$", x)
+           if (sum(b) > 0) {
+             boolean_warning <- TRUE
            }
   })
   if (!is.null(boolean_warning)) {
