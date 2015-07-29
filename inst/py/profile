@@ -1,0 +1,22 @@
+➜  py git:(radial_phylo_dependency_fix) ✗ python -m line_profiler
+phyloxml_from_msa.py.lprof
+Timer unit: 1e-06 s
+
+Total time: 70.0129 s
+File: phyloxml_from_msa.py
+Function: phyloxml_from_msa at line 20
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    20                                           @profile
+    21                                           def phyloxml_from_msa(msa, phyloxml):
+    22         1       222462 222462.0      0.3      from Bio import AlignIO
+    23         1       120050 120050.0      0.2      from Bio.Phylo.TreeConstruction import DistanceCalculator
+    24         1            6      6.0      0.0      from Bio.Phylo.TreeConstruction import DistanceTreeConstructor
+    25         1            3      3.0      0.0      from Bio import Phylo
+    26         1        74849  74849.0      0.1      ms_alignment = AlignIO.read(msa, "fasta")
+    27         1         3888   3888.0      0.0      calculator = DistanceCalculator("ident")
+    28         1     33363053 33363053.0     47.7      dist_matrix = calculator.get_distance(ms_alignment)
+    29         1            7      7.0      0.0      constructor = DistanceTreeConstructor()
+    30         1     36136582 36136582.0     51.6      tree = constructor.upgma(dist_matrix)
+    31         1        91968  91968.0      0.1      Phylo.write(tree, phyloxml, "phyloxml")
