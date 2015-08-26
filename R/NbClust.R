@@ -41,7 +41,7 @@
 #' @keywords internal
 NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
                     min.nc = 2, max.nc = 15, method = NULL, index = "all",
-                    alphaBeale = 0.1, plots = FALSE) {
+                    alphaBeale = 0.1, plots = TRUE) {
   x <- 0
   min_nc <- min.nc
   max_nc <- max.nc
@@ -72,7 +72,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       (indice == 32)) {
     if ((max.nc - min.nc) < 2) 
       stop("The difference between the minimum and the maximum number of", 
-           "clusters must be at least equal to 2", call. = FALSE)
+        "clusters must be at least equal to 2", call. = FALSE)
   }
   
   if (is.null(data)) {
@@ -80,22 +80,20 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       stop("\n", "method = kmeans, data matrix is needed", call. = FALSE)
     } else {
       if ((indice == 1) || (indice == 2) || (indice == 3) || (indice == 4) || 
-          (indice == 5) || (indice == 6) || (indice == 7) || (indice == 8) || 
-          (indice == 9) || (indice == 10) || (indice == 12) || (indice == 14) || 
-          (indice == 15) || (indice == 16) || (indice == 17) ||
-          (indice == 18) || (indice == 19) || (indice == 20) ||
-          (indice == 23) || (indice == 24) || (indice == 25) ||
-          (indice == 27) || (indice == 28) || (indice == 29) ||
-          (indice == 30) || (indice == 31) || (indice == 32))
+        (indice == 5) || (indice == 6) || (indice == 7) || (indice == 8) || 
+        (indice == 9) || (indice == 10) || (indice == 12) || (indice == 14) || 
+        (indice == 15) || (indice == 16) || (indice == 17) || (indice == 
+        18) || (indice == 19) || (indice == 20) || (indice == 23) || (indice == 
+        24) || (indice == 25) || (indice == 27) || (indice == 28) || (indice == 
+        29) || (indice == 30) || (indice == 31) || (indice == 32)) 
         stop("\n", "Data matrix is needed. Only frey, mcclain, cindex, ", 
-             "sihouette and dunn can be computed.", "\n", call. = FALSE)
+          "sihouette and dunn can be computed.", "\n", call. = FALSE)
       
       if (is.null(diss)) 
         stop("data matrix and dissimilarity matrix are both null",
              call. = FALSE)
       else message("\n", "Only frey, mcclain, cindex, sihouette and dunn can ", 
-                   "be computed. To compute the other indices, data matrix is ",
-                   "needed\n")
+        "be computed. To compute the other indices, data matrix is needed\n")
     }
   }
   
@@ -107,19 +105,19 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     nn <- numberObsAfter <- dim(jeu)[1]
     pp <- dim(jeu)[2]
     TT <- t(jeu) %*% jeu
-    sizeEigenTT <- length(eigen(TT)[["values"]])
-    eigenValues <- eigen(TT / (nn - 1))[["values"]]
+    sizeEigenTT <- length(eigen(TT)[["value"]])
+    eigenValues <- eigen(TT / (nn - 1))[["value"]]
     
     # Only for indices using vv : CCC, Scott, marriot, tracecovw, tracew,
     # friedman, rubin
     
     if (any((indice == 4) || (indice == 5) || (indice == 6) || (indice == 7) || 
-            (indice == 8) || (indice == 9) || (indice == 10) ||
-            (indice == 31) || (indice == 32))) {
+      (indice == 8) || (indice == 9) || (indice == 10) || (indice == 31) || 
+      (indice == 32))) {
       for (i in 1:sizeEigenTT) {
         if (eigenValues[i] < 0) {
           stop("The TSS matrix is indefinite. There must be too many missing ", 
-               "values. The index cannot be calculated.", call. = FALSE)
+          "values. The index cannot be calculated.", call. = FALSE)
         }
       }
       s1 <- sqrt(eigenValues)
@@ -149,10 +147,10 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   if (is.null(diss)) {
     if (distanceM == 1) {
       md <- dist(jeu, method = "euclidean") # dist function computes and returns
-      # the distance matrix computed by
-      # using the specified distance
-      # measure to compute the distances
-      # between the rows of a data matrix.
+                                            # the distance matrix computed by
+                                            # using the specified distance
+                                            # measure to compute the distances
+                                            # between the rows of a data matrix.
     }
     if (distanceM == 2) {
       md <- dist(jeu, method = "maximum")
@@ -172,11 +170,6 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     if (distanceM == 7) {
       stop("dissimilarity matrix and distance are both NULL", call. = FALSE)
     }
-    
-    if (distanceM == 7) 
-    {		  
-      stop("dissimilarity matrix and distance are both NULL")		
-    } 
   }
   if (!is.null(diss)) {
     if ((distanceM == 1) || (distanceM == 2) || (distanceM == 3) ||
@@ -188,7 +181,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   # &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&# #
   # Methods # #
   # &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&#
-  
+
   res <- array(0, c(max_nc - min_nc + 1, 30))
   x_axis <- min_nc:max_nc
   resCritical <- array(0, c(max_nc - min_nc + 1, 4))
@@ -216,19 +209,19 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     hc <- hclust(md, method = "complete")
   }
   if (method == 4) {
-    hc<-hclust(md,method = "average")
+    hc <- hclust(md, method = "average")
   }
   if (method == 5) {
-    hc<-hclust(md,method = "mcquitty")
+    hc <- hclust(md, method = "mcquitty")
   }
   if (method == 6) {
-    hc<-hclust(md,method = "median")
+    hc <- hclust(md, method = "median")
   }
   if (method == 7) {
-    hc<-hclust(md,method = "centroid")
+    hc <- hclust(md, method = "centroid")
   }
   if (method == 9) {
-    hc<-hclust(md,method = "ward.D")
+    hc <- hclust(md, method = "ward.D")
   }
   
   # &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&# #
@@ -238,7 +231,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   ############################## # SD and SDbw # #
   
   
-  centers<-function(cl,x) {
+  centers <- function(cl, x) {
     x <- as.matrix(x)
     n <- length(cl)
     k <- max(cl)
@@ -264,14 +257,14 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       for (j in 1:ncol(x)) {
         for (i in 1:n) {
           if (cl[i] == u) 
-            variance.clusters[u, j] <- (variance.clusters[u, j] +
-                                          (x[i, j] - centers.matrix[u, j]) ^ 2)
+          variance.clusters[u, j] <- (variance.clusters[u, j] + (x[i, j] - 
+            centers.matrix[u, j]) ^ 2)
         }
       }            
     }
     for (u in 1:k) {
-      for (j in 1:ncol(x)) 
-        variance.clusters[u, j] <- variance.clusters[u, j] / cluster.size[u]
+      for (j in 1:ncol(x)) variance.clusters[u, j] <- variance.clusters[u, 
+        j] / cluster.size[u]
     }
     variance.matrix <- numeric(0)
     for (j in 1:ncol(x)) variance.matrix[j] <- var(x[, j]) * (n - 1) / n
@@ -291,14 +284,15 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     return(scat)
   }
   
-  density.clusters<-function(cl, x) {
+  density.clusters<-function(cl, x)
+  {
     x <- as.matrix(x)
     k <- max(cl)
     n <- length(cl)
     distance <- matrix(0, ncol = 1, nrow = n)
     density <- matrix(0, ncol = 1, nrow = k)
     centers.matrix <- centers(cl, x)
-    stdev <- Average.scattering(cl, x)[["stdev"]]
+    stdev <- Average.scattering(cl, x)[["stdev "]]
     for (i in 1:n) {
       u <- 1
       while (cl[i] != u) u <- u + 1
@@ -313,7 +307,9 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     return(dens)
   }
   
-  density.bw<-function(cl, x) {
+  
+  density.bw<-function(cl, x)
+  {
     x <- as.matrix(x)
     k <- max(cl)
     n <- length(cl)
@@ -327,15 +323,15 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
           distance <- matrix(0, ncol = 1, nrow = n)
           moy <- (centers.matrix[u, ] + centers.matrix[v, ]) / 2
           for (i in 1:n) {
-            if ((cl[i] == u) || (cl[i] == v)) {
-              for (j in 1:ncol(x)) {
-                distance[i] <- distance[i] + (x[i, j] - moy[j]) ^ 2
-              }
-              distance[i] <- sqrt(distance[i])
-              if (distance[i] <= stdev) {
-                density.bw[u, v] <- density.bw[u, v] + 1
-              }
+          if ((cl[i] == u) || (cl[i] == v)) {
+            for (j in 1:ncol(x)) {
+            distance[i] <- distance[i] + (x[i, j] - moy[j]) ^ 2
             }
+            distance[i] <- sqrt(distance[i])
+            if (distance[i] <= stdev) {
+            density.bw[u, v] <- density.bw[u, v] + 1
+            }
+          }
           }
         }
       }
@@ -373,7 +369,9 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   
   ################################## # Hubert index # #
   
-  Index.Hubert<-function(x, cl) {
+  Index.Hubert<-function(x, cl)
+  {
+    
     k <- max(cl)
     n<-dim(x)[1]
     y <- matrix(0, ncol = dim(x)[2], nrow = n)
@@ -410,12 +408,12 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   
   ################################## # Gamma, Gplus and Tau # #
   
-  Index.sPlussMoins <- function (cl1,md) {
+  Index.sPlussMoins <- function (cl1,md)
+  {
     cn1 <- max(cl1)
     n1 <- length(cl1)
     dmat <- as.matrix(md)
-    average.distance <- median.distance <- separation <- numeric(0)
-      cluster.size <- within.dist1 <- between.dist1 <- numeric(0)
+    average.distance <- median.distance <- separation <- cluster.size <- within.dist1 <- between.dist1 <- numeric(0)
     separation.matrix <- matrix(0, ncol = cn1, nrow = cn1)
     di <- list()
     for (u in 1:cn1) {
@@ -430,8 +428,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
           suv <- dmat[cl1 == u, cl1 == v]
           bv <- c(bv, suv)
           if (u < v) {
-            separation.matrix[u, v] <- separation.matrix[v, u] <- min(suv)
-            between.dist1 <- c(between.dist1, suv)
+          separation.matrix[u, v] <- separation.matrix[v, u] <- min(suv)
+          between.dist1 <- c(between.dist1, suv)
           }
         }
       }
@@ -465,13 +463,18 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     cluster.size <- within.dist1 <- between.dist1 <- numeric(0)
     separation.matrix <- matrix(0, ncol = cn1, nrow = cn1)
     di <- list()
-    for (u in 1:cn1) {
+    for (u in 1:cn1) 
+    {
       cluster.size[u] <- sum(cl1 == u)
       du <- as.dist(dmat[cl1 == u, cl1 == u])
       within.dist1 <- c(within.dist1, du)
+      #average.distance[u] <- mean(du)
+      #median.distance[u] <- median(du)
+      #bv <- numeric(0)
       for (v in 1:cn1) {
         if (v != u) {
           suv <- dmat[cl1 == u, cl1 == v]
+          #bv <- c(bv, suv)
           if (u < v) {
             separation.matrix[u, v] <- separation.matrix[v, u] <- min(suv)
             between.dist1 <- c(between.dist1, suv)
@@ -490,6 +493,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       cluster.size[w] <- sum(cl2 == w)
       dw <- as.dist(dmat[cl2 == w, cl2 == w])
       within.dist2 <- c(within.dist2, dw)
+      #average.distance[w] <- mean(dw)
+      #median.distance[w] <- median(dw)
       bx <- numeric(0)
       for (x in 1:cn2) {
         if (x != w) {
@@ -515,7 +520,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   }
   
   ################################## # Point-biserial # #
-  
+
   Indice.ptbiserial <- function (x,md,cl1)
   {
     nn <- dim(x)[1]
@@ -570,7 +575,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   
   Indices.WKWL <- function(x, cl1 = cl1, cl2 = cl2) {
     dim2 <- dim(x)[2]
-    wss <- function(x) {
+    wss <- function(x) 
+    {
       x <- as.matrix(x)
       n <- length(x)
       centers <- matrix(nrow = 1, ncol = ncol(x))
@@ -619,13 +625,14 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     pseudot2 <- BKL / ((WK + WL) / (NK + NL - 2))
     beale <- (BKL / (WK + WL)) / (((NM - 1) / (NM - 2)) * (2 ^ (2 / dim2) - 1))
     results <- list(duda = duda, pseudot2 = pseudot2, NM = NM, NK = NK, NL = NL,
-                    beale = beale)
+      beale = beale)
     return(results)
   }
   
   ################ # ccc, scott, marriot, trcovw, tracew, friedman and rubin # #
-  
-  Indices.WBT <- function(x, cl, P, s, vv) {
+
+  Indices.WBT <- function(x, cl, P, s, vv) 
+  {
     n <- dim(x)[1]
     pp <- dim(x)[2]
     qq <- max(cl)
@@ -644,7 +651,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     trcovw <- sum(diag(cov(W)))
     tracew <- sum(diag(W))
     if (det(W) != 0) 
-      scott <- n * log(det(P) / det(W))
+      scott <- n * log(det(P) / det(W)) 
     else {
       message("Error: division by zero!")
     }
@@ -679,7 +686,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   }
   
   ################################## # Kl, Ch, Hartigan, Ratkowsky and Ball # #
-  
+
   Indices.Traces <- function(data, d, clall, index = "all") 
   {
     x <- data
@@ -779,9 +786,9 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       m <- ncol(x)
       g <- k <- max(clall[, 2])
       KL <- abs((g - 1) ^ (2 / m) * gss(x, clall[, 1], d)[["wgss"]] -
-                  g ^ (2 / m) * gss(x, clall[, 2], d)[["wgss"]]) /
+                g ^ (2 / m) * gss(x, clall[, 2], d)[["wgss"]]) /
         abs((g) ^ (2 / m) * gss(x, clall[, 2], d)[["wgss"]] -
-              (g + 1) ^ (2 / m) * gss(x, clall[, 3], d)[["wgss"]])
+            (g + 1) ^ (2 / m) * gss(x, clall[, 3], d)[["wgss"]])
       return(KL)
     }
     
@@ -822,7 +829,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       n <- nrow(x)
       g <- max(clall[, 1])
       HART <- (gss(x, clall[, 2], d)[["wgss"]] /
-                 gss(x, clall[, 3], d)[["wgss"]] - 1) * (n - g - 1)
+               gss(x, clall[, 3], d)[["wgss"]] - 1) * (n - g - 1)
       return(HART)
     }
     
@@ -961,14 +968,14 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         Sil <- 0
         for (i in 1:length(cl)) {
           if (cl[i] == k) {
-            ai <- sum(d[i, cl == k]) / (sum(cl == k) - 1)
-            dips <- NULL
-            for (j in 1:max(cl)) if (cl[i] != j) 
-              if (sum(cl == j) != 1) 
-                dips <- cbind(dips, c((sum(d[i, cl == j])) / (sum(cl == j))))
+          ai <- sum(d[i, cl == k]) / (sum(cl == k) - 1)
+          dips <- NULL
+          for (j in 1:max(cl)) if (cl[i] != j) 
+            if (sum(cl == j) != 1) 
+              dips <- cbind(dips, c((sum(d[i, cl == j])) / (sum(cl == j))))
             else dips <- cbind(dips, c((sum(d[i, cl == j]))))
-            bi <- min(dips)
-            Sil <- Sil + (bi - ai) / max(c(ai, bi))
+          bi <- min(dips)
+          Sil <- Sil + (bi - ai) / max(c(ai, bi))
           }
         }
       }
@@ -1037,10 +1044,10 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
             for (zz in (1:ClassNr)) {
               Xuse <- X[pp == zz, ]
               Wk0 <- Wk0 + sum(diag(var(Xuse))) * (length(pp[pp == zz]) - 
-                                                     1) / (dim(X)[1] - ClassNr)
-              Xuse2 <- Xnew[pp2 == zz, ]
-              WkB[1, bb] <- WkB[1, bb] + sum(diag(var(Xuse2))) *
-                (length(pp2[pp2 == zz]) - 1) / (dim(X)[1] - ClassNr)
+                1) / (dim(X)[1] - ClassNr)
+            Xuse2 <- Xnew[pp2 == zz, ]
+            WkB[1, bb] <- WkB[1, bb] + sum(diag(var(Xuse2))) *
+              (length(pp2[pp2 == zz]) - 1) / (dim(X)[1] - ClassNr)
             }
           }
           if (ClassNr == 1) {
@@ -1068,7 +1075,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
             }
           }
           if (ClassNr == 1) {
-            WkB[1, bb] <- sum(diag(var(Xnew)))
+          WkB[1, bb] <- sum(diag(var(Xnew)))
           }
         }
       }
@@ -1157,7 +1164,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   
   for (nc in min_nc:max_nc) {
     if (any(method == 1) || (method == 2) || (method == 3) || (method == 4) || 
-        (method == 5) || (method == 6) || (method == 7) || (method == 9)) {
+      (method == 5) || (method == 6) || (method == 7) || (method == 9)) {
       cl1 <- cutree(hc, k = nc)
       cl2 <- cutree(hc, k = nc + 1)
       clall <- cbind(cl1, cl2)
@@ -1196,8 +1203,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       }
     }
     j <- table(cl1)  # table uses the cross-classifying factors to build a
-    # contingency table of the counts at each combination of
-    # factor levels.
+                    # contingency table of the counts at each combination of
+                    # factor levels.
     s <- sum(j == 1)
     j2 <- table(cl2)
     s2 <- sum(j2 == 1)
@@ -1208,37 +1215,37 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     ########### Cubic Clustering Criterion-CCC - 4e colonne de res ############
     if (any((indice == 4) || (indice == 31) || (indice == 32))) {
       res[nc - min_nc + 1, 4] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss,
-                                             vv = vv)[["ccc"]]
+        vv = vv)[["ccc"]]
     }
     ########### Scott and Symons - 5e colonne de res ############
     if (any((indice == 5) || (indice == 31) || (indice == 32))) {
       res[nc - min_nc + 1, 5] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss,
-                                             vv = vv)[["scott"]]
+        vv = vv)[["scott"]]
     }
     ########### Marriot - 6e colonne de res ############
     if (any((indice == 6) || (indice == 31) || (indice == 32))) {
       res[nc - min_nc + 1, 6] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss,
-                                             vv = vv)[["marriot"]]
+        vv = vv)[["marriot"]]
     }
     ########### Trace Cov W - 7e colonne de res ############
     if (any((indice == 7) || (indice == 31) || (indice == 32))) {
       res[nc - min_nc + 1, 7] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss,
-                                             vv = vv)[["trcovw"]]
+        vv = vv)[["trcovw"]]
     }
     ########### Trace W - 8e colonne de res ############
     if (any((indice == 8) || (indice == 31) || (indice == 32))) {
       res[nc - min_nc + 1, 8] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss,
-                                             vv = vv)[["tracew"]]
+        vv = vv)[["tracew"]]
     }
     ########### Friedman - 9e colonne de res ############
     if (any((indice == 9) || (indice == 31) || (indice == 32))) {
       res[nc - min_nc + 1, 9] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss,
-                                             vv = vv)[["friedman"]]
+        vv = vv)[["friedman"]]
     }
     ########### Rubin - 10e colonne de res ############
     if (any((indice == 10) || (indice == 31) || (indice == 32))) {
       res[nc - min_nc + 1, 10] <- Indices.WBT(x = jeu, cl = cl1, P = TT, s = ss,
-                                              vv = vv)[["rubin"]]
+        vv = vv)[["rubin"]]
     }
     ########### Indices.WKWL-duda - 14e colonne de res ############
     if (any((indice == 14) || (indice == 31) || (indice == 32))) {
@@ -1251,13 +1258,13 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
                                                cl2 = cl2)[["pseudot2"]]
     }
     ########### Indices.WKWL-beale - 16e colonne de res ############
-    if (any((indice == 16))) {
+    if (any((indice == 16) || (indice == 31) || (indice == 32))) {
       res[nc - min_nc + 1, 16] <- beale <- Indices.WKWL(x = jeu, cl1 = cl1, 
-                                                        cl2 = cl2)[["beale"]]
+        cl2 = cl2)[["beale"]]
     }
     ########### Indices.WKWL- duda or pseudot2 or beale ############
-    if (any((indice == 14) || (indice == 15) || (indice == 16) ||
-            (indice == 31) || (indice == 32))) {
+    if (any((indice == 14) || (indice == 15) || (indice == 16) || (indice == 
+      31) || (indice == 32))) {
       NM <- Indices.WKWL(x = jeu, cl1 = cl1, cl2 = cl2)[["NM"]]
       NK <- Indices.WKWL(x = jeu, cl1 = cl1, cl2 = cl2)[["NK"]]
       NL <- Indices.WKWL(x = jeu, cl1 = cl1, cl2 = cl2)[["NL"]]
@@ -1272,7 +1279,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         resCritical[nc - min_nc + 1, 2] <- ((1 - critValue) / critValue) * 
           (NK + NL - 2)
       }
-      if (any((indice == 16))) {
+      if (any((indice == 16) || (indice == 31) || (indice == 32))) {
         df2 <- (NM - 2) * pp
         resCritical[nc - min_nc + 1, 3] <- 1 - pf(beale, pp, df2)
       }
@@ -1361,8 +1368,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       ########### Indice.DB - 12e colonne de res ############
       if (any((indice == 12) || (indice == 31) || (indice == 32))) {
         res[nc - min_nc + 1, 12] <- Indice.DB(x = jeu, cl = cl1, d = NULL, 
-                                              centrotypes = "centroids", p = 2,
-                                              q = 2)[["DB"]]
+          centrotypes = "centroids", p = 2, q = 2)[["DB"]]
       }
       ########### Silhouette - 13e colonne de res ############
       if (any((indice == 13) || (indice == 31) || (indice == 32))) {
@@ -1495,7 +1501,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     foundDuda <- FALSE
     for (ncD in min_nc:max_nc) {
       if ((res[ncD - min_nc + 1, 14] >= resCritical[ncD - min_nc + 1, 1]) && 
-          (!foundDuda)) {
+        (!foundDuda)) {
         ncDuda <- ncD
         indiceDuda <- res[ncD - min_nc + 1, 14]
         foundDuda <- TRUE
@@ -1515,7 +1521,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     foundPseudo <- FALSE
     for (ncP in min_nc:max_nc) {
       if ((res[ncP - min_nc + 1, 15] <= resCritical[ncP - min_nc + 1, 2]) && 
-          (!foundPseudo)) {
+        (!foundPseudo)) {
         ncPseudo <- ncP
         indicePseudo <- res[ncP - min_nc + 1, 15]
         foundPseudo <- TRUE
@@ -1531,7 +1537,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     }
   }
   nc.Beale <- indice.Beale <- 0
-  if (any(indice == 16)) {
+  if (any((indice == 16) || (indice == 31) || (indice == 32))) {
     foundBeale <- FALSE
     for (ncB in min_nc:max_nc) {
       if ((resCritical[ncB - min_nc + 1, 3] >= alphaBeale) && (!foundBeale)) {
@@ -1623,60 +1629,57 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         DiffLev[nc3 - min_nc + 1, 8] <- abs(res[nc3 - min_nc + 1, 10] - NA)
         DiffLev[nc3 - min_nc + 1, 9] <- abs(res[nc3 - min_nc + 1, 18] - NA)
         DiffLev[nc3 - min_nc + 1, 10] <- abs(res[nc3 - min_nc + 1, 27] - 
-                                               NA)
+          NA)
         DiffLev[nc3 - min_nc + 1, 12] <- abs(res[nc3 - min_nc + 1, 29] - 
-                                               NA)
+          NA)
       } else {
         if (nc3 == max_nc) {
           DiffLev[nc3 - min_nc + 1, 2] <- abs(res[nc3 - min_nc + 1, 3] - 
-                                                res[nc3 - min_nc, 3])
+          res[nc3 - min_nc, 3])
           DiffLev[nc3 - min_nc + 1, 3] <- abs(res[nc3 - min_nc + 1, 5] - 
-                                                res[nc3 - min_nc, 5])
+          res[nc3 - min_nc, 5])
           DiffLev[nc3 - min_nc + 1, 4] <- abs(res[nc3 - min_nc + 1, 6] - 
-                                                NA)
+          NA)
           DiffLev[nc3 - min_nc + 1, 5] <- abs(res[nc3 - min_nc + 1, 7] - 
-                                                res[nc3 - min_nc, 7])
+          res[nc3 - min_nc, 7])
           DiffLev[nc3 - min_nc + 1, 6] <- abs(res[nc3 - min_nc + 1, 8] - 
-                                                NA)   
+          NA)   
           DiffLev[nc3 - min_nc + 1, 7] <- abs(res[nc3 - min_nc + 1, 9] - 
-                                                res[nc3 - min_nc, 9])
+          res[nc3 - min_nc, 9])
           DiffLev[nc3 - min_nc + 1, 8] <- abs(res[nc3 - min_nc + 1, 10] - 
-                                                NA)
+          NA)
           DiffLev[nc3 - min_nc + 1, 9] <- abs(res[nc3 - min_nc + 1, 18] - 
-                                                res[nc3 - min_nc, 18])
+          res[nc3 - min_nc, 18])
           DiffLev[nc3 - min_nc + 1, 10] <- abs(res[nc3 - min_nc + 1, 27] - 
-                                                 NA)
+          NA)
           DiffLev[nc3 - min_nc + 1, 12] <- abs(res[nc3 - min_nc + 1, 29] - 
-                                                 NA)
+          NA)
         } else {
           DiffLev[nc3 - min_nc + 1, 2] <- abs(res[nc3 - min_nc + 1, 3] - 
-                                                res[nc3 - min_nc, 3])
+          res[nc3 - min_nc, 3])
           DiffLev[nc3 - min_nc + 1, 3] <- abs(res[nc3 - min_nc + 1, 5] - 
-                                                res[nc3 - min_nc, 5])
-          DiffLev[nc3 - min_nc + 1, 4] <- ((res[nc3 - min_nc + 2, 6] -
-                                              res[nc3 - min_nc + 1, 6]) -
-                                             (res[nc3 - min_nc + 1, 6] -
-                                                res[nc3 - min_nc, 6]))
+          res[nc3 - min_nc, 5])
+          DiffLev[nc3 - min_nc + 1, 4] <- ((res[nc3 - min_nc + 2, 6] - res[nc3 - 
+          min_nc + 1, 6]) - (res[nc3 - min_nc + 1, 6] - res[nc3 - min_nc, 
+          6]))
           DiffLev[nc3 - min_nc + 1, 5] <- abs(res[nc3 - min_nc + 1, 7] - 
-                                                res[nc3 - min_nc, 7])
-          DiffLev[nc3 - min_nc + 1, 6] <- ((res[nc3 - min_nc + 2, 8] -
-                                              res[nc3 - min_nc + 1, 8]) -
-                                             (res[nc3 - min_nc + 1, 8] -
-                                                res[nc3 - min_nc, 8]))
+          res[nc3 - min_nc, 7])
+          DiffLev[nc3 - min_nc + 1, 6] <- ((res[nc3 - min_nc + 2, 8] - res[nc3 - 
+          min_nc + 1, 8]) - (res[nc3 - min_nc + 1, 8] - res[nc3 - min_nc, 
+          8]))
           DiffLev[nc3 - min_nc + 1, 7] <- abs(res[nc3 - min_nc + 1, 9] - 
-                                                res[nc3 - min_nc, 9])
+          res[nc3 - min_nc, 9])
           DiffLev[nc3 - min_nc + 1, 8] <- ((res[nc3 - min_nc + 2, 10] -
                                               res[nc3 - min_nc + 1, 10]) -
                                              (res[nc3 - min_nc + 1, 10] -
                                                 res[nc3 - min_nc, 10]))
           DiffLev[nc3 - min_nc + 1, 9] <- abs(res[nc3 - min_nc + 1, 18] - 
-                                                res[nc3 - min_nc, 18])
+          res[nc3 - min_nc, 18])
           DiffLev[nc3 - min_nc + 1, 10] <- abs((res[nc3 - min_nc + 1, 27] - 
-                                                  res[nc3 - min_nc, 27]))
+          res[nc3 - min_nc, 27]))
           DiffLev[nc3 - min_nc + 1, 12] <- ((res[nc3 - min_nc + 2, 29] - 
-                                               res[nc3 - min_nc + 1, 29]) -
-                                              (res[nc3 - min_nc + 1, 29] -
-                                                 res[nc3 - min_nc, 29]))
+          res[nc3 - min_nc + 1, 29]) - (res[nc3 - min_nc + 1, 29] - res[nc3 - 
+          min_nc, 29]))
         }
       }
     }
@@ -1891,32 +1894,32 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   
   if (any((indice == 31) || (indice == 32))) {
     message("*****************************************************************",
-            "\n")
+      "\n")
     message("* Among all indices:                                             ",
-            "\n")
+      "\n")
     BestCluster <- results1[1, ]
     c <- 0
     for (i in min.nc:max.nc) {
       vect <- which(BestCluster == i)
       if (length(vect) > 0) 
-        message("*", length(vect), " proposed ", i,
-                " as the best number of clusters", "\n")
+        message("*", length(vect), "proposed", i,
+                "as the best number of clusters", "\n")
       if (c < length(vect)) {
         j <- i
         c <- length(vect)
       }
     }
     message("\n", "               *****Conclusion*****                       ", 
-            "\n", "\n")
+      "\n", "\n")
     message("* According to the majority rule, the best number of clusters is ",
-            j, "\n", "\n", "\n")
+      j, "\n", "\n", "\n")
     message("*****************************************************************",
-            "\n")
+      "\n")
     
     ########################## The Best partition ###################
     
     if (any((method == 1) || (method == 2) || (method == 3) || (method == 4) ||
-            (method == 5) || (method == 6) || (method == 7) || (method == 9))) 
+      (method == 5) || (method == 6) || (method == 7) || (method == 9))) 
       partition <- cutree(hc, k = j)
     else {
       set.seed(1)
@@ -1933,7 +1936,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
           (indice == 25) || (indice == 26) || (indice == 28) ||
           (indice == 30))) {
     if (any((method == 1) || (method == 2) || (method == 3) || (method == 4) ||
-            (method == 5) || (method == 6) || (method == 7) || (method == 9))) 
+      (method == 5) || (method == 6) || (method == 7) || (method == 9))) 
       partition <- cutree(hc, k = best.nc)
     else {
       set.seed(1)
@@ -1946,7 +1949,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   if (any((indice == 14) || (indice == 15) || (indice == 16) ||
           (indice == 20) || (indice == 31) || (indice == 32))) {
     results.final <- list(All.index = res, All.CriticalValues = resCritical, 
-                          Best.nc = resultats, Best.partition = partition)
+      Best.nc = resultats, Best.partition = partition)
   }
   if (any((indice == 27) || (indice == 29))) 
     results.final <- list(All.index = res)
@@ -1960,4 +1963,4 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     results.final <- list(All.index = res, Best.nc = resultats,
                           Best.partition = partition)
   return(results.final)
-}
+} 
