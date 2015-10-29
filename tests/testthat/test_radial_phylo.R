@@ -195,3 +195,4 @@ test_that("radial phylograms work using Biopython", {
                 gives_warning("install Python's Biopython"))
   }
 })
+

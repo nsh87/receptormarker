@@ -33,4 +33,4 @@ Imports:
 Suggests:
     testthat (>= 0.9.1),
     lintr (>= 0.2.0)
-RoxygenNote: 5.0.1
+RoxygenNote: 5.0.0

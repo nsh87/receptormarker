@@ -98,26 +98,33 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
   validate_pos_num(list(iter.max = iter.max, runs = runs))
   d <- d[complete.cases(d), ]
   d_dist <- dist(d)
-  km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
+  if (method != "kmeans" && method != "hclust") {
+    stop("The 'method' argument should either be 'kmeans' or 'hclust'.",
+         call. = FALSE)
+  }
+  if (method == "hclust") {
+    hc <- hclust(d_dist, method = "average")
+  }
+  cl <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
              clust_gap = NULL, wss = NULL, k_best = NULL)
   for (k in krange) {
-    km_opt <- stats::kmeans(d, k, iter.max = iter.max, nstart = runs, ...)
-    min_wss <- km_opt[["tot.withinss"]]
-    sil <- cluster::silhouette(km_opt[["cluster"]], d_dist)
+    cl_opt <- stats::kmeans(d, k, iter.max = iter.max, nstart = runs, ...)
+    min_wss <- cl_opt[["tot.withinss"]]
+    sil <- cluster::silhouette(cl_opt[["cluster"]], d_dist)
     sil_sum <- summary(sil)
     sil_avg <- sil_sum[["avg.width"]]
     
-    km[["clust_model"]][[k]] <- km_opt
-    km[["sil_avg"]][[k]] <- sil_avg
-    km[["num_clust"]][[k]] <- k
-    km[["sil"]][[k]] <- sil
-    km[["wss"]][[k]] <- min_wss
+    cl[["clust_model"]][[k]] <- cl_opt
+    cl[["sil_avg"]][[k]] <- sil_avg
+    cl[["num_clust"]][[k]] <- k
+    cl[["sil"]][[k]] <- sil
+    cl[["wss"]][[k]] <- min_wss
   }
-  km[["clust_gap"]] <- cluster::clusGap(d, kmeans, 
-                                        K.max = length(km[["clust_model"]]), 
+  cl[["clust_gap"]] <- cluster::clusGap(d, kmeans, 
+                                        K.max = length(cl[["clust_model"]]), 
                                         B = 15, verbose = FALSE)
-  km[["k_best"]] <- which.max(km[["sil_avg"]])
-  structure(km, class = "multiClust")
+  cl[["k_best"]] <- which.max(cl[["sil_avg"]])
+  structure(cl, class = "multiClust")
 }
 
 #' @title Validate and sort an argument that is a range of integers
