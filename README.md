@@ -3,7 +3,10 @@
 ## Installation
 
 While this package is in development it can be installed directly from GitHub
-using the `devtools` package:
+using the `devtools` package. The Bioconductor package `muscle` is a
+dependency that must be installed first - follow [Bioconductor's
+instructions](https://bioconductor.org/packages/release/bioc/html/muscle.html).
+Then, to install `receptormarker`:
 
 ```R
 devtools::install_github('nsh87/receptormarker')
@@ -24,6 +27,8 @@ the following packages in order to develop:
 install.packages(c("devtools", "roxygen2", "testthat", "knitr", "htmlwidgets"))
 devtools::install_github('jimhester/lintr')  # Do not install from CRAN
 ```
+
+You also need to install `muscle` from Bioconductor (see link in Installation).
 
 Load **receptormarker.Rproj** to open the project in RStudio, then load the
 code:
