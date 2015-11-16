@@ -5,10 +5,11 @@
 
 # prepare for convergence
 # Minglu
-
+# For test
 string <- "This is my string string"
 d <- strsplit(string, " ")[[1]]
 
+# clean the input vector to unique string and save to txt file
 clean_input <- function(d) {
       print(d)
       d_unique <- unique(d)
@@ -21,10 +22,9 @@ x=system('perl -e “print 2 + 4″', intern=TRUE)
 
 # run perl script
 run_perl <- function(input_file){
-  # how to get output path.
+  #TODO: how to get output path?
   perl_file <- system.file("pl", "convergence-pipeline.pl",
                            package="receptormarker")
-  
   system(sprintf("perl %s --textfil=%s",
                  perl_file,
                  input_file
@@ -34,15 +34,12 @@ run_perl <- function(input_file){
   )
 }
 
+#TODO: After read output, reformat and send to siwei
 read_output <- function(path) {
   mydata <- read.table(path)
   print(mydata)
 }
 
-# Question: P
-# xml_file <- phyloxml_path()
-# how to paste output to 
 
-  
-# XML data in R
+
   
