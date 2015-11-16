@@ -1,0 +1,80 @@
+dependencies:
+- name: yui
+  version: 3.18.1
+  src: htmlwidgets/lib/yui-3.18.1
+  script: ./yui.min.js
+- name: raphael
+  version: 2.1.4
+  src: htmlwidgets/lib/raphael-2.1.4
+  script: ./raphael-min.js
+- name: jsphylosvg
+  version: 1.55
+  src: htmlwidgets/lib/jsphylosvg-1.55
+  script: ./jsphylosvg.js  
+- name: jquery
+  version: 1.11.3
+  src: htmlwidgets/lib/jquery-1.11.3
+  script: ./jquery.min.js
+- name: jquery-ui
+  version: 1.11.4
+  src: htmlwidgets/lib/jquery-ui-1.11.4
+  script:
+    - ./jquery-ui.min.js
+    - ./jquery-ui-tooltip.js
+- name: raphaelexport
+  version: 1.0
+  src: htmlwidgets/lib/raphaelexport-1.0
+  script: ./raphael.export.js
+- name: canvg
+  version: 1.0
+  src: htmlwidgets/lib/canvg-1.0
+  script:
+    - ./canvg.js
+    - ./rgbcolor.js
+    - ./StackBlur.js
+- name: unitip
+  version: 1.0
+  src: htmlwidgets/lib/unitip-1.0
+  script:
+    - ./js/unitip.js
+  stylesheet: ./css/unitip.css
+  attachment:
+    - ./images/clear.gif
+    - ./images/TipCap.png
+    - ./images/TipMid.png
+    - ./images/TipPoint.png
+- name: custom-css
+  version: 1.0
+  src: htmlwidgets/lib/css
+  stylesheet: 
+    - ./radial_phylo.css
+    - ./jquery-ui.min.css
+    - ./jquery-ui.theme.min.css
+- name: images
+  version: 1.0
+  src: htmlwidgets/lib/radial_phylo_images
+  attachment: {
+    "download_sheet_gray": "download-sheet-gray.png",
+    "download_sheet_blue": "download-sheet-blue.png"
+  }
+- name: cytoscapeweb
+  version: 0.8
+  src: htmlwidgets/lib/cytoscapeweb_v0.8
+  script:
+    - ./js/min/AC_OETags.min.js
+    - ./js/min/cytoscapeweb.min.js
+    - ./js/min/json2.min.js
+    - ./js/src/AC_OETags.js
+    - ./js/src/cytoscapeweb.js
+    - ./js/src/json2.js
+  attachment: {
+    "CytoscapeWeb": "swf/CytoscapeWeb",
+    "playerProductInstall": "swf/playerProductInstall"
+  }
+#this dependency should be generated dynamically
+#- name: convergencexml
+#  version: 1.0
+#  src: htmlwidgets/lib/convergencexml
+#  attachment: {
+#    "file":"visual.xml"
+#  }
