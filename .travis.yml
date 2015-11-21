@@ -2,7 +2,7 @@ language: r
 
 warnings_are_errors: true
 
-sudo: required
+sudo: false
 
 virtualenv:
   - system_site_packages: true
@@ -11,10 +11,19 @@ env:
   global:
     - CRAN: http://cran.rstudio.com
 
+addons:
+  apt:
+    packages:
+    - libcurl4-openssl-dev
+    - libxml2-dev
+    - python
+    - python-setuptools
+    - python-dev
+    - python-numpy
+
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq libcurl4-openssl-dev libxml2-dev python python-setuptools python-dev python-numpy
-  - sudo easy_install -f http://biopython.org/DIST/ biopython
+  - apt-get update -qq
+  - easy_install -f http://biopython.org/DIST/ biopython
 
 r_binary_packages:
   - testthat
