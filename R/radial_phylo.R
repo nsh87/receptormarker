@@ -429,7 +429,9 @@ calculate_canvas_size <- function(xml_file, condensed, rings) {
   # not count these when determining how many names are on phylogram
   named_nodes <- named_nodes[grepl("^[^Inner]", named_nodes)]
   num_elements <- length(named_nodes)
+  # nolint start
   # Similarly: xpathApply(doc, "/ns:phyloxml//ns:name", xmlValue, namespaces=ns)
+  # nolint end
   if (num_elements == 0) {
     stop("Cannot generate phylogram: no sequences to plot", call.=FALSE)
   } else if (num_elements <= 30) {
