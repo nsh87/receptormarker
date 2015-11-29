@@ -38,7 +38,7 @@ save_input <- function(d) {
 # test system function  
 # x=system('perl -e “print 2 + 4″', intern=TRUE)
 
-# run perl script isd
+# run perl script isd, TODO: How to test this function?
 run_perl <- function(input_file){
   perl_file <- system.file("pl", "convergence-pipeline.pl",
                            package="receptormarker")
@@ -62,24 +62,20 @@ convergencexml_path <- function() {
 
 #TODO: read_output, and write to xml file the sample from siwei.
 read_output <- function(path) {
-  xml_file <- convergencexml_path
-  test <- read.csv(path, sep = ' ', header = FALSE)
+  xml_file <- convergencexml_path()
+  #test <- read.csv(path, sep = ' ', header = FALSE)
   
-  ################################################################
-  test <- read.csv("/Users/mingluma/2015Fall/receptormarker/vdjfasta/bin/sample-convergence-groups.txt", sep = '\t', header = FALSE)
+  ############################### For test, I hard code the output path#################################
+  test <- read.csv("/Users/mingluma/2015Fall/receptormarker/vdjfasta/bin/sample-convergence-groups.txt", 
+    sep = '\t', header = FALSE)
   test <- as.data.frame(test)
-  test[3]
-  typeof(test)
   # Get the row with longest nodes, just read the 11st row
   # TODO： Should be modify to loop all the rows
   nodes_list <- test[11,][3]
-  nodes_list
   node_char <- as.character(nodes_list$V3)
   node_char <- strsplit(node_char, " ")
   df_nodes <- as.data.frame(node_char)
   #dim(df_nodes) each seq is df_node[i,], i from 1 to rownums
-  rownums<-nrow(df_nodes)
-
   # if I get df_nodes as input. I will have
   rownums<-nrow(df_nodes)
 
@@ -137,6 +133,9 @@ convergence <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
 
   # run perl script
   run_perl(input)
+
+  # Read output file and save to xml
+  read_output(output)
 
 #################TODO: follow code need to modify? #################
   # Forward options to radial_phylo.js using 'x'
