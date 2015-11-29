@@ -68,8 +68,8 @@ dependencies:
     - ./js/src/cytoscapeweb.js
     - ./js/src/json2.js
   attachment: {
-    "CytoscapeWeb": "swf/CytoscapeWeb.swf",
-    "playerProductInstall": "swf/playerProductInstall.swf"
+    "CytoscapeWeb": "swf/CytoscapeWeb",
+    "playerProductInstall": "swf/playerProductInstall"
   }
 - name: convergencexml
   version: 1.0
