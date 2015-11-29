@@ -63,21 +63,51 @@ convergencexml_path <- function() {
 #TODO: read_output, and write to xml file the sample from siwei.
 read_output <- function(path) {
   xml_file <- convergencexml_path
-  test <- read.csv("/Users/mingluma/2015Fall/receptormarker/vdjfasta/bin/sample-convergence-groups.txt", sep = ' ', header = FALSE)
   test <- read.csv(path, sep = ' ', header = FALSE)
-# TODO need to modify
-  doc <- XML::xmlParse(xml_file)
-  root <- XML::xmlRoot(doc)
-  ns <- c(ns=XML::xmlNamespace(root))
-  named_nodes <- XML::getNodeSet(root, "//ns:name", namespaces=ns)
-  # Grab the separating period + hash + rest of chars until end of str
-  regex_find <- paste0("\\.", hash, ".*$")  
-  lapply(named_nodes, function(n) {
-    XML::xmlValue(n) <- gsub(regex_find, "", XML::xmlValue(n))
-  })
-  XML::saveXML(doc=doc, file=xml_file,
-               prefix="<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-               indent=FALSE)
+  
+  ################################################################
+  test <- read.csv("/Users/mingluma/2015Fall/receptormarker/vdjfasta/bin/sample-convergence-groups.txt", sep = '\t', header = FALSE)
+  test <- as.data.frame(test)
+  test[3]
+  typeof(test)
+  # Get the row with longest nodes, just read the 11st row
+  # TODO： Should be modify to loop all the rows
+  nodes_list <- test[11,][3]
+  nodes_list
+  node_char <- as.character(nodes_list$V3)
+  node_char <- strsplit(node_char, " ")
+  df_nodes <- as.data.frame(node_char)
+  #dim(df_nodes) each seq is df_node[i,], i from 1 to rownums
+  rownums<-nrow(df_nodes)
+
+  # if I get df_nodes as input. I will have
+  rownums<-nrow(df_nodes)
+
+  # Generate XML Tree
+  node = newXMLNode("graphml")
+  keynode = newXMLNode("key", 
+                 attrs = c(id="label", "for"="all", "attr.name"="label", 
+                           "attr.type"="string"), parent = node)
+  graphnode = newXMLNode("graph", attrs = c(id="0", 
+                                      "edgedefault"="undirected"), parent = node)
+  kidsnode = lapply(c(1:rownums),
+              function(x)
+                newXMLNode("node", attrs = c(id = x), 
+                           .children = sapply(x, function(x) 
+                             newXMLNode("data", df_nodes[x,],
+                            attrs = c(key ="label"))) ))
+  addChildren(graphnode, kidsnode)
+  for(i in 1:(rownums-1)){
+  kidsedge = lapply(c((i+1):rownums),
+                function(x)
+                  newXMLNode("edge","", 
+                             attrs = c("source"= LETTERS[i] , "target"=LETTERS[x])))
+  addChildren(graphnode, kidsedge)
+  }
+  #cat(saveXML(node)) ? TODO:check
+  saveXML(node, file=xml_file,
+             prefix="<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+             indent=FALSE)
   xml_file
 }
 
@@ -140,5 +170,7 @@ convergence <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
     dependencies = convergencexml
   )
 }
+
+
 
   
