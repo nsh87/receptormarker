@@ -22,7 +22,7 @@ validate_sequences <- function(seqs) {
 
 
 # For test save the input vector to unique string and save to txt file
-input_d <- read.csv("/Users/mingluma/2015Fall/receptormarker/vdjfasta/bin/sample.txt", sep = " ", header = FALSE)
+#input_d <- read.csv("/Users/mingluma/2015Fall/receptormarker/vdjfasta/bin/sample.txt", sep = " ", header = FALSE)
 
 # return the temp directory
 save_input <- function(d) {
@@ -35,10 +35,7 @@ save_input <- function(d) {
       input_tmpdir
 }
 
-# test system function  
-# x=system('perl -e “print 2 + 4″', intern=TRUE)
-
-# run perl script isd, TODO: How to test this function?
+# run perl script isd, TODO:
 run_perl <- function(input_file){
   perl_file <- system.file("pl", "convergence-pipeline.pl",
                            package="receptormarker")
@@ -60,16 +57,17 @@ convergencexml_path <- function() {
                        fileext=".xml")
 }
 
-#TODO: read_output, and write to xml file the sample from siwei.
+#read output and write to xml file as the requirement from siwei.
 read_output <- function(path) {
   xml_file <- convergencexml_path()
-  #test <- read.csv(path, sep = ' ', header = FALSE)
+  test <- read.csv(path, sep = '\t', header = FALSE)
   
-  ############################### For test, I hard code the output path#################################
-  test <- read.csv("/Users/mingluma/2015Fall/receptormarker/vdjfasta/bin/sample-convergence-groups.txt", 
-    sep = '\t', header = FALSE)
+  # For test, I hard code the output path
+  # test <- read.csv("/Users/mingluma/2015Fall/receptormarker/vdjfasta/bin/sample-convergence-groups.txt", 
+  # sep = '\t', header = FALSE)
   test <- as.data.frame(test)
   # Get the row with longest nodes, just read the 11st row
+  ############################# ONLY READ ONE ROW RIGHT NOW ##################################
   # TODO： Should be modify to loop all the rows
   nodes_list <- test[11,][3]
   node_char <- as.character(nodes_list$V3)
@@ -108,7 +106,7 @@ read_output <- function(path) {
 }
 
 
-# The main function, TODO: understand and clear the function parameters
+# The main function, parameters
 convergence <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
                          canvas_size="auto", font_size=12, scale=TRUE,
                          browser=FALSE, verbose=FALSE, fast=FALSE) {
@@ -135,7 +133,7 @@ convergence <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
   run_perl(input)
 
   # Read output file and save to xml
-  read_output(output)
+  xml_file <-read_output(output)
 
 #################TODO: follow code need to modify? #################
   # Forward options to radial_phylo.js using 'x'
