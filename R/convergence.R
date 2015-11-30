@@ -21,7 +21,7 @@ validate_sequences <- function(seqs) {
 # read input as character vector for test
 
 
-# save the input vector to unique string and save to txt file
+# For test save the input vector to unique string and save to txt file
 input_d <- read.csv("/Users/mingluma/2015Fall/receptormarker/vdjfasta/bin/sample.txt", sep = " ", header = FALSE)
 
 # return the temp directory
@@ -117,7 +117,7 @@ convergence <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
                          verbose=verbose, fast=fast))  
   validate_true_false(list(condense=condense, scale=scale, browser=browser,
                         verbose=verbose, fast=fast))  
-  validate_d_seqs(d, seqs_col)
+  validate_seqs(d, seqs_col)
 
   # clean data to unique sequence
   d_unique <- unique(d)
@@ -148,7 +148,7 @@ convergence <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
   
   # Add the phyloxml as an HTML dependency so it can get loaded in the browser
    convergencexml <- htmltools::htmlDependency(
-     name = "phyloxml",
+     name = "convergencexml",
      version = "1.0",
      src = c(file=dirname(xml_file)),
      attachment = list(xml=basename(xml_file))
