@@ -14,12 +14,34 @@ HTMLWidgets.widget({
   },
 
   renderValue: function(el, x, instance) {
+    var xml_path = HTMLWidgets.getAttachmentUrl('convergencexml','file');
+    
+    var request = new XMLHttpRequest();
+    request.open("GET", xml_path, false);
+    request.send();
+            console.log(request);
+    var network_xml = request.responseText;
+    
     var network = {
-      data: {
-          nodes: [ { id: "1" }, { id: "2" } ],
-          edges: [ { id: "2to1", target: "1", source: "2" } ]
-      }
+        // you need to specify a data schema for custom attributes!
+        dataSchema: {
+            nodes: [ { name: "label", type: "string" },
+                { name: "foo", type: "string" }
+            ],
+            edges: [ { name: "label", type: "string" },
+                { name: "bar", type: "string" }
+            ]
+        },
+        // NOTE the custom attributes on nodes and edges
+        data: {
+            nodes: [ { id: "1", label: "1", foo: "Is this the real life?" },
+                { id: "2", label: "2", foo: "Is this just fantasy?" }
+            ],
+            edges: [ { id: "2to1", target: "1", source: "2", label: "2 to 1", bar: "Caught in a landslide..." }
+            ]
+        }
     };
+    
     var options = {
       swfPath: HTMLWidgets.getAttachmentUrl('cytoscapeweb', 'CytoscapeWeb'),
       flashInstallerPath: HTMLWidgets.getAttachmentUrl('cytoscapeweb', 'playerProductInstall')
@@ -43,9 +65,10 @@ HTMLWidgets.widget({
     };
     var draw_options = {
 
-      network: network,
+      //network: network,
+      network: network_xml,
 
-      nodeLabelsVisible: isLabel,
+      nodeLabelsVisible: x.isLabel,
 
       // let's try another layout
       layout: "Circle",
@@ -56,6 +79,7 @@ HTMLWidgets.widget({
       // hide pan zoom
       panZoomControlVisible: false
     };
+    console.log(JSON.stringify(draw_options));
     instance.cy = new org.cytoscapeweb.Visualization(el.id, options);
     instance.cy.draw(draw_options);
   },
