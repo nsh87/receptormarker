@@ -2,12 +2,6 @@
 # This script compare gene and find the similary parts
 # Date: 11/08/2015
 
-# prepare for convergence
-# Minglu
-# For test
-#string <- "This is my string string"
-#d <- strsplit(string, " ")[[1]]
-
 ## Copy from radial_phylo.r
 validate_sequences <- function(seqs) {
   # Make sure sequences are only alpha characters
@@ -17,9 +11,6 @@ validate_sequences <- function(seqs) {
     stop(seqs_col_err, call.=FALSE)
   }
 }
-
-# read input as character vector for test
-
 
 # For test save the input vector to unique string and save to txt file
 #input_d <- read.csv("/Users/mingluma/2015Fall/receptormarker/vdjfasta/bin/sample.txt", sep = " ", header = FALSE)
@@ -37,12 +28,13 @@ save_input <- function(d) {
 
 # run perl script isd, TODO:
 run_perl <- function(input_file){
-  perl_file <- system.file("pl", "convergence-pipeline.pl",
+  perl_file <- system.file("perl/vdjfasta/bin", "convergence-pipeline.pl",
                            package="receptormarker")
-  system(sprintf("perl %s --textfil=%s",
+  system(sprintf("perl %s --textfile=%s",
                  perl_file,
                  input_file
                  ),
+  # verbose means?
          ignore.stdout=!verbose, 
          ignore.stderr=!verbose
   )
@@ -67,7 +59,7 @@ read_output <- function(path) {
   # sep = '\t', header = FALSE)
   test <- as.data.frame(test)
   # Get the row with longest nodes, just read the 11st row
-  ############################# ONLY READ ONE ROW RIGHT NOW ##################################
+  ############################# ONLY READ ONE ROW ##################################
   # TODO： Should be modify to loop all the rows
   nodes_list <- test[11,][3]
   node_char <- as.character(nodes_list$V3)
