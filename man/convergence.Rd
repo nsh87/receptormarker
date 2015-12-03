@@ -4,7 +4,9 @@
 \alias{convergence}
 \title{<Add Title>}
 \usage{
-convergence(isLabel = TRUE, browser = FALSE)
+convergence(d, seqs_col = NULL, condense = FALSE, rings = NULL,
+  canvas_size = "auto", font_size = 12, scale = TRUE, browser = FALSE,
+  verbose = FALSE, fast = FALSE)
 }
 \description{
 <Add Description>
