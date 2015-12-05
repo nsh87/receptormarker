@@ -2,15 +2,17 @@
 # This script compare gene and find the similary parts
 # Date: 11/08/2015
 
-## Copy from radial_phylo.r
-validate_sequences <- function(seqs) {
+## validate input dataframe
+validate_seq <- function(seqs) {
   # Make sure sequences are only alpha characters
   seqs_col_err <- "Sequences must only contain characters from A-Z and a-z"
-  g <- grepl("[^A-Za-z]", as.character(seqs))
+  g <- grepl("[^A-Za-z]", as.character(seqs[,1]))
   if (sum(g) > 0) {
     stop(seqs_col_err, call.=FALSE)
   }
 }
+
+
 
 # For test save the input vector to unique string and save to txt file
 #input_d <- read.csv("/Users/mingluma/2015Fall/receptormarker/vdjfasta/bin/sample.txt", sep = " ", header = FALSE)
@@ -33,10 +35,10 @@ run_perl <- function(input_file){
   system(sprintf("perl %s --textfile=%s",
                  perl_file,
                  input_file
-  ),
+  )
   # verbose means?
-  ignore.stdout=!verbose, 
-  ignore.stderr=!verbose
+  # ignore.stdout=!verbose, 
+  # ignore.stderr=!verbose
   )
 }
 
@@ -70,28 +72,29 @@ read_output <- function(path) {
   rownums<-nrow(df_nodes)
   
   # Generate XML Tree
-  node = newXMLNode("graphml")
-  keynode = newXMLNode("key", 
+  node = XML::newXMLNode("graphml")
+  keynode = XML::newXMLNode("key", 
                        attrs = c(id="label", "for"="all", "attr.name"="label", 
                                  "attr.type"="string"), parent = node)
-  graphnode = newXMLNode("graph", attrs = c(id="0", 
+  graphnode = XML::newXMLNode("graph", attrs = c(id="0", 
                                             "edgedefault"="undirected"), parent = node)
   kidsnode = lapply(c(1:rownums),
                     function(x)
-                      newXMLNode("node", attrs = c(id = x), 
+                      XML::newXMLNode("node", attrs = c(id = x), 
                                  .children = sapply(x, function(x) 
-                                   newXMLNode("data", df_nodes[x,],
+                                   XML::newXMLNode("data", df_nodes[x,],
                                               attrs = c(key ="label"))) ))
-  addChildren(graphnode, kidsnode)
+  print("before addchildren")
+  XML::addChildren(graphnode, kidsnode)
   for(i in 1:(rownums-1)){
     kidsedge = lapply(c((i+1):rownums),
                       function(x)
-                        newXMLNode("edge","", 
-                                   attrs = c("source"= LETTERS[i] , "target"=LETTERS[x])))
-    addChildren(graphnode, kidsedge)
+                        XML::newXMLNode("edge","", 
+                                   attrs = c("source"= i , "target"=x)))
+    XML::addChildren(graphnode, kidsedge)
   }
   #cat(saveXML(node)) ? TODO:check
-  saveXML(node, file=xml_file,
+  XML::saveXML(node, file=xml_file,
           prefix="<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
           indent=FALSE)
   xml_file
@@ -113,26 +116,32 @@ convergence <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
                          verbose=verbose, fast=fast))  
   validate_true_false(list(condense=condense, scale=scale, browser=browser,
                            verbose=verbose, fast=fast))  
-  validate_seqs(d, seqs_col)
+  validate_seq(d)
   
   # clean data to unique sequence
   d_unique <- unique(d)
+  print("after unique")
   
   # create temp dir for input and out put
   convergence_tmpdir <- tempfile("", tmpdir=tempdir(), fileext="")
+  print("after tmpdir")
   dir.create(convergence_tmpdir)
+  print("after dir.create")
   input <- tempfile(pattern="sample", tmpdir=convergence_tmpdir, fileext=".txt")
-  write(d_unique, input, sep="\n")
+  print("after tempfile")
+  #write(d_unique, input, sep="\n")
+  write(as.character(d_unique[,1]), input, sep="\n")
+  print("after write")
   
   #get output path
   output <- gsub(pattern = ".txt$", replacement = "-convergence-groups.txt", x = input, ignore.case = T)
-  
+  print("after gsub")
   # run perl script
   run_perl(input)
-  
+  print("after runing perl")
   # Read output file and save to xml
   xml_file <-read_output(output)
-  
+  print("after xml_file")
   #################TODO: follow code need to modify? #################
   # Forward options to radial_phylo.js using 'x'
   x <- list(
@@ -149,7 +158,8 @@ convergence <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
     src = c(file=dirname(xml_file)),
     attachment = list(xml=basename(xml_file))
   )
-  
+  width=NULL
+  height=NULL
   # Create widget
   htmlwidgets::createWidget(
     name = "convergence",

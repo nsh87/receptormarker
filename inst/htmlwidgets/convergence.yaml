@@ -72,9 +72,9 @@ dependencies:
     "playerProductInstall": "swf/playerProductInstall"
   }
 #this dependency should be generated dynamically
-- name: convergencexml
-  version: 1.0
-  src: htmlwidgets/lib/convergencexml
-  attachment: {
-    "file":"visual.xml"
-  }
+#- name: convergencexml
+#  version: 1.0
+#  src: htmlwidgets/lib/convergencexml
+#  attachment: {
+#    "file":"visual.xml"
+#  }

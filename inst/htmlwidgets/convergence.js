@@ -14,7 +14,7 @@ HTMLWidgets.widget({
   },
 
   renderValue: function(el, x, instance) {
-    var xml_path = HTMLWidgets.getAttachmentUrl('convergencexml','file');
+    var xml_path = HTMLWidgets.getAttachmentUrl('convergencexml','xml');
     
     var request = new XMLHttpRequest();
     request.open("GET", xml_path, false);
@@ -68,7 +68,8 @@ HTMLWidgets.widget({
       //network: network,
       network: network_xml,
 
-      nodeLabelsVisible: x.isLabel,
+      //nodeLabelsVisible: x.isLabel,
+      nodeLabelsVisible: true,
 
       // let's try another layout
       layout: "Circle",
