@@ -22,26 +22,6 @@ HTMLWidgets.widget({
             console.log(request);
     var network_xml = request.responseText;
     
-    var network = {
-        // you need to specify a data schema for custom attributes!
-        dataSchema: {
-            nodes: [ { name: "label", type: "string" },
-                { name: "foo", type: "string" }
-            ],
-            edges: [ { name: "label", type: "string" },
-                { name: "bar", type: "string" }
-            ]
-        },
-        // NOTE the custom attributes on nodes and edges
-        data: {
-            nodes: [ { id: "1", label: "1", foo: "Is this the real life?" },
-                { id: "2", label: "2", foo: "Is this just fantasy?" }
-            ],
-            edges: [ { id: "2to1", target: "1", source: "2", label: "2 to 1", bar: "Caught in a landslide..." }
-            ]
-        }
-    };
-    
     var options = {
       swfPath: HTMLWidgets.getAttachmentUrl('cytoscapeweb', 'CytoscapeWeb'),
       flashInstallerPath: HTMLWidgets.getAttachmentUrl('cytoscapeweb', 'playerProductInstall')
