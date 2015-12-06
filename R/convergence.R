@@ -86,12 +86,14 @@ read_output <- function(path) {
                                               attrs = c(key ="label"))) ))
   print("before addchildren")
   XML::addChildren(graphnode, kidsnode)
-  for(i in 1:(rownums-1)){
-    kidsedge = lapply(c((i+1):rownums),
-                      function(x)
-                        XML::newXMLNode("edge","", 
-                                   attrs = c("source"= i , "target"=x)))
-    XML::addChildren(graphnode, kidsedge)
+  if (rownums>1){
+    for(i in 1:(rownums-1)){
+      kidsedge = lapply(c((i+1):rownums),
+                        function(x)
+                          XML::newXMLNode("edge","", 
+                                     attrs = c("source"= i , "target"=x)))
+      XML::addChildren(graphnode, kidsedge)
+    }
   }
   #cat(saveXML(node)) ? TODO:check
   XML::saveXML(node, file=xml_file,
@@ -135,13 +137,14 @@ convergence <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
   
   #get output path
   output <- gsub(pattern = ".txt$", replacement = "-convergence-groups.txt", x = input, ignore.case = T)
+  print(output)
   print("after gsub")
   # run perl script
   run_perl(input)
   print("after runing perl")
   # Read output file and save to xml
   xml_file <-read_output(output)
-  print("after xml_file")
+  print(xml_file)
   #################TODO: follow code need to modify? #################
   # Forward options to radial_phylo.js using 'x'
   x <- list(
