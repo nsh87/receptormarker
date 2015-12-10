@@ -84,7 +84,7 @@ read_output <- function(path) {
                                  .children = sapply(x, function(x) 
                                    XML::newXMLNode("data", df_nodes[x,],
                                               attrs = c(key ="label"))) ))
-  print("before addchildren")
+  
   XML::addChildren(graphnode, kidsnode)
   if (rownums>1){
     for(i in 1:(rownums-1)){
@@ -122,29 +122,28 @@ convergence <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
   
   # clean data to unique sequence
   d_unique <- unique(d)
-  print("after unique")
   
   # create temp dir for input and out put
   convergence_tmpdir <- tempfile("", tmpdir=tempdir(), fileext="")
-  print("after tmpdir")
+  
   dir.create(convergence_tmpdir)
-  print("after dir.create")
+  
   input <- tempfile(pattern="sample", tmpdir=convergence_tmpdir, fileext=".txt")
-  print("after tempfile")
+  
   #write(d_unique, input, sep="\n")
   write(as.character(d_unique[,1]), input, sep="\n")
-  print("after write")
+  
   
   #get output path
   output <- gsub(pattern = ".txt$", replacement = "-convergence-groups.txt", x = input, ignore.case = T)
-  print(output)
-  print("after gsub")
+  #print(output)
+  
   # run perl script
   run_perl(input)
-  print("after runing perl")
+  
   # Read output file and save to xml
   xml_file <-read_output(output)
-  print(xml_file)
+  #print(xml_file)
   #################TODO: follow code need to modify? #################
   # Forward options to radial_phylo.js using 'x'
   x <- list(
