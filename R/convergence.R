@@ -30,6 +30,13 @@ save_input <- function(d) {
 
 # run perl script isd, TODO:
 run_perl <- function(input_file){
+  #set the path of hmm and blast to system PATH
+  #written by Daniel Zhang till "##"
+  sys_path <- Sys.getenv("PATH")
+  hmm_tool <- system.file("tools/hmmer-3.1b2/binaries", package = "receptormarker")
+  blstn_tool <- system.file("tools/ncbi/blast/bin", package = "receptormarker")
+  Sys.setenv( PATH = paste(sys_path,hmm_tool,blstn_tool,sep=":"))
+  ##
   perl_file <- system.file("perl/vdjfasta/bin", "convergence-pipeline.pl",
                            package="receptormarker")
   system(sprintf("perl %s --textfile=%s",
@@ -108,7 +115,8 @@ read_output <- function(path) {
 #' <Add Description>
 #'
 #' @import htmlwidgets
-#'
+#' @example 
+#' 
 #' @export
 convergence <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
                         canvas_size="auto", font_size=12, scale=TRUE,
@@ -139,7 +147,9 @@ convergence <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
   #print(output)
   
   # run perl script
+  print("before run_perl")
   run_perl(input)
+  print("after run perl")
   
   # Read output file and save to xml
   xml_file <-read_output(output)

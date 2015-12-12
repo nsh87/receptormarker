@@ -11,4 +11,7 @@ convergence(d, seqs_col = NULL, condense = FALSE, rings = NULL,
 \description{
 <Add Description>
 }
+\examples{
+
+}
 
