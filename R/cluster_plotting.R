@@ -44,9 +44,9 @@ wss_plot <- function(clust_obj, optimal = FALSE, ...) {
   end <- length(wss)
   krange <- start:end
   wss <- wss[!is.na(wss)]
-  plot(krange, wss, type = "b", xlab = "# of Clusters", 
+  plot(krange, wss, type = "b", xlab = "# of K Clusters",
        ylab = "Within Sum of Squares", 
-       main = "Within Sum of Squares by Cluster",
+       main = "Within Sum of Squares by K Clusters",
        ...)
   if (optimal) {
     opti_clust <- clust_obj[["k_best"]]
@@ -99,8 +99,8 @@ gap_plot <- function(clust_obj, optimal = FALSE, ...) {
   validate_not_null(list(clust_obj = clust_obj, optimal = optimal))
   validate_true_false(list(optimal = optimal))
   validate_multi_clust(clust_obj)
-  plot(clust_obj[["clust_gap"]], xlab = "# of Clusters", main = "Gap Analysis",
-       ...)
+  plot(clust_obj[["clust_gap"]], xlab = "# of K Clusters",
+       main = "Gap Analysis by K Clusters", ...)
   if (optimal) {
     opti_clust <- clust_obj[["k_best"]]
     gap_best <- clust_obj[["clust_gap"]]["Tab"][[1]][opti_clust, 3]
@@ -161,7 +161,7 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
   pca <- stats::princomp(d)
   sdev <- pca[["sdev"]]
   prop_var <- sdev ^ 2 / sum(sdev ^ 2)
-  main <- paste0("PCA Plot (", round(sum(prop_var[1:3]) * 100), "% Variance)")
+  main <- paste0("PCA Plot (", round(sum(prop_var[1:2]) * 100), "% Variance)")
   clusters <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
   plot(pca[["scores"]][, 1:2], col = rainbow(num_clust)[clusters],
        xlab = "Principal Component 1",
@@ -214,7 +214,7 @@ sil_plot <- function(clust_obj, num_clust, ...) {
   validate_multi_clust(clust_obj)
   validate_pos_num(list(num_clust = num_clust))
   sil <- clust_obj[["sil"]][[num_clust]]
-  plot(sil, main = "Silhouette Plot", ...)
+  plot(sil, main = "Silhouette Plot of K Clusters", ...)
 }
 
 #' Plot average silhouette widths for different numbers of clusters.
@@ -266,9 +266,9 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
   end <- length(sil)
   krange <- start:end
   sil <- sil[!is.na(sil)]
-  plot(krange, sil, type = "b", xlab = "# of Clusters",
+  plot(krange, sil, type = "b", xlab = "# of K Clusters",
        ylab = "Average Silhouette Width", 
-       main = "Average Silhouette Width by Cluster",
+       main = "Average Silhouette Width by K Clusters",
        ...)
   if (optimal) {
     opti_clust <- clust_obj[["k_best"]]
@@ -305,7 +305,7 @@ axis_label_size <- function(num_clust) {
 #' @return An integer value for the number of columns
 #' @keywords internal
 boxplot_num_cols <- function(num_clust) {
-  if (num_clust < 10) {
+  if (num_clust <= 10) {
     return(5)
   } else if (num_clust <= 15) {
     return (4)
@@ -328,8 +328,9 @@ boxplot_num_cols <- function(num_clust) {
 #' @keywords internal
 check_boolean <- function(d) {
   for (col in d) {
-    b <- grepl("[^0|1]", col)
-    if (sum(b) > 0) {
+    uniq <- unique(col)
+    if (!(identical(uniq, c(0, 1)) || identical(uniq, 0) ||
+          identical(uniq, 1) || identical(uniq, c(1, 0)))) {
       return (FALSE)
     }
   }
