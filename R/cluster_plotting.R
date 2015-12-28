@@ -328,8 +328,9 @@ boxplot_num_cols <- function(num_clust) {
 #' @keywords internal
 check_boolean <- function(d) {
   for (col in d) {
-    if (!(identical(unique(col), c(0, 1)) || identical(unique(col), 0) ||
-          identical(unique(col), 1) || identical(unique(col), c(1, 0)))) {
+    uniq <- unique(col)
+    if (!(identical(uniq, c(0, 1)) || identical(uniq, 0) ||
+          identical(uniq, 1) || identical(uniq, c(1, 0)))) {
       return (FALSE)
     }
   }
