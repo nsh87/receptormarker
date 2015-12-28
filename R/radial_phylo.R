@@ -168,47 +168,6 @@ validate_rings <- function(rings, d) {
 }
 
 
-#' @title Clean the data for a phylogram and extract the sequences
-#' @description An internal function that removes rows of data where the
-#' sequence column is \code{NA} or an empty string.
-#' @template -d
-#' @template -seqs_col
-#' @param verbose \code{TRUE} or \code{FALSE}, depending on whether or not the
-#' cleaned sequences should be written to the \code{verbose_dir} in FASTA
-#' format.
-#' @template -verbose_dir
-#' @return A named list containing the cleaned \code{"seqs"} and \code{"d"}.
-#' @keywords internal
-clean_data <- function(d, seqs_col, verbose, verbose_dir) {
-  # If d is a >1D data frame
-  if (class(d) == "data.frame" && dim(d)[2] > 1) {
-    d_clean <- d[d[, seqs_col] != "", ]  # Remove rows with no sequences
-    d_clean <- d_clean[complete.cases(d_clean[, seqs_col]), ]  # Remove NA rows
-    d_clean <- d_clean[with(d_clean, order(d_clean[, seqs_col])), ]
-    seqs <- as.character(d_clean[, seqs_col])
-  # If d is a 1D data frame or vector
-  } else if ((class(d) == "data.frame" && dim(d)[2] == 1) ||
-             (class(d) == "character")) {
-    d_clean <- d[d != ""]  # Remove blank sequences
-    d_clean <- d_clean[!is.na(d_clean)]  # Remove NA's
-    d_clean <- sort(d_clean)
-    seqs <- as.character(d_clean)
-  }
-  # Write the sequences if the user wants them
-  if (verbose) {
-    if (class(d_clean) == "data.frame") {
-      seqs_fasta <- with(d_clean, paste0(">", seqs, "\n", seqs, collapse="\n"))
-    } else if (class(d_clean) == "character") {
-      seqs_fasta <- paste0(">", seqs, "\n", seqs, collapse="\n")
-    }
-    seqs_file <- tempfile(pattern="sequences-", tmpdir=verbose_dir,
-                          fileext=".txt")
-    write(seqs_fasta, seqs_file)
-  }
-  list("seqs"=seqs, "d"=d_clean)
-}
-
-
 #' @title Perform multiple sequence alignment on sequences
 #' @description An internal function that utilizes Bioconductor's MUSCLE for
 #' MSA. Writes the alignment in addition to returning it so the file can be
@@ -819,7 +778,7 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
   }
   
   # Step 1: Clean the user-supplied data and the sequences
-  clean <- clean_data(d, seqs_col, verbose, verbose_dir)
+  clean <- clean_data(d, seqs_col, verbose, verbose_dir, verbose_format="fasta")
   seqs <- clean[["seqs"]]
   if (condense == TRUE) {
     seqs <- unique(seqs)
