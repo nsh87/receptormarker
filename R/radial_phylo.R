@@ -47,20 +47,6 @@ validate_canvas_size <- function(canvas_size) {
   )
 }
 
-#' @title Validate protein or DNA sequences
-#' @description An internal function that creates an error if sequences contain
-#' characters outisde the alphabet.
-#' @param seqs A character vector of sequences.
-#' @keywords internal
-validate_sequences <- function(seqs) {
-  # Make sure sequences are only alpha characters
-  seqs_col_err <- "Sequences must only contain characters from A-Z and a-z"
-  g <- grepl("[^A-Za-z]", as.character(seqs))
-  if (sum(g) > 0) {
-    stop(seqs_col_err, call.=FALSE)
-  }
-}
-
 
 #' @title Validate the data, sequence column, and sequences for a phylogram
 #' @description An internal function that raises an error if the arguments are
