@@ -1,19 +1,3 @@
-# Minglu Ma
-# This script compare gene and find the similary parts
-# Date: 11/08/2015
-
-## validate input dataframe
-validate_seq <- function(seqs) {
-  # Make sure sequences are only alpha characters
-  seqs_col_err <- "Sequences must only contain characters from A-Z and a-z"
-  g <- grepl("[^A-Za-z]", as.character(seqs[,1]))
-  if (sum(g) > 0) {
-    stop(seqs_col_err, call.=FALSE)
-  }
-}
-
-
-
 # For test save the input vector to unique string and save to txt file
 #input_d <- read.csv("/Users/mingluma/2015Fall/receptormarker/vdjfasta/bin/sample.txt", sep = " ", header = FALSE)
 
@@ -127,7 +111,7 @@ convergence <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
                          verbose=verbose, fast=fast))  
   validate_true_false(list(condense=condense, scale=scale, browser=browser,
                            verbose=verbose, fast=fast))  
-  validate_seq(d)
+  validate_sequences(d)
   
   # clean data to unique sequence
   d_unique <- unique(d)
