@@ -12,7 +12,7 @@ confirm.}
 }
 \description{
 An internal function that raises an error if the argument is not
-either a \emph{data.frame} or \emph{matrix}. Also, If all columns are not
+either a \emph{data.frame} or \emph{matrix}. Also, if all columns are not
 numeric, it will raise an error.
 }
 \keyword{internal}
