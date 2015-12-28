@@ -70,7 +70,7 @@ read_output <- function(path) {
   # Get the row with longest nodes, just read the 11st row
   ############################# ONLY READ ONE ROW ##################################
   # TODO： Should be modify to loop all the rows
-  nodes_list <- test[11,][3]
+  nodes_list <- test[14,][3]
   node_char <- as.character(nodes_list$V3)
   node_char <- strsplit(node_char, " ")
   df_nodes <- as.data.frame(node_char)
@@ -107,6 +107,7 @@ read_output <- function(path) {
           prefix="<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
           indent=FALSE)
   xml_file
+  file.copy(xml_file, getwd())
 }
 
 
