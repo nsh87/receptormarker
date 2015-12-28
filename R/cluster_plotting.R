@@ -318,24 +318,6 @@ boxplot_num_cols <- function(num_clust) {
   }
 }
 
-#' Check if all columns of data.frame are boolean
-#' 
-#' This is an internal function that returns if \code{d} is boolean for the
-#' \code{\link{clust_boxplot}} function that determines if a barplot should be
-#' used.
-#' @param d The data argument from \code{\link{clust_boxplot}}
-#' @return A boolean value indicating if all columns are boolean
-#' @keywords internal
-check_boolean <- function(d) {
-  for (col in d) {
-    uniq <- unique(col)
-    if (!(identical(uniq, c(0, 1)) || identical(uniq, 0) ||
-          identical(uniq, 1) || identical(uniq, c(1, 0)))) {
-      return (FALSE)
-    }
-  }
-  return (TRUE)
-}
 
 #' Plot cluster membership for each feature.
 #' 
@@ -392,7 +374,7 @@ clust_boxplot <- function(d, clust_obj, num_clust, ...) {
   validate_pos_num(list(num_clust = num_clust))
   meas_vars <- colnames(d)
   d["cluster"] <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
-  if (check_boolean(d[meas_vars])) {
+  if (is_boolean(d[meas_vars])) {
     d_bool <- aggregate(. ~ cluster, data = d, sum)
     d_bool[meas_vars] <- d_bool[meas_vars] / nrow(d)
     m <- reshape2::melt(d_bool, id.vars = "cluster", measure.vars = meas_vars)

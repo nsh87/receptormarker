@@ -34,9 +34,43 @@ validate_not_null <- function(arg_list) {
 }
 
 
+#' @title Validate protein or DNA sequences
+#' @description An internal function that creates an error if sequences contain
+#' characters outisde the alphabet.
+#' @param seqs A character vector of sequences.
+#' @keywords internal
+validate_sequences <- function(seqs) {
+  # Make sure sequences are only alpha characters
+  seqs_col_err <- "Sequences must only contain characters from A-Z and a-z"
+  g <- grepl("[^A-Za-z]", as.character(seqs))
+  if (sum(g) > 0) {
+    stop(seqs_col_err, call.=FALSE)
+  }
+}
+
+
+#' Check if all columns of data.frame are boolean or binary
+#' 
+#' This is an internal function that returns \code{TRUE} if \code{d} is boolean
+#' or binary.
+#' @param d A data.frame or matrix.
+#' @return A logical indicating whether or not \emph{all} columns are boolean or
+#' binary.
+#' @keywords internal
+is_boolean <- function(d) {
+  for (col in d) {
+    uniq <- unique(col)
+    if (!all(uniq %in% 0:1)) {
+      return (FALSE)
+    }
+  }
+  return (TRUE)
+}
+
+
 #' @title Validate that the arg is either a numeric data.frame or matrix
 #' @description An internal function that raises an error if the argument is not
-#' either a \emph{data.frame} or \emph{matrix}. Also, If all columns are not
+#' either a \emph{data.frame} or \emph{matrix}. Also, if all columns are not
 #' numeric, it will raise an error.
 #' @param d A \emph{data.frame} or \emph{matrix} whose class the function will
 #' confirm.
@@ -49,18 +83,18 @@ validate_num_data <- function(d) {
     stop("The argument 'd' is not a data.frame or matrix.", call.=FALSE)
   }
   lapply(d,
-         function(x) {
-           if (!(class(x) %in% types)) {
-             stop("The classes of the columns of 'd' are not all numeric.", 
-                  call.=FALSE) 
-           } else TRUE
-         })
+          function(x) {
+            if (!(class(x) %in% types)) {
+              stop("The classes of the columns of 'd' are not all numeric.", 
+                   call.=FALSE) 
+            } else TRUE
+          })
   lapply(d,
-         function(x) {
-           b <- grepl("[^0|1]", x)
-           if (sum(b) > 0) {
-             boolean_warning <- TRUE  # nolint
-           }
+          function(x) {
+            uniq <- unique(x)
+            if (all(uniq %in% 0:1)) {
+              boolean_warning <- TRUE  # nolint
+            }
   })
   if (!is.null(boolean_warning)) {
     message("At least one column of 'd' contains only values 0 and 1.")
