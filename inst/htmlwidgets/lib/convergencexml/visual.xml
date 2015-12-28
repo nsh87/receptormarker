@@ -1,0 +1,108 @@
+<graphml>
+    <key id="label" for="all" attr.name="label" attr.type="string"/>
+    <key id="weight" for="node" attr.name="weight" attr.type="double"/>
+
+    <graph id="0" edgedefault="undirected" label = "CRG-CAWEKAGAGGTQYF">
+        <node id = "A">
+            <data key="label">CASNTLGAGGREQYF</data>
+        </node>
+        <node id = "B">
+            <data key="label">CASSQDGAGGREQFF</data>
+        </node>
+        <node id = "C">
+            <data key="label">CSAATLDGSNQPQHF</data>
+        </node>
+        <node id = "D">
+            <data key="label">CAWEKAGAGGTQYF</data>
+        </node>
+        <node id = "E">
+            <data key="label">CAWSEGGIGQPQHF</data>
+        </node>
+        <node id = "F">
+            <data key="label">CASSVFGIGVGGTYEQYF</data>
+        </node>
+        <node id = "G">
+            <data key="label">CASSATLGSLHYGYTF</data>
+        </node>
+        <node id = "H">
+            <data key="label">CSARDGTGIGDTQYF</data>
+        </node>
+        <node id = "I">
+            <data key="label">CSVDGALAGGTYEQYF</data>
+        </node>
+        <edge source="A" target="B">
+        </edge>
+        <edge source="A" target="C">
+        </edge>
+        <edge source="A" target="D">
+        </edge>
+        <edge source="A" target="E">
+        </edge>
+        <edge source="A" target="F">
+        </edge>
+        <edge source="A" target="G">
+        </edge>
+        <edge source="A" target="H">
+        </edge>
+        <edge source="A" target="I">
+        </edge>
+        <edge source="B" target="C">
+        </edge>
+        <edge source="B" target="D">
+        </edge>
+        <edge source="B" target="E">
+        </edge>
+        <edge source="B" target="F">
+        </edge>
+        <edge source="B" target="G">
+        </edge>
+        <edge source="B" target="H">
+        </edge>
+        <edge source="B" target="I">
+        </edge>
+        <edge source="C" target="D">
+        </edge>
+        <edge source="C" target="E">
+        </edge>
+        <edge source="C" target="F">
+        </edge>
+        <edge source="C" target="G">
+        </edge>
+        <edge source="C" target="H">
+        </edge>
+        <edge source="C" target="I">
+        </edge>
+        <edge source="D" target="E">
+        </edge>
+        <edge source="D" target="F">
+        </edge>
+        <edge source="D" target="G">
+        </edge>
+        <edge source="D" target="H">
+        </edge>
+        <edge source="D" target="I">
+        </edge>
+        <edge source="E" target="F">
+        </edge>
+        <edge source="E" target="G">
+        </edge>
+        <edge source="E" target="H">
+        </edge>
+        <edge source="E" target="I">
+        </edge>
+        <edge source="F" target="G">
+        </edge>
+        <edge source="F" target="H">
+        </edge>
+        <edge source="F" target="I">
+        </edge>
+        <edge source="G" target="H">
+        </edge>
+        <edge source="G" target="I">
+        </edge>
+        <edge source="H" target="I">
+        </edge>
+    </graph>
+
+
+</graphml>
