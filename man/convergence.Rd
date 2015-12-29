@@ -2,14 +2,14 @@
 % Please edit documentation in R/convergence.R
 \name{convergence}
 \alias{convergence}
-\title{<Add Title>}
+\title{Create an interactive convergence network diagram}
 \usage{
-convergence(d, seqs_col = NULL, condense = FALSE, rings = NULL,
-  canvas_size = "auto", font_size = 12, scale = TRUE, browser = FALSE,
-  verbose = FALSE, fast = FALSE)
+convergence(d, seqs_col = NULL, browser = FALSE, verbose = FALSE)
 }
 \description{
-<Add Description>
+Creates a JavaScript-based network diagram in RStudio or a browser window.
+This visualization can help identify clusters of functionally similar
+complementary determining regions (CDRs) of antibody or T-cell receptors.
 }
 \examples{
 
