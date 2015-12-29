@@ -25,38 +25,44 @@ HTMLWidgets.widget({
       
       var vis_style = {
         global: {
-            backgroundColor: "#ABCFD6"
+            backgroundColor: x.background_color
         },
         nodes: {
-            shape: "CIRCLE",
-            borderWidth: 3,
-            borderColor: "#ffffff",
-            color: "#0b94b1",
-            size: 25,
-            labelHorizontalAnchor: "center"
+            shape: x.node_shape,
+            borderWidth: x.border_width,
+            borderColor: x.border_color,
+            color: x.node_color,
+            size: x.node_size,
+            labelHorizontalAnchor: x.label_horizontal_pos,
+            labelVerticalAnchor: x.label_vertical_pos
         },
         edges: {
-            width: 3,
-            color: "#0B94B1"
+            width: x.edge_width,
+            color: x.edge_color
         }
       };
       
+      // Draw options at http://cytoscapeweb.cytoscape.org/documentation
       var draw_options = {
   
         //network: network,
         network: x.xml_string,
-  
+        
         //nodeLabelsVisible: x.isLabel,
         nodeLabelsVisible: true,
   
-        // let's try another layout
+        /* A layout object or name: http://cytoscapeweb.cytoscape.org/
+           documentation/layout#section/Layout */
         layout: "Circle",
   
-        // set the style at initialisation
+        // Set the style at initialisation
         visualStyle: vis_style,
-  
-        // hide pan zoom
-        panZoomControlVisible: false
+        
+        // Show pan zoom
+        panZoomControlVisible: false,
+        
+        panZoomControlPosition: "bottomRight"
+        
       };
       instance.cy = new org.cytoscapeweb.Visualization(el.id, options);
       instance.cy.draw(draw_options);
@@ -66,6 +72,8 @@ HTMLWidgets.widget({
   },
 
   resize: function(el, width, height, instance) {
+    
+    instance.cy.resize();
 
   }
 

@@ -21,9 +21,18 @@ convergence_xml_path <- function() {
 #' @description An internal function that parses the output of the convergence
 #' tool and creates an XML file to represent a specific row (cluster) in the
 #' file.
+#' @param d A data frame of clusters, typically returned by
+#' \code{\link{run_convergence}}.
+#' @param row_num An integer indicating which row number in \code{d} to graph.
+#' Each row should correspond to a single cluster.
+#' @param labels \code{TRUE} or \code{FALSE}, depending on whether or not node
+#' labels should be written to the XML and therefore displayed in Cytoscape.
+#' @param verbose \code{TRUE} or \code{FALSE}. If \code{TRUE} the XML file is
+#' coped to the \code{verbose_dir}.
+#' @template -verbose_dir
 #' @return A path to the Cytoscape XML file.
 #' @keywords internal
-cytoscape_xml <- function(d, row_num, verbose, verbose_dir) {
+cytoscape_xml <- function(d, row_num, labels, verbose, verbose_dir) {
   xml_file <- convergence_xml_path()
   
   # Get cluster nodes, label, and size
@@ -66,6 +75,10 @@ cytoscape_xml <- function(d, row_num, verbose, verbose_dir) {
                                 attrs=c(id="0", "edgedefault"="undirected",
                                         "label"=cluster_label),
                                 parent=root)
+  # If 'labels' is FALSE, don't show labels by using empty string for labels
+  if (!labels) {
+    nodes <- rep("", length(nodes))
+  }
   # Add cluster nodes into the XML tree as children of graph_node, <graph>
   lapply(c(1:num_nodes), function(x) {
     single_node <- XML::newXMLNode("node", attrs=c(id=x), parent=graph_node)
@@ -101,6 +114,10 @@ cytoscape_xml <- function(d, row_num, verbose, verbose_dir) {
 #' @param results_file A path to the \code{...-convergence-groups.txt} output
 #' file created by the convergence tool. This path is returned by
 #' \code{\link{run_convergence}}.
+#' @param verbose \code{TRUE} or \code{FALSE}. If \code{TRUE} a CSV
+#' representation of the returned data frame is written to the
+#' \code{verbose_dir}.
+#' @template -verbose_dir
 #' @return A data frame containing the clusters data. Each row represents a
 #' single cluster. The first column contains the number of items in each cluster
 #' and each cell in the remaining columns is a sequence belonging to that
@@ -136,6 +153,10 @@ parse_convergence_results <- function(results_file, verbose, verbose_dir) {
 #' @details Requires HMMER and blastn libraries. These binaries are included
 #' in the R package, but may present difficulties on non-Unix computers.
 #' @template -seqs
+#' @param verbose \code{TRUE} or \code{FALSE}, depending on whether or not the
+#' output of the convergence script should be printed and the output file should
+#' be copied to the \code{verbose_dir}.
+#' @template -verbose_dir
 #' @return A path to the output file containing the convergence groups in
 #' tabular format.
 #' @keywords internal
@@ -185,18 +206,52 @@ run_convergence <- function(seqs, verbose, verbose_dir){
 }
 
 
-#' Create an interactive convergence network diagram
-#'
-#' Creates a JavaScript-based network diagram in RStudio or a browser window.
-#' This visualization can help identify clusters of functionally similar
-#' complementary determining regions (CDRs) of antibody or T-cell receptors.
-#'  
-#'
+#' @title Create an interactive convergence network diagram of similar CDRs
+#' @description Creates a JavaScript-based network diagram in RStudio or a
+#' browser window. This visualization can help identify clusters of
+#' functionally similar complementary determining regions (CDRs) of antibody or
+#' T-cell receptors.
+#' @template -d
+#" @template -seqs_col
+#' @param background_color A valid hex color code as a string for the canvas
+#' color.
+#' @param node_shape A string indicating what shape to use for the nodes. One of
+#' \code{"ELLIPSE"}, \code{"RECTANGLE"}, \code{"TRIANGLE"}, \code{"DIAMOND"},
+#' \code{"HEXAGON"}, \code{"OCTAGON"}, \code{"PARALLELOGRAM"},
+#' \code{"ROUNDRECT"}, \code{"VEE"}.
+#' @param border_width An integer border width for the nodes.
+#' @param border_color A valid hex color code as a string for the border color
+#' of the nodes.
+#' @param node_color A valid hex color code as a string for the node color.
+#' @param node_size An integer representing node size.
+#' @param labels A logical indicating whether or not node labels should be
+#' displayed. If \code{TRUE}, labels will be the sequences used for analysis in
+#' the convergence pipeline.
+#' @param label_vertical_pos A string indicating the vertical position of node
+#' labels. Must be one of \code{"top"}, \code{"middle"}, or \code{"bottom"}.
+#' Ignored if \code{label=FALSE}.
+#' @param label_horizontal_pos  A string indicating the horizontal position of
+#' node labels. Must be one of \code{"left"}, \code{"center"}, or
+#' \code{"right"}. Ignored if \code{label=FALSE}.
+#' @param edge_width An integer representing the thickness of edges, or the
+#' lines that connect nodes.
+#' @param edge_color A valid hex color code as a string for the edge lines.
+#' @template -browser
+#' @param verbose \code{TRUE} or \code{FALSE}. If \code{TRUE}, additional output
+#' is printed to the console and the sequences, resulting clusters (convergence
+#' groups), and XML file for Cytoscape are written to a folder in the working
+#' directory.
 #' @import htmlwidgets
-#' @example 
-#' 
+#' @examples
+#' data(tcr)  # Packaged data set, a data.frame from a CSV file
+#' tcr_reduced <- tcr[1:50, ]
 #' @export
-convergence <- function(d, seqs_col=NULL, browser=FALSE, verbose=FALSE) {
+convergence <- function(d, seqs_col=NULL, background_color="#FFFFFF",
+                        node_shape="ELLIPSE", border_width=2,
+                        border_color="#161616", node_color="#0B94B1",
+                        node_size=30, labels=TRUE, label_vertical_pos="middle",
+                        label_horizontal_pos="center", edge_width=3,
+                        edge_color="#2D2D2D", browser=FALSE, verbose=FALSE) {
   validate_not_null(list(d=d, browser=browser, verbose=verbose))  
   validate_d_seqs(d, seqs_col)
   
@@ -223,7 +278,7 @@ convergence <- function(d, seqs_col=NULL, browser=FALSE, verbose=FALSE) {
   # Step 4: Save a specific cluster (row) to XML to send to Cytoscape
   # Plot the largest cluster, or the first row if all clusters are the same size
   largest_cluster <- which.max(clusters[, 1])
-  xml_file <- cytoscape_xml(clusters, row_num=largest_cluster, verbose,
+  xml_file <- cytoscape_xml(clusters, row_num=largest_cluster, labels, verbose,
                             verbose_dir)
   
   xml <- XML::xmlRoot(XML::xmlTreeParse(xml_file))
@@ -231,7 +286,17 @@ convergence <- function(d, seqs_col=NULL, browser=FALSE, verbose=FALSE) {
   
   # Forward options and the XML string to convergence.js using 'x'
   x <- list(
-    xml_string=xml_string
+    xml_string=xml_string,
+    background_color=background_color,
+    node_shape=node_shape,
+    border_width=border_width,
+    border_color=border_color,
+    node_color=node_color,
+    node_size=node_size,
+    label_vertical_pos=label_vertical_pos,
+    label_horizontal_pos=label_horizontal_pos,
+    edge_width=edge_width,
+    edge_color=edge_color
   )
   
   # Add the XML file as an HTML dependency so it can get loaded in the browser.
