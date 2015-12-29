@@ -14,54 +14,55 @@ HTMLWidgets.widget({
   },
 
   renderValue: function(el, x, instance) {
-    var xml_path = HTMLWidgets.getAttachmentUrl('convergence_xml','xml');
     
-    var request = new XMLHttpRequest();
-    request.open("GET", xml_path, false);
-    request.send();
-    var network_xml = request.responseText;
+    window.onload = function() {
+      
+      var options = {
+        swfPath: HTMLWidgets.getAttachmentUrl('cytoscapeweb', 'CytoscapeWeb'),
+        flashInstallerPath: HTMLWidgets.getAttachmentUrl('cytoscapeweb',
+                                                         'playerProductInstall')
+      };
+      
+      var vis_style = {
+        global: {
+            backgroundColor: "#ABCFD6"
+        },
+        nodes: {
+            shape: "CIRCLE",
+            borderWidth: 3,
+            borderColor: "#ffffff",
+            color: "#0b94b1",
+            size: 25,
+            labelHorizontalAnchor: "center"
+        },
+        edges: {
+            width: 3,
+            color: "#0B94B1"
+        }
+      };
+      
+      var draw_options = {
+  
+        //network: network,
+        network: x.xml_string,
+  
+        //nodeLabelsVisible: x.isLabel,
+        nodeLabelsVisible: true,
+  
+        // let's try another layout
+        layout: "Circle",
+  
+        // set the style at initialisation
+        visualStyle: vis_style,
+  
+        // hide pan zoom
+        panZoomControlVisible: false
+      };
+      instance.cy = new org.cytoscapeweb.Visualization(el.id, options);
+      instance.cy.draw(draw_options);
+      
+    };
     
-    var options = {
-      swfPath: HTMLWidgets.getAttachmentUrl('cytoscapeweb', 'CytoscapeWeb'),
-      flashInstallerPath: HTMLWidgets.getAttachmentUrl('cytoscapeweb',
-                                                       'playerProductInstall')
-    };
-    var vis_style = {
-      global: {
-          backgroundColor: "#ABCFD6"
-      },
-      nodes: {
-          shape: "CIRCLE",
-          borderWidth: 3,
-          borderColor: "#ffffff",
-          color: "#0b94b1",
-          size: 25,
-          labelHorizontalAnchor: "center"
-      },
-      edges: {
-          width: 3,
-          color: "#0B94B1"
-      }
-    };
-    var draw_options = {
-
-      //network: network,
-      network: network_xml,
-
-      //nodeLabelsVisible: x.isLabel,
-      nodeLabelsVisible: true,
-
-      // let's try another layout
-      layout: "Circle",
-
-      // set the style at initialisation
-      visualStyle: vis_style,
-
-      // hide pan zoom
-      panZoomControlVisible: false
-    };
-    instance.cy = new org.cytoscapeweb.Visualization(el.id, options);
-    instance.cy.draw(draw_options);
   },
 
   resize: function(el, width, height, instance) {

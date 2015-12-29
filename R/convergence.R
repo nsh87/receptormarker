@@ -90,7 +90,6 @@ cytoscape_xml <- function(d, row_num, verbose, verbose_dir) {
   if (verbose && file.exists(xml_file)) {
     file.copy(xml_file, verbose_dir)
   }
-  
   xml_file
 }
 
@@ -227,7 +226,17 @@ convergence <- function(d, seqs_col=NULL, browser=FALSE, verbose=FALSE) {
   xml_file <- cytoscape_xml(clusters, row_num=largest_cluster, verbose,
                             verbose_dir)
   
-  # Add the XML file as an HTML dependency so it can get loaded in the browser
+  xml <- XML::xmlRoot(XML::xmlTreeParse(xml_file))
+  xml_string <- XML::toString.XMLNode(xml)
+  
+  # Forward options and the XML string to convergence.js using 'x'
+  x <- list(
+    xml_string=xml_string
+  )
+  
+  # Add the XML file as an HTML dependency so it can get loaded in the browser.
+  # The Cytoscape visualization doesn't use this (it uses the xml_string above),
+  # but it can be useful to debug by simply looking at this file in the browser.
   convergence_xml <- htmltools::htmlDependency(
     name = "convergence_xml",
     version = "1.0",
@@ -238,6 +247,7 @@ convergence <- function(d, seqs_col=NULL, browser=FALSE, verbose=FALSE) {
   # Create widget
   htmlwidgets::createWidget(
     name = "convergence",
+    x,
     width = width,
     height = height,
     htmlwidgets::sizingPolicy(

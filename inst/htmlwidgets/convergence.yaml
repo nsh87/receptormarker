@@ -1,4 +1,12 @@
 dependencies:
+- name: yui
+  version: 3.18.1
+  src: htmlwidgets/lib/yui-3.18.1
+  script: ./yui.min.js
+- name: jquery
+  version: 1.11.3
+  src: htmlwidgets/lib/jquery-1.11.3
+  script: ./jquery.min.js
 - name: cytoscapeweb
   version: 0.8
   src: htmlwidgets/lib/cytoscapeweb_v0.8
@@ -6,9 +14,6 @@ dependencies:
     - ./js/min/AC_OETags.min.js
     - ./js/min/cytoscapeweb.min.js
     - ./js/min/json2.min.js
-    - ./js/src/AC_OETags.js
-    - ./js/src/cytoscapeweb.js
-    - ./js/src/json2.js
   attachment: {
     "CytoscapeWeb": "swf/CytoscapeWeb",
     "playerProductInstall": "swf/playerProductInstall"
