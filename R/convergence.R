@@ -11,7 +11,8 @@ convergence_xml_path <- function() {
   convergence_xml_tmpdir <- tempfile("", tmpdir=tempdir(), fileext="")
   dir.create(convergence_xml_tmpdir)  # htmlwidgets copies entire dir to browser
   
-  xml_file <- tempfile(pattern="phyloxml-", tmpdir=convergence_xml_tmpdir,
+  xml_file <- tempfile(pattern="convergence_xml-",
+                       tmpdir=convergence_xml_tmpdir,
                        fileext=".xml")
 }
 
@@ -38,7 +39,19 @@ cytoscape_xml <- function(d, row_num, verbose, verbose_dir) {
   }
   
   # Create the XML tree
-  root <- XML::newXMLNode("graphml")
+  schema_location <- paste0(
+    c("http://graphml.graphdrawing.org/xmlns",
+      "http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"
+      ), collapse=" "
+  )
+  root <- XML::newXMLNode(
+    "graphml",
+    namespaceDefinitions=c(
+      "http://graphml.graphdrawing.org/xmlns",
+      "xsi"="http://www.w3.org/2001/XMLSchema-instance"
+    ),
+    attrs=c("xsi:schemaLocation"=schema_location)
+  )
   label_key <- XML::newXMLNode("key", 
                                attrs=c(id="label", "for"="all",
                                        "attr.name"="label",
@@ -70,8 +83,8 @@ cytoscape_xml <- function(d, row_num, verbose, verbose_dir) {
   
   # Write XML to file
   XML::saveXML(root, file=xml_file,
-          prefix="<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-          indent=FALSE)
+               prefix="<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+               indent=FALSE)
   
   # Copy XML file to verbose dir if user wants it
   if (verbose && file.exists(xml_file)) {
