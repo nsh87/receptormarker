@@ -57,24 +57,3 @@ dependencies:
     "download_sheet_gray": "download-sheet-gray.png",
     "download_sheet_blue": "download-sheet-blue.png"
   }
-- name: cytoscapeweb
-  version: 0.8
-  src: htmlwidgets/lib/cytoscapeweb_v0.8
-  script:
-    - ./js/min/AC_OETags.min.js
-    - ./js/min/cytoscapeweb.min.js
-    - ./js/min/json2.min.js
-    - ./js/src/AC_OETags.js
-    - ./js/src/cytoscapeweb.js
-    - ./js/src/json2.js
-  attachment: {
-    "CytoscapeWeb": "swf/CytoscapeWeb",
-    "playerProductInstall": "swf/playerProductInstall"
-  }
-- name: convergencexml
-  version: 1.0
-  src: htmlwidgets/lib/convergencexml
-  attachment: {
-    "file":"visual.xml"
-  }
-
