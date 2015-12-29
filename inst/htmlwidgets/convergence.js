@@ -14,17 +14,17 @@ HTMLWidgets.widget({
   },
 
   renderValue: function(el, x, instance) {
-    var xml_path = HTMLWidgets.getAttachmentUrl('convergencexml','xml');
+    var xml_path = HTMLWidgets.getAttachmentUrl('convergence_xml','xml');
     
     var request = new XMLHttpRequest();
     request.open("GET", xml_path, false);
     request.send();
-            console.log(request);
     var network_xml = request.responseText;
     
     var options = {
       swfPath: HTMLWidgets.getAttachmentUrl('cytoscapeweb', 'CytoscapeWeb'),
-      flashInstallerPath: HTMLWidgets.getAttachmentUrl('cytoscapeweb', 'playerProductInstall')
+      flashInstallerPath: HTMLWidgets.getAttachmentUrl('cytoscapeweb',
+                                                       'playerProductInstall')
     };
     var vis_style = {
       global: {
@@ -60,7 +60,6 @@ HTMLWidgets.widget({
       // hide pan zoom
       panZoomControlVisible: false
     };
-    console.log(JSON.stringify(draw_options));
     instance.cy = new org.cytoscapeweb.Visualization(el.id, options);
     instance.cy.draw(draw_options);
   },
