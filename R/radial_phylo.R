@@ -939,3 +939,4 @@ renderRadial_phylo <- function(expr, env = parent.frame(), quoted = FALSE) {
   shinyRenderWidget(expr, radial_phyloOutput, env, quoted = TRUE)
 # nolint end
 }
+
