@@ -1890,8 +1890,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     for (i in min.nc:max.nc) {
       vect <- which(BestCluster == i)
       if (length(vect) > 0) 
-        message("*", length(vect), "proposed", i,
-                "as the best number of clusters", "\n")
+        message("*", length(vect), " proposed ", i,
+                " as the best number of clusters", "\n")
       if (c < length(vect)) {
         j <- i
         c <- length(vect)
