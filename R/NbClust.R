@@ -102,7 +102,6 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     nn <- numberObsAfter <- dim(jeu)[1]
     pp <- dim(jeu)[2]
     TT <- t(jeu) %*% jeu
-    # I think that this is where the singularity issues reside. tryCatch it.
     sizeEigenTT <- length(eigen(TT)[["values"]])
     eigenValues <- eigen(TT / (nn - 1))[["values"]]
     
@@ -609,7 +608,6 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     return(results)
   }
   
-  # other part to incorporate tryCatch?
   ################ # ccc, scott, marriot, trcovw, tracew, friedman and rubin # #
 
   Indices.WBT <- function(x, cl, P, s, vv) {
@@ -637,7 +635,13 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     else {
       message("Error: division by zero!")
     }
-    friedman <- sum(diag(solve(W) * B))
+    friedman <- tryCatch({
+      sum(diag(solve(W) * B))
+    }, 
+    error = function(e) {
+      NA
+    }
+    )
     rubin <- sum(diag(P)) / sum(diag(W))
     R2 <- 1 - sum(diag(W)) / sum(diag(P))
     v1 <- 1
@@ -669,8 +673,6 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   }
   
   ################################## # Kl, Ch, Hartigan, Ratkowsky and Ball # #
-
-  # tryCatch when this function is called?
   
   Indices.Traces <- function(data, d, clall, index = "all") {
     x <- data
@@ -1149,7 +1151,6 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   }
   
   ################ 
-  # tryCatch possibility below?
   
   for (nc in min_nc:max_nc) {
     if (any(method == 1) || (method == 2) || (method == 3) || (method == 4) || 
