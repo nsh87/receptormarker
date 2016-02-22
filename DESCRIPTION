@@ -29,7 +29,8 @@ Imports:
     cluster (>= 2.0.2),
     ggplot2 (>= 1.0.1),
     reshape2 (>= 1.4.1),
-    muscle(>= 3.10.0)
+    muscle(>= 3.10.0),
+    methods(>= 3.2.3)
 Suggests:
     testthat (>= 0.9.1),
     lintr (>= 0.2.0)
