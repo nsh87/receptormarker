@@ -1,3 +1,18 @@
+
+
+#' @title Validate that an object is of class \emph{multiClust}
+#' @description An internal function that raises an error if the argument is not
+#' of class \emph{multiClust}.
+#' @param clust_obj An item to be checked for class membership.
+#' @keywords internal
+validate_multi_clust <- function(clust_obj) {
+  if (class(clust_obj) != "multiClust") {
+    stop("The argument 'clust_obj' must be an object of class 'multiClust'",
+         call.=FALSE)
+  }
+}
+
+
 #' @title Validate that a list of arguments are \code{TRUE} or \code{FALSE}
 #' @description An internal function that raises an error if any of the items in
 #' the list is not either \code{TRUE} or \code{FALSE}.
