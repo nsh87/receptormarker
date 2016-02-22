@@ -19,14 +19,19 @@ is printed to the console and the sequences and resulting cluster
 (convergence groups) are written to a folder in the working directory.}
 }
 \value{
-An object of class \code{\link{convergenceGroups}} that can be 
+An object of class \code{\link{convergenceGroups-class}} that can be 
 inspected or used to generate network graphs using
 \code{\link{convergence_plot}}.
 }
 \description{
 Generates convergence motifs and establishes a statistical
 cutoff to determine convergence groups. Convergence groups can be plotted
-using \code{\link{cluster_plot}}.
+using \code{\link{convergence_plot}}.
+}
+\details{
+Inspection of the convergence groups can (and likely should) be
+performed by analyzing the data frame contained within the returned object.
+See the examples below for more info.
 }
 \examples{
 data(tcr)  # Packaged data set, a data.frame from a CSV file

@@ -99,13 +99,16 @@ run_convergence <- function(seqs, verbose, verbose_dir){
 #' Group adaptive repertoire convergence by paratope hotspots for CDRs
 #' @description Generates convergence motifs and establishes a statistical
 #' cutoff to determine convergence groups. Convergence groups can be plotted
-#' using \code{\link{cluster_plot}}.
+#' using \code{\link{convergence_plot}}.
+#' @details Inspection of the convergence groups can (and likely should) be
+#' performed by analyzing the data frame contained within the returned object.
+#' See the examples below for more info.
 #' @template -d
 #' @template -seqs_col
 #' @param verbose \code{TRUE} or \code{FALSE}. If \code{TRUE}, additional output
 #' is printed to the console and the sequences and resulting cluster
 #' (convergence groups) are written to a folder in the working directory.
-#' @return An object of class \code{\link{convergenceGroups}} that can be 
+#' @return An object of class \code{\link{convergenceGroups-class}} that can be 
 #' inspected or used to generate network graphs using
 #' \code{\link{convergence_plot}}.
 #' @examples 
@@ -150,7 +153,7 @@ convergence <- function(d, seqs_col=NULL, verbose=FALSE) {
   # Step 5: Sort the convergence groups from largest to smallest
   num_rows <- nrow(groups)
   if (num_rows > 0) {
-    groups <- groups[order(-groups['num_items']), ]
+    groups <- groups[order(-groups["num_items"]), ]
     row.names(groups) <- 1:num_rows
   }
     
