@@ -1,3 +1,24 @@
+#' @title Validate than an object is of class \emph{convergenceGroups}
+#' @description An internal function that raises an error if the argument is not
+#' of class \emph{convergenceGroups} or if the \code{groups} are empty (i.e.
+#' if there are no convergence groups). 
+#' @param convergence_obj An item to be checked for class membership.
+#' @keywords internal
+validate_convergence_clust <- function(convergence_obj) {
+  if (class(convergence_obj) != "convergenceGroups") {
+    err <- paste0(c("The argument 'convergence_obj' must be an object of",
+                    "class 'convergenceGroups'"),
+                  sep=" ")
+    stop(err, call.=FALSE)
+  }
+  # Get the data.frame of convergence groups and check if there are 0 rows
+  if (nrow(convergence_obj@groups) < 1) {
+    err <- paste0(c("There are no convergence groups in",
+                    "'convergence_obj@groups'"),
+                  sep=" ")
+    stop(err, call.=FALSE)
+  }
+}
 
 
 #' @title Validate that an object is of class \emph{multiClust}
@@ -135,4 +156,24 @@ validate_pos_num <- function(n) {
              stop(err, call.=FALSE)
            }
          })
+}
+
+#' @title Validate than an argument is a single, positive integer
+#' @description An internal function that raises an error if the argument is not
+#' a positive integer.
+#' @param n An item to be checked.
+#' @keywords internal
+validate_single_pos_num <- function(n) {
+  if (is.na(n)) {
+    stop("Argument 'n' must be a real value", call.=FALSE)
+  } else if (class(n) != "numeric") {
+    stop("Argument 'n' must be an integer", call.=FALSE)
+  } else if (length(n) != 1) {
+    stop("Argument 'n' must be a single integer", call.=FALSE)
+  } else if(n == 0) {
+    stop("Argument 'n' must be greater than 0", call.=FALSE)
+  } else if (grep("^[0-9]+$", n) != 1) {
+    stop("Argument 'n' must be an integer greater than 0",
+         call.=FALSE)
+  }
 }
