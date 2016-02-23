@@ -365,14 +365,14 @@ add_binaries_to_path <- function() {
   } 
   
   # Check if BLAST+ is in path (in a platform independent way) and add it if not
-  g <- grepl(file.path("/binaries/ncbi-blast"), path_items)
+  g <- grepl(file.path("/binaries/ncbi-blast/"), path_items)  # nolint
   if (sum(g) == 0) {
   # Add the BLAST+ binaries to the system path
     Sys.setenv(PATH=paste0(c(Sys.getenv("PATH"), blast), collapse=path_sep)) 
   }
   
   # Check if HMMER is in path (in a platform independent way) and add it if not
-  g <- grepl(file.path("/binaries/hmmer-"), path_items)
+  g <- grepl(file.path("/binaries/hmmer-"), path_items)  # nolint
   if (sum(g) == 0) {
   # Add the HMMER binaries to the system path
     Sys.setenv(PATH=paste0(c(Sys.getenv("PATH"), hmmer), collapse=path_sep)) 
