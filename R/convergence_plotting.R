@@ -248,7 +248,7 @@ convergence_plot <- function(convergence_obj, group_num=NULL,
 #' @description Output and render functions for using
 #' \code{\link{convergence_plot}} within Shiny applications and interactive Rmd
 #' documents.
-#' @param outputID The output variable to read from.
+#' @param outputId The output variable to read from.
 #' @param width,height A valid CSS unit, such as \code{"100\%"},
 #' \code{"600px"}, \code{"auto"}, or a number (which will be coerced to a string
 #' and have \code{"px"} appended to it).
@@ -260,7 +260,7 @@ convergence_plot <- function(convergence_obj, group_num=NULL,
 #' @export
 # nolint start
 convergence_plotOutput <- function(outputId, width = "100%", height = "400px"){
-  shinyWidgetOutput(outputId, "convergence", width, height,
+  shinyWidgetOutput(outputId, "convergence_plot", width, height,
                     package = "receptormarker")
 # nolint end
 }
@@ -273,6 +273,6 @@ renderConvergence_plot <- function(expr, env = parent.frame(), quoted = FALSE) {
   if (!quoted) { 
     expr <- substitute(expr)
   }
-  shinyRenderWidget(expr, convergenceOutput, env, quoted = TRUE)
+  shinyRenderWidget(expr, convergence_plotOutput, env, quoted = TRUE)
 # nolint end
 }
