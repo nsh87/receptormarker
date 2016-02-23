@@ -10,7 +10,7 @@
 #' NbClust Package for determining the best number of clusters
 #' @description An internal function using the \code{\link[NbClust]{NbClust}}
 #'   package. It provides 30 indices for determining the number of clusters and
-#'   proposes to user the best clustering scheme from the different results
+#'   proposes to the user the best clustering scheme from the different results
 #'   obtained by varying all combinations of number of clusters, distance
 #'   measures, and clustering methods.
 #' @param data matrix or dataset.
@@ -113,8 +113,17 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       (indice == 32))) {
       for (i in 1:sizeEigenTT) {
         if (eigenValues[i] < 0) {
-          stop("The TSS matrix is indefinite. There must be too many missing ", 
-          "values. The index cannot be calculated.", call. = FALSE)
+          # Start here
+          # tcr_binary[is.na(tcr_binary)] <- 0
+          # NbClust(tcr_binary, distance = "binary", max.nc = 5, method = "average")
+          # Error: The TSS matrix is indefinite.
+          # Error: Division by zero!
+          # Figure out how many can be retained
+          message("The TSS matrix is indefinite. There must be too many ", 
+          "missing values. The following indices cannot be calculated:\n", 
+          "CCC, Scott, Marriot, TrCovW, TraceW, Friedman, and Rubin")
+          indef <- TRUE
+          break
         }
       }
       s1 <- sqrt(eigenValues)
@@ -633,7 +642,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     if (det(W) != 0) 
       scott <- n * log(det(P) / det(W)) 
     else {
-      message("Error: division by zero!")
+      scott <- NA
     }
     friedman <- tryCatch({
       sum(diag(solve(W) * B))
