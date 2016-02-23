@@ -156,8 +156,7 @@ cytoscape_xml <- function(d, row_num, labels, verbose, verbose_dir) {
 #' tcr_reduced <- tcr[1:100, ]
 #' converged <- convergence(tcr_reduced, seqs_col='seqs')
 #' # Plot the group with the largest size
-#' largest_group <- which.max(converged@groups[, 1])
-#' convergence_plot(converged, group_num=largest_group)
+#' convergence_plot(converged, group_num=1)
 #' @export
 convergence_plot <- function(convergence_obj, group_num=NULL,
                              background_color="#FFFFFF", node_shape="ELLIPSE",
