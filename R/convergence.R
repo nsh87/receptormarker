@@ -60,7 +60,7 @@ run_convergence <- function(seqs, verbose, verbose_dir){
   dir.create(convergence_tmpdir)
   seqs_file <- tempfile(pattern="sequences-deduped-", tmpdir=convergence_tmpdir,
                         fileext=".txt")
-  write(seqs, seqs_file)
+  write(seqs, seqs_file, sep="\n")
   # Copy deduped sequences file to output dir if user wants it
   if (verbose && file.exists(seqs_file)) {
     file.copy(seqs_file, verbose_dir)
