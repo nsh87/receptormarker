@@ -67,14 +67,15 @@ cytoscape_xml <- function(d, row_num, labels, verbose, verbose_dir) {
                                        "atr.type"="string"),
                                parent=root)
   weight_key <- XML::newXMLNode("key",
-                                attrs=c(id="weight", "for"="node",
+                                attrs=c(id="weight", "for"="edge",
                                         "attr.name"="weight",
                                         "attr.type"="double"),
                                 parent=root)
   graph_node <- XML::newXMLNode("graph",
-                                attrs=c(id="0", "edgedefault"="undirected",
+                                attrs=c(id="0", "edgedefault"="directed",
                                         "label"=cluster_label),
                                 parent=root)
+
   # If 'labels' is FALSE, don't show labels by using empty string for labels
   if (!labels) {
     nodes <- rep("", length(nodes))
@@ -91,8 +92,10 @@ cytoscape_xml <- function(d, row_num, labels, verbose, verbose_dir) {
   if (num_nodes != 1) {
     lapply(c(1:(num_nodes - 1)), function(x) {
       lapply(c((x + 1):num_nodes), function(y) {
-        XML::newXMLNode("edge", attrs=c("source"=x, "target"=y),
-                        parent=graph_node)
+        edge <- XML::newXMLNode("edge", attrs=c("source"=x, "target"=y),
+                                parent=graph_node)
+        XML::newXMLNode("data", 10, attrs=c("key"="weight"), parent=edge)
+        edge
       })
     })
   }

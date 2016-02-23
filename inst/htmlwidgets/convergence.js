@@ -53,7 +53,13 @@ HTMLWidgets.widget({
   
         /* A layout object or name: http://cytoscapeweb.cytoscape.org/
            documentation/layout#section/Layout */
-        layout: "Circle",
+        layout: {
+          name: "ForceDirected",
+          options: {
+            weightAttr: "weight",
+            autoStabilize: true
+          }
+        },
   
         // Set the style at initialisation
         visualStyle: vis_style,
