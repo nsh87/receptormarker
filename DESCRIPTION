@@ -1,19 +1,22 @@
 Package: receptormarker
 Type: Package
 Title: Analysis and Visualization of Immunological Data
-Version: 0.0.0.9000
-Date: 2015-05-20
+Version: 0.0.0.9001
+Date: 2016-02-23
 Authors@R: as.person(c(
     "Nikhil Haas <nikhil@nikhilhaas.com> [aut, cre]",
     "Chris Atterbury <chris.atterbury@gmail.com> [aut]",
     "Jacob Glanville <jake@hackbio.com> [aut]"))
-Description: Provides functions for executing computations on antibody receptor
-    sequences and phenotypic markers. Generates visualizations or data suitable
-    for visualizing with web-based libraries such as D3.js. Types of analyses
-    available include normalization, clustering, and phylogenetic analysis to
-    build phylogenetic trees. Utilizes existing packages to perform many
-    analyses, focusing not on novel algorithms but rather on making it easer to
-    pipe data into these functions and then generate visualizations.
+Description: Provides functions for executing computations on antibody and
+    T-cell receptor protein sequences (specifically CDRs) and phenotypic markers.
+    Generates visualizations or data suitable
+    for visualizing with web-based libraries such as D3.js and Cytoscape Web.
+    Types of analyses available include normalization, clustering, phylogenetic
+    analysis to build phylogenetic trees, and grouping of adaptive repertoire
+    convergence for CDRs. Utilizes and includes existing packages and binaries
+    (e.g. HMMER and BLAST+) to perform many analyses, focusing on both
+    supplying novel algorithms and making it easer to pipe data into
+    pre-existing tools to generate useful visualizations and analyses.
 License: BSD_2_clause + file LICENSE
 URL: https://github.com/nsh87/receptormarker
 LazyData: True
