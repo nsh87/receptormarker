@@ -128,11 +128,15 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       }
       s1 <- sqrt(eigenValues)
       ss <- rep(1, sizeEigenTT)
-      for (i in 1:sizeEigenTT) {
-        if (s1[i] != 0) 
-          ss[i] <- s1[i]
+      if (indef) {
+        vv <- NA
+      } else {
+        for (i in 1:sizeEigenTT) {
+          if (s1[i] != 0) 
+            ss[i] <- s1[i]
+        }
+        vv <- prod(ss)
       }
-      vv <- prod(ss)
     }
   }
   
@@ -636,7 +640,11 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     xbar <- solve(t(z) %*% z) %*% t(z) %*% x
     B <- t(xbar) %*% t(z) %*% z %*% xbar
     W <- P - B
-    marriot <- (qq ^ 2) * det(W)
+    if (det(W) != 0) {
+      marriot <- (qq ^ 2) * det(W)
+    } else {
+      marriot <- NA
+    }
     trcovw <- sum(diag(cov(W)))
     tracew <- sum(diag(W))
     if (det(W) != 0) 
