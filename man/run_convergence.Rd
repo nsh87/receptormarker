@@ -28,7 +28,8 @@ clustering of adaptive repertoire convergence.
 }
 \details{
 Requires HMMER and blastn libraries. These binaries are included
-in the R package, but may present difficulties on non-Unix computers.
+in the R package, but may present difficulties on non-Unix computers. These
+binaries are added to the system \code{PATH} when the package is loaded.
 }
 \keyword{internal}
 
