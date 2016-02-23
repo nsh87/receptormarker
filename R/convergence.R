@@ -42,7 +42,8 @@ parse_convergence_results <- function(results_file, verbose, verbose_dir) {
 #' \code{convergence.pl} script and associated files to find statistical
 #' clustering of adaptive repertoire convergence.
 #' @details Requires HMMER and blastn libraries. These binaries are included
-#' in the R package, but may present difficulties on non-Unix computers.
+#' in the R package, but may present difficulties on non-Unix computers. These
+#' binaries are added to the system \code{PATH} when the package is loaded.
 #' @template -seqs
 #' @param verbose \code{TRUE} or \code{FALSE}, depending on whether or not the
 #' output of the convergence script should be printed and the output file should
@@ -64,13 +65,6 @@ run_convergence <- function(seqs, verbose, verbose_dir){
   if (verbose && file.exists(seqs_file)) {
     file.copy(seqs_file, verbose_dir)
   }
-  
-  # Add the HMMER and blastn binaries to the system path
-  original_sys_path <- Sys.getenv("PATH")
-  hmmer <- system.file("binaries/hmmer-3.1b2/binaries",
-                       package = "receptormarker")
-  blastn <- system.file("binaries/ncbi/blast/bin", package = "receptormarker")
-  Sys.setenv(PATH=paste0(c(original_sys_path, hmmer, blastn), collapse=":"))
   
   # Run the convergence tool
   tryCatch({
