@@ -19,13 +19,13 @@ and have \code{"px"} appended to it).}
 
 \item{expr}{An expression that generates a radial phylogram.}
 
-\item{env}{The environment in which to evaluate \code{expr}}
+\item{env}{The environment in which to evaluate \code{expr}.}
 
 \item{quoted}{Is \code{expr} a quoted expression (with \code{quote()})? This
 is useful if you want to save an expression in a variable.}
 }
 \description{
-Output and render functions for using radial_phylo within
-Shiny applications and interactive Rmd documents.
+Output and render functions for using \code{\link{radial_phylo}}
+within Shiny applications and interactive Rmd documents.
 }
 
