@@ -67,26 +67,16 @@ run_convergence <- function(seqs, verbose, verbose_dir){
   }
   
   # Run the convergence tool
-  tryCatch({
-    convergence <- system.file("perl/vdjfasta/bin", "convergence-pipeline.pl",
-                               package="receptormarker")
-    system(sprintf("perl %s --textfile=%s", convergence, seqs_file),
-           ignore.stdout=!verbose, ignore.stderr=!verbose)
-    # Collect output
-    output_file <- gsub(".txt$", "-convergence-groups.txt", seqs_file)
-    # Copy output file to verbose dir if user wants it
-    if (verbose && file.exists(seqs_file)) {
-      file.copy(output_file, verbose_dir)
-    }
-    # Revert system path back to what it was originally 
-    Sys.setenv(PATH=original_sys_path)
-  },
-  error = function(e) {
-    # Need to set system path back to what it was if something goes wrong
-    Sys.setenv(PATH=original_sys_path)
-    stop(e, call.=FALSE) 
+  convergence <- system.file("perl/vdjfasta/bin", "convergence-pipeline.pl",
+                             package="receptormarker")
+  system(sprintf("perl %s --textfile=%s", convergence, seqs_file),
+         ignore.stdout=!verbose, ignore.stderr=!verbose)
+  # Collect output
+  output_file <- gsub(".txt$", "-convergence-groups.txt", seqs_file)
+  # Copy output file to verbose dir if user wants it
+  if (verbose && file.exists(seqs_file)) {
+    file.copy(output_file, verbose_dir)
   }
-  )
   output_file
 }
 
