@@ -40,44 +40,44 @@ inst/binaries/hmmer-3.1b2/binaries/makehmmerdb
 inst/binaries/hmmer-3.1b2/binaries/nhmmer
 inst/binaries/hmmer-3.1b2/binaries/nhmmscan
 inst/binaries/hmmer-3.1b2/binaries/phmmer
-inst/binaries/ncbi/blast/bin/blast_formatter (for architecture i386)
-inst/binaries/ncbi/blast/bin/blast_formatter (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/blastdb_aliastool (for architecture i386)
-inst/binaries/ncbi/blast/bin/blastdb_aliastool (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/blastdbcheck (for architecture i386)
-inst/binaries/ncbi/blast/bin/blastdbcheck (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/blastdbcmd (for architecture i386)
-inst/binaries/ncbi/blast/bin/blastdbcmd (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/blastn (for architecture i386)
-inst/binaries/ncbi/blast/bin/blastn (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/blastp (for architecture i386)
-inst/binaries/ncbi/blast/bin/blastp (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/blastx (for architecture i386)
-inst/binaries/ncbi/blast/bin/blastx (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/convert2blastmask (for architecture i386)
-inst/binaries/ncbi/blast/bin/convert2blastmask (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/deltablast (for architecture i386)
-inst/binaries/ncbi/blast/bin/deltablast (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/dustmasker (for architecture i386)
-inst/binaries/ncbi/blast/bin/dustmasker (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/makeblastdb (for architecture i386)
-inst/binaries/ncbi/blast/bin/makeblastdb (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/makembindex (for architecture i386)
-inst/binaries/ncbi/blast/bin/makembindex (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/makeprofiledb (for architecture i386)
-inst/binaries/ncbi/blast/bin/makeprofiledb (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/psiblast (for architecture i386)
-inst/binaries/ncbi/blast/bin/psiblast (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/rpsblast (for architecture i386)
-inst/binaries/ncbi/blast/bin/rpsblast (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/rpstblastn (for architecture i386)
-inst/binaries/ncbi/blast/bin/rpstblastn (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/segmasker (for architecture i386)
-inst/binaries/ncbi/blast/bin/segmasker (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/tblastn (for architecture i386)
-inst/binaries/ncbi/blast/bin/tblastn (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/tblastx (for architecture i386)
-inst/binaries/ncbi/blast/bin/tblastx (for architecture x86_64)
-inst/binaries/ncbi/blast/bin/windowmasker (for architecture i386)
-inst/binaries/ncbi/blast/bin/windowmasker (for architecture x86_64)
+inst/binaries/ncbi/blast/bin/blast_formatter
+inst/binaries/ncbi/blast/bin/blast_formatter
+inst/binaries/ncbi/blast/bin/blastdb_aliastool
+inst/binaries/ncbi/blast/bin/blastdb_aliastool
+inst/binaries/ncbi/blast/bin/blastdbcheck
+inst/binaries/ncbi/blast/bin/blastdbcheck
+inst/binaries/ncbi/blast/bin/blastdbcmd
+inst/binaries/ncbi/blast/bin/blastdbcmd
+inst/binaries/ncbi/blast/bin/blastn
+inst/binaries/ncbi/blast/bin/blastn
+inst/binaries/ncbi/blast/bin/blastp
+inst/binaries/ncbi/blast/bin/blastp
+inst/binaries/ncbi/blast/bin/blastx
+inst/binaries/ncbi/blast/bin/blastx
+inst/binaries/ncbi/blast/bin/convert2blastmask
+inst/binaries/ncbi/blast/bin/convert2blastmask
+inst/binaries/ncbi/blast/bin/deltablast
+inst/binaries/ncbi/blast/bin/deltablast
+inst/binaries/ncbi/blast/bin/dustmasker
+inst/binaries/ncbi/blast/bin/dustmasker
+inst/binaries/ncbi/blast/bin/makeblastdb
+inst/binaries/ncbi/blast/bin/makeblastdb
+inst/binaries/ncbi/blast/bin/makembindex
+inst/binaries/ncbi/blast/bin/makembindex
+inst/binaries/ncbi/blast/bin/makeprofiledb
+inst/binaries/ncbi/blast/bin/makeprofiledb
+inst/binaries/ncbi/blast/bin/psiblast
+inst/binaries/ncbi/blast/bin/psiblast
+inst/binaries/ncbi/blast/bin/rpsblast
+inst/binaries/ncbi/blast/bin/rpsblast
+inst/binaries/ncbi/blast/bin/rpstblastn
+inst/binaries/ncbi/blast/bin/rpstblastn
+inst/binaries/ncbi/blast/bin/segmasker
+inst/binaries/ncbi/blast/bin/segmasker
+inst/binaries/ncbi/blast/bin/tblastn
+inst/binaries/ncbi/blast/bin/tblastn
+inst/binaries/ncbi/blast/bin/tblastx
+inst/binaries/ncbi/blast/bin/tblastx
+inst/binaries/ncbi/blast/bin/windowmasker
+inst/binaries/ncbi/blast/bin/windowmasker
 
