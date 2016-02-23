@@ -74,6 +74,10 @@ run_convergence <- function(seqs, verbose, verbose_dir){
          ignore.stdout=!verbose, ignore.stderr=!verbose)
   # Collect output
   output_file <- gsub(".txt$", "-convergence-groups.txt", seqs_file)
+  if (!file.exists(output_file)) {
+    stop("Convergence output not found: no convergence groups, or error",
+         call.=FALSE)
+  }
   # Copy output file to verbose dir if user wants it
   if (verbose && file.exists(seqs_file)) {
     file.copy(output_file, verbose_dir)
