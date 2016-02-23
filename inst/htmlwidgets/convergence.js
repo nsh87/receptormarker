@@ -38,7 +38,8 @@ HTMLWidgets.widget({
         },
         edges: {
             width: x.edge_width,
-            color: x.edge_color
+            color: x.edge_color,
+            targetArrowShape: "NONE"
         }
       };
       
@@ -57,7 +58,8 @@ HTMLWidgets.widget({
           name: "ForceDirected",
           options: {
             weightAttr: "weight",
-            autoStabilize: true
+            autoStabilize: true,
+            maxTime: 2000
           }
         },
   
