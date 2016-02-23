@@ -75,8 +75,12 @@ Before submitting a pull request you should build the documentation, run tests,
 and check that the package builds. This can be done with a single command:
 
 ```R
-devtools::check()
+devtools::check(cran=FALSE)
 ```
+
+Note that we are not checking the package `--as-cran` since we have included
+HMMER and BLAST+ binaries and CRAN does not allow executable binaries in
+packages.
 
 You can also load the package and then test functions after running:
 
