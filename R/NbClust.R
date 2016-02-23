@@ -667,7 +667,9 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     u <- s / c
     k1 <- sum((u >= 1) == TRUE)
     p1 <- min(k1, qq - 1)
-    if (all(p1 > 0, p1 < pp)) {
+    if (indef) {
+      ccc <- NA
+    } else if (all(p1 > 0, p1 < pp)) {
       for (i in 1:p1)
         v1 <- v1 * s[i]
       c <- (v1 / qq) ^ (1 / p1)
