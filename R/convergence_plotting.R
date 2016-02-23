@@ -244,21 +244,31 @@ convergence_plot <- function(convergence_obj, group_num=NULL,
   )
 }
 
-#' Widget output function for use in Shiny
-#'
+#' @title Shiny bindings for convergence plots
+#' @description Output and render functions for using
+#' \code{\link{convergence_plot}} within Shiny applications and interactive Rmd
+#' documents.
+#' @param outputID The output variable to read from.
+#' @param width,height A valid CSS unit, such as \code{"100\%"},
+#' \code{"600px"}, \code{"auto"}, or a number (which will be coerced to a string
+#' and have \code{"px"} appended to it).
+#' @param expr An expression that generates a convergence plot.
+#' @param env The environment in which to evaluate \code{expr}.
+#' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
+#' is useful if you want to save an expression in a variable.
+#' @name convergence_plot_shiny
 #' @export
 # nolint start
-convergenceOutput <- function(outputId, width = "100%", height = "400px"){
+convergence_plotOutput <- function(outputId, width = "100%", height = "400px"){
   shinyWidgetOutput(outputId, "convergence", width, height,
                     package = "receptormarker")
 # nolint end
 }
 
-#' Widget render function for use in Shiny
-#'
+#' @rdname convergence_plot_shiny
 #' @export
 # nolint start
-renderConvergence <- function(expr, env = parent.frame(), quoted = FALSE) {
+renderConvergence_plot <- function(expr, env = parent.frame(), quoted = FALSE) {
   # force quoted
   if (!quoted) { 
     expr <- substitute(expr)
