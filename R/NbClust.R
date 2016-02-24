@@ -113,15 +113,9 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       (indice == 32))) {
       for (i in 1:sizeEigenTT) {
         if (eigenValues[i] < 0) {
-          # Start here
-          # tcr_binary[is.na(tcr_binary)] <- 0
-          # NbClust(tcr_binary, distance = "binary", max.nc = 5, method = "average")
-          # Error: The TSS matrix is indefinite.
-          # Error: Division by zero!
-          # Figure out how many can be retained
           message("The TSS matrix is indefinite. There must be too many ", 
           "missing values. The following indices cannot be calculated:\n", 
-          "CCC, Scott, Marriot, TrCovW, TraceW, Friedman, and Rubin")
+          "CCC, Scott, Marriot, Friedman, and Ratkowsky")
           indef <- TRUE
           break
         }
