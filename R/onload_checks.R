@@ -251,3 +251,130 @@ check_muscle <- function(level) {
   }
   return(TRUE)
 }
+
+
+#' @title Get the OS type
+#' @description Polls the current system to get the platform type: 'win',
+#' 'osx', or 'linux'. The discovery of 'osx' might not be 100%, so if the
+#' platform is not discovered to be either one of "win", "osx", but it is found
+#' to be "unix" then the return OS type will be "linux". If the platform is
+#' not found to be any of the three ("win", "osx", or "unix") then an error
+#' is thrown. Sinced OS X is a Unix variation, the default 'linux'
+#' should generally be applicable even if the platform is OS X but that
+#' couldn't be discovered properly.
+#' @return Either 'win', 'osx', or 'linux', as a string.
+#' @keywords internal
+get_os <- function() {
+  os <- "linux"
+  if (.Platform$OS.type == "windows") {
+    os <- "win"
+  } else if (Sys.info()["sysname"] == "Darwin") {
+    os <- "osx"
+  } else if (.Platform$OS.type != "unix") {
+    stop("Unknown OS: failed to append HMMER/BLAST+ binaries.", call.=FALSE)
+  }
+  os
+}
+
+
+#' @title Parse system PATH into a list
+#' @description The system \code{PATH} is usually of format
+#' \code{/usr/bin:/usr/sbin:/usr/local/bin...} where each folder is separated
+#' by a \code{:} character. This function takes the path and splits it into
+#' a list of individual paths so that it can be used elsewhere. The function
+#' has been taken from the \code{rappdirs} package at:
+#' https://github.com/hadley/rappdirs.
+#' @return A vector of characters containing the various paths.
+#' @keywords internal
+parse_path_string <- function(path, sep=":") {
+  normalizePath(unique(strsplit(path, sep)[[1]]), mustWork=FALSE)
+}
+
+
+#' @title Get the architecture of the current machine
+#' @description Checks to see if a machine uses a x86_64 or ia32 processor.
+#' @return Either 'x86_64' or 'ia32', depending on the architecture.
+#' @keywords internal
+get_architecture <- function() {
+  if (sum(grepl("86_64", Sys.info()["machine"])) > 0) {
+    machine <-"x86_64"
+  } else if (sum(grepl("32", Sys.info()["machine"])) > 0) {
+    machine <- "ia32"
+  } else {
+    err <- paste0(c("Unknown architecture ('x86_64' or 'ia32' sought):",
+                    "failed to append HMMER/BLAST+ binaries"),
+                  collapse=" ")
+    stop(err, call.=FALSE) 
+  }
+  machine
+}
+
+
+#' @title Add HMMER and NCBI BLAST+ binaries to the system path
+#' @description HMMER and BLAST+ binaries are included for multiple platforms.
+#' For HMMER, there are 'windows' and 'unix' binaries. For BLAST+, there are
+#' 'windows', 'mac-osx', 'linux x86', and 'linux 'linux ia32' binaries. This
+#' function detects the current operating system and adds the appropriate
+#' binaries to the system \code{PATH} variable if they are not already in
+#' the \code{PATH}.
+#' @keywords internal
+add_binaries_to_path <- function() {
+  path_items <- NULL # Will hold vector of items in original system path
+  path_sep <- NULL  # Will hold ';' or ':', depending on the operating system
+  machine <- NULL  # Will hold 'x86_64' or 'ia32', depending on the architecture
+  # Get OS and a list of items in the system path
+  os <- get_os()
+  if (os == "win") {
+    path_items <- parse_path_string(Sys.getenv("PATH"), sep=";")
+    path_sep <- ";"
+  } else if (os == "osx") {
+    path_items <- parse_path_string(Sys.getenv("PATH"))
+    path_sep <- ":"
+  } else if (os == "linux") {
+    path_items <- parse_path_string(Sys.getenv("PATH"))
+    path_sep <- ":"
+    machine <- get_architecture()  # Holds "x86" or "ia32", needed for BLAST+ 
+  }
+  
+  # Get location of included HMMER binaries in a platform-independent way
+  if (os == "win") {
+    hmmer <- system.file(file.path("binaries/hmmer/hmmer-3_0-windows/bin"),
+                         package="receptormarker")
+  } else if (os == "osx") {
+    hmmer <- system.file(
+      file.path("binaries/hmmer/hmmer-3_1b2-macosx-intel/bin"),
+      package="receptormarker")
+  } else if (os == "linux" && machine == "x86_64") {
+    hmmer <- system.file(
+      file.path("binaries/hmmer/hmmer-3_1b2-linux-intel-x86_64/bin"),
+      package="receptormarker"
+    )
+  } else if (os == "linux" && machine == "ia32") {
+    hmmer <- system.file(
+      file.path("binaries/hmmer/hmmer-3_1b2-linux-intel-ia32/bin"),
+      package="receptormarker")
+  }
+  
+  # Get location of included BLAST binaries in a platform independent way
+  if (os == "win") {
+    blast <- system.file(file.path("binaries/ncbi-blast/windows/bin"),
+                         package="receptormarker")
+  } else if (os == "osx" || os == "linux") {
+    blast <- system.file(file.path("binaries/ncbi-blast/unix/bin"),
+                         package="receptormarker")
+  } 
+  
+  # Check if BLAST+ is in path (in a platform independent way) and add it if not
+  g <- grepl(file.path("/binaries/ncbi-blast/"), path_items)  # nolint
+  if (sum(g) == 0) {
+  # Add the BLAST+ binaries to the system path
+    Sys.setenv(PATH=paste0(c(Sys.getenv("PATH"), blast), collapse=path_sep)) 
+  }
+  
+  # Check if HMMER is in path (in a platform independent way) and add it if not
+  g <- grepl(file.path("/binaries/hmmer-"), path_items)  # nolint
+  if (sum(g) == 0) {
+  # Add the HMMER binaries to the system path
+    Sys.setenv(PATH=paste0(c(Sys.getenv("PATH"), hmmer), collapse=path_sep)) 
+  }
+}

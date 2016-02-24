@@ -138,15 +138,3 @@ validate_sort_range <- function(n_range) {
   }
   sort(n_range)
 }
-
-#' @title Validate that an object is of class \emph{multiClust}
-#' @description An internal function that raises an error if the argument is not
-#' of class \emph{multiClust}.
-#' @param clust_obj An item to be checked for class membership.
-#' @keywords internal
-validate_multi_clust <- function(clust_obj) {
-  if (class(clust_obj) != "multiClust") {
-    stop("The argument 'clust_obj' must be an object of class 'multiClust'",
-         call.=FALSE)
-  }
-}

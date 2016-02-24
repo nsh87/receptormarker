@@ -51,10 +51,11 @@ phylogram should scale to fit the browser or RStudio Viewer window. If
 \code{FALSE} and the phylogram is on a large canvas, it will be necessary to
 scroll to see the entire canvas.}
 
-\item{browser}{\code{TRUE} or \code{FALSE}, depending on whether or not the
-phylogram should open in a browser window. Only applicable if using RStudio,
-which by default will show the phylogram in RStudio's Viewer. If using R from
-the command line, the phylogram will always open in a browser.}
+\item{browser}{\code{TRUE} or \code{FALSE}, depending on whether or not the 
+visualization should open in a browser window. Only applicable if using
+RStudio, which by default will show the visualization in RStudio's Viewer.
+If using R from the command line, the visualization will always open in a
+browser.}
 
 \item{verbose}{\code{TRUE} or \code{FALSE}. If \code{TRUE} additional output
 is printed to the R console and the sequences, multiple sequence alignment,
