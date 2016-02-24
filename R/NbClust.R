@@ -122,7 +122,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       }
       s1 <- sqrt(eigenValues)
       ss <- rep(1, sizeEigenTT)
-      if (indef) {
+      if (exists("indef")) {
         vv <- NA
       } else {
         for (i in 1:sizeEigenTT) {
@@ -661,7 +661,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     u <- s / c
     k1 <- sum((u >= 1) == TRUE)
     p1 <- min(k1, qq - 1)
-    if (indef) {
+    if (exists("indef")) {
       ccc <- NA
     } else if (all(p1 > 0, p1 < pp)) {
       for (i in 1:p1)
