@@ -71,14 +71,19 @@
 #'     number of cluster centers requested.
 #'   \code{sil_avg} A list of average silhouette scores for each number of
 #'     cluster centers requested.
-#'   \code{num_clust} A list of the each number of clusters used.
+#'   \code{num_clust} A list of each number of clusters used.
 #'   \code{sil} A list of \code{\link[cluster]{silhouette}} objects for each
 #'     number of clusters.
 #'   \code{wss} A list of total within sum of squares for each of the
 #'     \code{\link[stats]{kmeans}} objects stored in \code{clust_model}.
 #'   \code{clust_gap} A \code{\link[cluster]{clusGap}} object that uses the
 #'     highest number of \code{krange} for the \code{K.max} argument.
-#'   \code{k_best} The optimal number of clusters based on silhouette score.
+#'   \code{k_best} The optimal number of clusters based on the algorithms used
+#'     by \code{\link[NbClust]{NbClust}}. These include: "kl", "ch",
+#'     "hartigan", "ccc", "scott", "marriot", "trcovw", "tracew", "friedman",
+#'     "rubin", "cindex", "db", "silhouette", "duda", "pseudot2", "beale",
+#'     "ratkowsky", "ball", "ptbiserial", "gap", "frey", "mcclain", "gamma",
+#'     "gplus", "tau", "dunn", "hubert", "sdindex", "dindex", "sdbw".
 #' 
 #' @export
 #'
@@ -119,7 +124,7 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
   tryCatch({
     nb_best <- suppressWarnings(suppressMessages(NbClust(d,
                                         min.nc = krange[1],
-                                        index = "all",
+                                        index = "alllong",
                                         max.nc = krange[length(krange)],
                                         method = "average")))
   }, 
@@ -133,7 +138,7 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
   }
   )
   best <- aggregate(nb_best[["Best.nc"]][1, ], 
-                    by = list(nb_best[["Best.nc"]][1,]), length)
+                    by = list(nb_best[["Best.nc"]][1, ]), length)
   index <- which.max(best[[2]])
   km[["k_best"]] <- best[index, 1]
   structure(km, class = "multiClust")
