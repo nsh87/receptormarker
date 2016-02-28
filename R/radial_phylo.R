@@ -47,20 +47,6 @@ validate_canvas_size <- function(canvas_size) {
   )
 }
 
-#' @title Validate protein or DNA sequences
-#' @description An internal function that creates an error if sequences contain
-#' characters outisde the alphabet.
-#' @param seqs A character vector of sequences.
-#' @keywords internal
-validate_sequences <- function(seqs) {
-  # Make sure sequences are only alpha characters
-  seqs_col_err <- "Sequences must only contain characters from A-Z and a-z"
-  g <- grepl("[^A-Za-z]", as.character(seqs))
-  if (sum(g) > 0) {
-    stop(seqs_col_err, call.=FALSE)
-  }
-}
-
 
 #' @title Validate the data, sequence column, and sequences for a phylogram
 #' @description An internal function that raises an error if the arguments are
@@ -179,47 +165,6 @@ validate_rings <- function(rings, d) {
     stop(e)
   }
   )
-}
-
-
-#' @title Clean the data for a phylogram and extract the sequences
-#' @description An internal function that removes rows of data where the
-#' sequence column is \code{NA} or an empty string.
-#' @template -d
-#' @template -seqs_col
-#' @param verbose \code{TRUE} or \code{FALSE}, depending on whether or not the
-#' cleaned sequences should be written to the \code{verbose_dir} in FASTA
-#' format.
-#' @template -verbose_dir
-#' @return A named list containing the cleaned \code{"seqs"} and \code{"d"}.
-#' @keywords internal
-clean_data <- function(d, seqs_col, verbose, verbose_dir) {
-  # If d is a >1D data frame
-  if (class(d) == "data.frame" && dim(d)[2] > 1) {
-    d_clean <- d[d[, seqs_col] != "", ]  # Remove rows with no sequences
-    d_clean <- d_clean[complete.cases(d_clean[, seqs_col]), ]  # Remove NA rows
-    d_clean <- d_clean[with(d_clean, order(d_clean[, seqs_col])), ]
-    seqs <- as.character(d_clean[, seqs_col])
-  # If d is a 1D data frame or vector
-  } else if ((class(d) == "data.frame" && dim(d)[2] == 1) ||
-             (class(d) == "character")) {
-    d_clean <- d[d != ""]  # Remove blank sequences
-    d_clean <- d_clean[!is.na(d_clean)]  # Remove NA's
-    d_clean <- sort(d_clean)
-    seqs <- as.character(d_clean)
-  }
-  # Write the sequences if the user wants them
-  if (verbose) {
-    if (class(d_clean) == "data.frame") {
-      seqs_fasta <- with(d_clean, paste0(">", seqs, "\n", seqs, collapse="\n"))
-    } else if (class(d_clean) == "character") {
-      seqs_fasta <- paste0(">", seqs, "\n", seqs, collapse="\n")
-    }
-    seqs_file <- tempfile(pattern="sequences-", tmpdir=verbose_dir,
-                          fileext=".txt")
-    write(seqs_fasta, seqs_file)
-  }
-  list("seqs"=seqs, "d"=d_clean)
 }
 
 
@@ -746,13 +691,13 @@ add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
 #' accommodate the growing phylogram. If the growth of the canvas does not keep
 #' up with the growth of the phylogram, the phylogram will either be cut off at
 #' the horizontal and vertical edges of the canvas (which is akin to an HTML
-#' \code{<div>}) or squashed the by small canvas. The argument
+#' \code{<div>}) or squashed by the small canvas. The argument
 #' \code{canvas_size} has everything to do with the initial draw of the
 #' phylogram. In contrast, \code{scale} has nothing to do with the size of the
 #' phylogram during its initial draw, but rather everything to do with the
 #' scaling of the phylogram \emph{after it has already been drawn}. The
 #' phylogram will only be drawn once, since scaling does not initiate a redraw.
-#' Therefore any anomolies in the drawing of the phylogram should be addressed
+#' Therefore, any anomolies in the drawing of the phylogram should be addressed
 #' using \code{canvas_size}.
 #'
 #' \strong{TIP:} When experimenting or crafting a large or complex phylogram,
@@ -784,10 +729,7 @@ add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
 #' phylogram should scale to fit the browser or RStudio Viewer window. If
 #' \code{FALSE} and the phylogram is on a large canvas, it will be necessary to
 #' scroll to see the entire canvas.
-#' @param browser \code{TRUE} or \code{FALSE}, depending on whether or not the
-#' phylogram should open in a browser window. Only applicable if using RStudio,
-#' which by default will show the phylogram in RStudio's Viewer. If using R from
-#' the command line, the phylogram will always open in a browser.
+#' @template -browser
 #' @param verbose \code{TRUE} or \code{FALSE}. If \code{TRUE} additional output
 #' is printed to the R console and the sequences, multiple sequence alignment,
 #' and PhyloXML are written to a folder in the working directory.
@@ -833,7 +775,7 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
   }
   
   # Step 1: Clean the user-supplied data and the sequences
-  clean <- clean_data(d, seqs_col, verbose, verbose_dir)
+  clean <- clean_data(d, seqs_col, verbose, verbose_dir, verbose_format="fasta")
   seqs <- clean[["seqs"]]
   if (condense == TRUE) {
     seqs <- unique(seqs)
@@ -911,14 +853,14 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
 
 
 #' @title Shiny bindings for radial phylograms
-#' @description Output and render functions for using radial_phylo within
-#' Shiny applications and interactive Rmd documents.
+#' @description Output and render functions for using \code{\link{radial_phylo}}
+#' within Shiny applications and interactive Rmd documents.
 #' @param outputId The output variable to read from.
 #' @param width,height A valid CSS unit, such as \code{"100\%"},
 #' \code{"600px"}, \code{"auto"}, or a number (which will be coerced to a string
 #' and have \code{"px"} appended to it).
 #' @param expr An expression that generates a radial phylogram.
-#' @param env The environment in which to evaluate \code{expr}
+#' @param env The environment in which to evaluate \code{expr}.
 #' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
 #' is useful if you want to save an expression in a variable.
 #' @name radial_phylo_shiny

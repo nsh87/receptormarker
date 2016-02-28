@@ -44,9 +44,9 @@ wss_plot <- function(clust_obj, optimal = FALSE, ...) {
   end <- length(wss)
   krange <- start:end
   wss <- wss[!is.na(wss)]
-  plot(krange, wss, type = "b", xlab = "# of Clusters", 
+  plot(krange, wss, type = "b", xlab = "# of K Clusters",
        ylab = "Within Sum of Squares", 
-       main = "Within Sum of Squares by Cluster",
+       main = "Within Sum of Squares by K Clusters",
        ...)
   if (optimal) {
     opti_clust <- clust_obj[["k_best"]]
@@ -99,8 +99,8 @@ gap_plot <- function(clust_obj, optimal = FALSE, ...) {
   validate_not_null(list(clust_obj = clust_obj, optimal = optimal))
   validate_true_false(list(optimal = optimal))
   validate_multi_clust(clust_obj)
-  plot(clust_obj[["clust_gap"]], xlab = "# of Clusters", main = "Gap Analysis",
-       ...)
+  plot(clust_obj[["clust_gap"]], xlab = "# of K Clusters",
+       main = "Gap Analysis by K Clusters", ...)
   if (optimal) {
     opti_clust <- clust_obj[["k_best"]]
     gap_best <- clust_obj[["clust_gap"]]["Tab"][[1]][opti_clust, 3]
@@ -161,7 +161,7 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
   pca <- stats::princomp(d)
   sdev <- pca[["sdev"]]
   prop_var <- sdev ^ 2 / sum(sdev ^ 2)
-  main <- paste0("PCA Plot (", round(sum(prop_var[1:3]) * 100), "% Variance)")
+  main <- paste0("PCA Plot (", round(sum(prop_var[1:2]) * 100), "% Variance)")
   clusters <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
   plot(pca[["scores"]][, 1:2], col = rainbow(num_clust)[clusters],
        xlab = "Principal Component 1",
@@ -214,7 +214,7 @@ sil_plot <- function(clust_obj, num_clust, ...) {
   validate_multi_clust(clust_obj)
   validate_pos_num(list(num_clust = num_clust))
   sil <- clust_obj[["sil"]][[num_clust]]
-  plot(sil, main = "Silhouette Plot", ...)
+  plot(sil, main = "Silhouette Plot of K Clusters", ...)
 }
 
 #' Plot average silhouette widths for different numbers of clusters.
@@ -266,9 +266,9 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
   end <- length(sil)
   krange <- start:end
   sil <- sil[!is.na(sil)]
-  plot(krange, sil, type = "b", xlab = "# of Clusters",
+  plot(krange, sil, type = "b", xlab = "# of K Clusters",
        ylab = "Average Silhouette Width", 
-       main = "Average Silhouette Width by Cluster",
+       main = "Average Silhouette Width by K Clusters",
        ...)
   if (optimal) {
     opti_clust <- clust_obj[["k_best"]]
@@ -318,23 +318,6 @@ boxplot_num_cols <- function(num_clust) {
   }
 }
 
-#' Check if all columns of data.frame are boolean
-#' 
-#' This is an internal function that returns if \code{d} is boolean for the
-#' \code{\link{clust_boxplot}} function that determines if a barplot should be
-#' used.
-#' @param d The data argument from \code{\link{clust_boxplot}}
-#' @return A boolean value indicating if all columns are boolean
-#' @keywords internal
-check_boolean <- function(d) {
-  for (col in d) {
-    b <- grepl("[^0|1]", col)
-    if (sum(b) > 0) {
-      return (FALSE)
-    }
-  }
-  return (TRUE)
-}
 
 #' Plot cluster membership for each feature.
 #' 
@@ -391,7 +374,7 @@ clust_boxplot <- function(d, clust_obj, num_clust, ...) {
   validate_pos_num(list(num_clust = num_clust))
   meas_vars <- colnames(d)
   d["cluster"] <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
-  if (check_boolean(d[meas_vars])) {
+  if (is_boolean(d[meas_vars])) {
     d_bool <- aggregate(. ~ cluster, data = d, sum)
     d_bool[meas_vars] <- d_bool[meas_vars] / nrow(d)
     m <- reshape2::melt(d_bool, id.vars = "cluster", measure.vars = meas_vars)

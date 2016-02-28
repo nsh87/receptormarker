@@ -38,4 +38,5 @@ NULL
 .onAttach <- function(libname, pkgname) {
   check_bio_python(level="startup_warn")
   check_muscle(level="startup_warn")
+  add_binaries_to_path()
 }

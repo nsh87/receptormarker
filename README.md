@@ -2,17 +2,28 @@
 
 ## Installation
 
-While this package is in development it can be installed directly from GitHub
-using the `devtools` package. The Bioconductor package `muscle` is a
-dependency that must be installed first - follow [Bioconductor's
+This package should be installed directly from GitHub using the `devtools`
+package. The Bioconductor package `muscle` is a dependency that must be
+installed first - follow [Bioconductor's
 instructions](https://bioconductor.org/packages/release/bioc/html/muscle.html).
 Then, to install `receptormarker`:
 
 ```R
+install.packages("devtools")
 devtools::install_github('nsh87/receptormarker')
 ```
 
-Once version 1.0 is complete the package will be submitted to CRAN.
+## Further Note
+
+This package is currently only tested on Unix (Linux/Mac OS X) environments.
+Functionality in Windows might be limited due to the unavailability of Windows
+binaries for included analytical tools.
+
+We will not be making `receptormarker` available through CRAN or Bioconductor.
+We include a number of dependencies and binary files used for analysis (such
+as HMMER and standalone BLAST) so that the user does not need to have these
+tools previously installed on his or her computer. This eases use of the package
+but also prevents it from conforming to CRAN's guidelines.
 
 ## Development
 
@@ -30,20 +41,23 @@ devtools::install_github('jimhester/lintr')  # Do not install from CRAN
 
 You also need to install `muscle` from Bioconductor (see link in Installation).
 
-Load **receptormarker.Rproj** to open the project in RStudio, then load the
-code:
+Clone this repo and load **receptormarker.Rproj** to open the project in
+RStudio. Then load the code:
 
 ```R
 devtools::load_all()
 ```
 
-Be sure to follow this [code style](http://r-pkgs.had.co.nz/r.html#style "Hadley Wickham's Modified Google R Style Guide")
+Be sure to follow this [code tyle](http://r-pkgs.had.co.nz/r.html#style
+"Hadley Wickham's Modified Google R Style Guide")
  and [document your functions](http://r-pkgs.had.co.nz/man.html "Documenting
 with Roxygen2").  If you create any functions that are internal and not of
 interest to most users, be sure to document them with `@keywords internal` to
 exclude them from the package index. You should explicitly
-[define functions to export](http://r-pkgs.had.co.nz/namespace.html#exports "Namespacing in R")
-to NAMESPACE with Roxygen2's `@export` tag. Build .Rd files from Roxygen2 comments with:
+[define functions to
+export](http://r-pkgs.had.co.nz/namespace.html#exports "Namespacing in R")
+to NAMESPACE with Roxygen2's `@export` tag. Build .Rd files from Roxygen2
+comments with:
 
 ```R
 devtools::document()
@@ -61,8 +75,12 @@ Before submitting a pull request you should build the documentation, run tests,
 and check that the package builds. This can be done with a single command:
 
 ```R
-devtools::check()
+devtools::check(cran=FALSE)
 ```
+
+Note that we are not checking the package `--as-cran` since we have included
+HMMER and BLAST+ binaries and CRAN does not allow executable binaries in
+packages.
 
 You can also load the package and then test functions after running:
 

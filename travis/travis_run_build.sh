@@ -1,13 +1,14 @@
 #!/usr/bin/env sh
 
-# Build and check the package --as-cran
+# Build and check the package (not --as-cran, since they don't allow binaries
+# to be included and we include BLAST and HMMER binares)
 echo "Building the package with: R CMD build"
 R CMD build .
 export PKG_TARBALL=$(Rscript -e 'pkg <- devtools::as.package("."); cat(paste0(pkg$package, "_", pkg$version, ".tar.gz"));')
 
 # Check the package
-echo "Checking the package with: R CMD check ${PKG_TARBALL} --as-cran"
-R CMD check "${PKG_TARBALL}" --as-cran
+echo "Checking the package with: R CMD check ${PKG_TARBALL}"
+R CMD check "${PKG_TARBALL}"
 
 # search for errors in the output of the package check log
 export RCHECK_DIR=$(Rscript -e 'cat(paste0(devtools::as.package(".")$package, ".Rcheck"))')

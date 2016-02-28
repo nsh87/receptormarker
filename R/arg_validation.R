@@ -1,3 +1,39 @@
+#' @title Validate than an object is of class \emph{convergenceGroups}
+#' @description An internal function that raises an error if the argument is not
+#' of class \emph{convergenceGroups} or if the \code{groups} are empty (i.e.
+#' if there are no convergence groups). 
+#' @param convergence_obj An item to be checked for class membership.
+#' @keywords internal
+validate_convergence_clust <- function(convergence_obj) {
+  if (class(convergence_obj) != "convergenceGroups") {
+    err <- paste0(c("The argument 'convergence_obj' must be an object of",
+                    "class 'convergenceGroups'"),
+                  sep=" ")
+    stop(err, call.=FALSE)
+  }
+  # Get the data.frame of convergence groups and check if there are 0 rows
+  if (nrow(convergence_obj@groups) < 1) {
+    err <- paste0(c("There are no convergence groups in",
+                    "'convergence_obj@groups'"),
+                  sep=" ")
+    stop(err, call.=FALSE)
+  }
+}
+
+
+#' @title Validate that an object is of class \emph{multiClust}
+#' @description An internal function that raises an error if the argument is not
+#' of class \emph{multiClust}.
+#' @param clust_obj An item to be checked for class membership.
+#' @keywords internal
+validate_multi_clust <- function(clust_obj) {
+  if (class(clust_obj) != "multiClust") {
+    stop("The argument 'clust_obj' must be an object of class 'multiClust'",
+         call.=FALSE)
+  }
+}
+
+
 #' @title Validate that a list of arguments are \code{TRUE} or \code{FALSE}
 #' @description An internal function that raises an error if any of the items in
 #' the list is not either \code{TRUE} or \code{FALSE}.
@@ -34,36 +70,66 @@ validate_not_null <- function(arg_list) {
 }
 
 
+#' @title Validate protein or DNA sequences
+#' @description An internal function that creates an error if sequences contain
+#' characters outisde the alphabet.
+#' @param seqs A character vector of sequences.
+#' @keywords internal
+validate_sequences <- function(seqs) {
+  # Make sure sequences are only alpha characters
+  seqs_col_err <- "Sequences must only contain characters from A-Z and a-z"
+  g <- grepl("[^A-Za-z]", as.character(seqs))
+  if (sum(g) > 0) {
+    stop(seqs_col_err, call.=FALSE)
+  }
+}
+
+
+#' Check if all columns of data.frame are boolean or binary
+#' 
+#' This is an internal function that returns \code{TRUE} if \code{d} is boolean
+#' or binary.
+#' @param d A data.frame or matrix.
+#' @return A logical indicating whether or not \emph{all} columns are boolean or
+#' binary.
+#' @keywords internal
+is_boolean <- function(d) {
+  for (col in d) {
+    uniq <- unique(col)
+    if (!all(uniq %in% 0:1)) {
+      return (FALSE)
+    }
+  }
+  return (TRUE)
+}
+
+
 #' @title Validate that the arg is either a numeric data.frame or matrix
 #' @description An internal function that raises an error if the argument is not
-#' either a \emph{data.frame} or \emph{matrix}. Also, If all columns are not
+#' either a \emph{data.frame} or \emph{matrix}. Also, if all columns are not
 #' numeric, it will raise an error.
 #' @param d A \emph{data.frame} or \emph{matrix} whose class the function will
 #' confirm.
 #' @keywords internal
 validate_num_data <- function(d) {
-  boolean_warning <- NULL
   classes <- c("data.frame", "matrix")
   types <- c("numeric", "integer")
   if (!(class(d) %in% classes)) {
     stop("The argument 'd' is not a data.frame or matrix.", call.=FALSE)
   }
   lapply(d,
-         function(x) {
-           if (!(class(x) %in% types)) {
-             stop("The classes of the columns of 'd' are not all numeric.", 
-                  call.=FALSE) 
-           } else TRUE
-         })
-  lapply(d,
-         function(x) {
-           b <- grepl("[^0|1]", x)
-           if (sum(b) > 0) {
-             boolean_warning <- TRUE  # nolint
-           }
-  })
-  if (!is.null(boolean_warning)) {
-    message("At least one column of 'd' contains only values 0 and 1.")
+          function(x) {
+            if (!(class(x) %in% types)) {
+              stop("The classes of the columns of 'd' are not all numeric.", 
+                   call.=FALSE) 
+            } else TRUE
+          })
+  for (col in d) {
+    uniq <- unique(col)
+    if (all(uniq %in% 0:1)) {
+      message("At least one column of 'd' contains only values 0 and 1.")
+      break
+    }
   }
 }
 
@@ -90,4 +156,24 @@ validate_pos_num <- function(n) {
              stop(err, call.=FALSE)
            }
          })
+}
+
+#' @title Validate than an argument is a single, positive integer
+#' @description An internal function that raises an error if the argument is not
+#' a positive integer.
+#' @param n An item to be checked.
+#' @keywords internal
+validate_single_pos_num <- function(n) {
+  if (is.na(n)) {
+    stop("Argument 'n' must be a real value", call.=FALSE)
+  } else if (class(n) != "numeric") {
+    stop("Argument 'n' must be an integer", call.=FALSE)
+  } else if (length(n) != 1) {
+    stop("Argument 'n' must be a single integer", call.=FALSE)
+  } else if(n == 0) {
+    stop("Argument 'n' must be greater than 0", call.=FALSE)
+  } else if (grep("^[0-9]+$", n) != 1) {
+    stop("Argument 'n' must be an integer greater than 0",
+         call.=FALSE)
+  }
 }

@@ -60,7 +60,7 @@ test_that("validation of 'font_size' works", {
                "'font_size' must be an integer between 1 and 99")
   expect_error(radial_phylo(tcr, "seqs", font_size="12"),
                "'font_size' must be an integer")
-  expect_error(radial_phylo(tcr, "seqs", font_size=c(1:10)),
+  expect_error(suppressWarnings(radial_phylo(tcr, "seqs", font_size=c(1:10))),
                "'font_size' must be an integer")
   expect_error(radial_phylo(tcr, "seqs", font_size=NA),
                "'font_size' must be a real value")

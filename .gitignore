@@ -12,3 +12,6 @@
 
 # Travis CI
 travis/travis_build.log
+
+.idea/
+
