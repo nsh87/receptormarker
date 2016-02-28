@@ -74,7 +74,6 @@ HTMLWidgets.widget({
       };
       instance.cy = new org.cytoscapeweb.Visualization(el.id, options);
       instance.cy.draw(draw_options);
-      instance.cy.zoomToFit();
       
     };
     
