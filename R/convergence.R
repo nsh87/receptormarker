@@ -1,8 +1,9 @@
-#' @title Parse the results of the convergence tool into a data frame
+#' @title Parse the groups output by the convergence tool into a data frame
 #' @description An internal function that extracts the relevant tabular data
 #' from the convergence output file and saves it as a data frame for easy
-#' manipulation and reading.
-#' @param results_file A path to the \code{...-convergence-groups.txt} output
+#' manipulation and reading. Creates meaningful column names and sorts the
+#' groups from largest to smallest.
+#' @param groups_file A path to the \code{...-convergence-groups.txt} output
 #' file created by the convergence tool. This path is returned by
 #' \code{\link{run_convergence}}.
 #' @param verbose \code{TRUE} or \code{FALSE}. If \code{TRUE} a CSV
@@ -14,19 +15,77 @@
 #' and each cell in the remaining columns is a sequence belonging to that
 #' cluster.
 #' @keywords internal
-parse_convergence_results <- function(results_file, verbose, verbose_dir) {
+parse_convergence_groups <- function(groups_file, verbose, verbose_dir) {
   # Since there are no headers, you can't parse the CSV and have blank cells
   # where you need them. So you need to figure out how many columns the data
   # frame should have, then create a data frame and specify that many columns.
-  d <- read.csv(results_file, sep="\t", header=FALSE, stringsAsFactors=FALSE)
+  d <- read.csv(groups_file, sep="\t", header=FALSE, stringsAsFactors=FALSE)
   largest_cluster_size <- max(d[, 1])
   num_cols <- largest_cluster_size + 2  # Need to account for 1st and 2nd cols
-  d <- read.csv(results_file, sep="", header=FALSE,
+  d <- read.csv(groups_file, sep="", header=FALSE,
                 col.names=as.character(c(1:num_cols)), stringsAsFactors=FALSE)
+  
+  # Rename columns c("num_items", "group_name", "X1", "X2", etc.)
+  num_cols <- ncol(d)
+  if (num_cols >= 2) {
+    colnames(d)[1:2] <- c("num_items", "group_name")
+  }
+  if (num_cols >= 3) {
+    num_group_cols <- length(3:num_cols)
+    numbered_cols <- lapply(1:num_group_cols, function(x) {
+      paste0("X", x, sep="") 
+    })
+    colnames(d)[3:num_cols] <- numbered_cols
+  }
+  
+  # Sort the convergence groups from largest to smallest
+  num_rows <- nrow(d)
+  if (num_rows > 0) {
+    d <- d[order(-d["num_items"]), ]
+    row.names(d) <- 1:num_rows
+  }
   
   # Write data frame to verbose dir if user wants it
   if (verbose) {
-    csv_path <- gsub(".txt$", "-parsed.csv", results_file)
+    csv_path <- gsub(".txt$", "-parsed.csv", groups_file)
+    write.table(d, csv_path, sep=",", row.names=FALSE)
+    # CSV gets written to convergence's temporary dir, need to copy it
+    if (file.exists(csv_path)) {
+      file.copy(csv_path, verbose_dir)
+    }
+  }
+  d
+}
+
+
+#' @title Parse the network output by the convergence tool into a data frame
+#' @description An internal function that puts the network file output by the
+#' tool into a data frame. The network file contains information about which
+#' nodes should connect to which other nodes.
+#' @details The first and second columns of the data capture which nodes
+#' connect to each other. If there is a node in a group (not this data, but in
+#' the other file output by convergence) it should be looked up in this network
+#' data to see what else the node connects to. Some nodes have no connections,
+#' i.e. if they are not found in this network information. The 3rd column in
+#' the network info contains either 'local', 'global', or 'singleton'.
+#' Singletons have no connections, and local should just be a different color
+#' than global connections in the convergence graph.
+#' @param network_file A path to the \code{...-clone-network.txt} output
+#' file created by the convergence tool. This path is returned by
+#' \code{\link{run_convergence}}.
+#' @param verbose \code{TRUE} or \code{FALSE}. If \code{TRUE} a CSV
+#' representation of the returned data frame is written to the
+#' \code{verbose_dir}.
+#' @template -verbose_dir
+#' @return A data frame containg the network data.
+#' @keywords internal
+parse_convergence_network <- function(network_file, verbose, verbose_dir) {
+  d <- read.csv(network_file, sep="", header=FALSE, stringsAsFactors=FALSE,
+                col.names=c("node1", "node2", "type"))
+  
+  # Write data frame to verbose dir if user wants it
+  if (verbose) {
+    csv_path <- gsub(".txt$", "-parsed.csv", network_file)
     write.table(d, csv_path, sep=",", row.names=FALSE)
     # CSV gets written to convergence's temporary dir, need to copy it
     if (file.exists(csv_path)) {
@@ -72,17 +131,28 @@ run_convergence <- function(seqs, verbose, verbose_dir){
                              package="receptormarker")
   system(sprintf("perl %s --textfile=%s", convergence, seqs_file),
          ignore.stdout=!verbose, ignore.stderr=!verbose)
-  # Collect output
-  output_file <- gsub(".txt$", "-convergence-groups.txt", seqs_file)
-  if (!file.exists(output_file)) {
-    stop("Convergence output not found: no convergence groups, or error",
+  
+  # Collect output file containing groups
+  groups_file <- gsub(".txt$", "-convergence-groups.txt", seqs_file)
+  if (!file.exists(groups_file)) {
+    stop("Convergence output not found: no convergence groups, or error.",
          call.=FALSE)
   }
-  # Copy output file to verbose dir if user wants it
-  if (verbose && file.exists(seqs_file)) {
-    file.copy(output_file, verbose_dir)
+  
+  # Collect output file containing network
+  network_file <- gsub(".txt$", "-clone-network.txt", seqs_file)
+  if (!file.exists(network_file)) {
+    stop("Convergence network not found: no node link, or error.",
+         call.=FALSE)
   }
-  output_file
+  
+  # Copy output file to verbose dir if user wants it
+  if (verbose && file.exists(groups_file) && file.exists(network_file)) {
+    file.copy(groups_file, verbose_dir)
+    file.copy(network_file, verbose_dir)
+  }
+  
+  list("groups_file"=groups_file, "network_file"=network_file)
 }
 
 #' Group adaptive repertoire convergence by paratope hotspots for CDRs
@@ -121,31 +191,16 @@ convergence <- function(d, seqs_col=NULL, verbose=FALSE) {
   seqs <- clean[["seqs"]]
   
   # Step 2: Run the convergence tool
-  results_file <- run_convergence(seqs, verbose, verbose_dir)
+  results <- run_convergence(seqs, verbose, verbose_dir)
+  groups_file <- results[["groups_file"]]
+  network_file <- results[["network_file"]]
   
-  # Step 3: Parse output file into a data frame
-  groups <- parse_convergence_results(results_file, verbose, verbose_dir)
+  # Step 3: Parse convergence output groups file into a data frame
+  groups <- parse_convergence_groups(groups_file, verbose, verbose_dir)
   
-  # Step 4: Rename columns c("num_items", "group_name", "X1", "X2", "X3", etc.)
-  num_cols <- ncol(groups)
-  if (num_cols >= 2) {
-    colnames(groups)[1:2] <- c("num_items", "group_name")
-  }
-  if (num_cols >= 3) {
-    num_group_cols <- length(3:num_cols)
-    numbered_cols <- lapply(1:num_group_cols, function(x) {
-      paste0("X", x, sep="") 
-    })
-    colnames(groups)[3:num_cols] <- numbered_cols
-  }
+  # Step 4: Parse the network information output file into a data frame
+  network <- parse_convergence_network(network_file, verbose, verbose_dir)
   
-  # Step 5: Sort the convergence groups from largest to smallest
-  num_rows <- nrow(groups)
-  if (num_rows > 0) {
-    groups <- groups[order(-groups["num_items"]), ]
-    row.names(groups) <- 1:num_rows
-  }
-    
   # Instantiate a 'convergenceClust' class to hold clusters and return it
-  new("convergenceGroups", groups=groups)
+  new("convergenceGroups", groups=groups, network=network)
 }
