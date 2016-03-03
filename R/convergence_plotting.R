@@ -54,7 +54,7 @@ cytoscape_xml <- function(convergence_obj, row_num, labels, verbose,
   # Get the network info so you can determine what connections to make
   network <- unique(convergence_obj@network)
   # Filter out singletons, leaving only 'local' and 'global' connections
-  network <- network[which(network['type'] != 'singleton'), ]
+  network <- network[which(network["type"] != "singleton"), ]
   # Subset by nodes in this cluster group
   network <- subset(network, node1 %in% nodes & node2 %in% nodes)
   
@@ -104,13 +104,13 @@ cytoscape_xml <- function(convergence_obj, row_num, labels, verbose,
   # Use the network to connect the relevant nodes
   if (num_nodes != 1) {
     lapply(c(1:num_nodes), function(x) {
-      connections <- network[network['node1'] == nodes[[x]], ]
+      connections <- network[network["node1"] == nodes[[x]], ]
       num_connections <- nrow(connections)
       if (num_connections > 0) {
         lapply(c(1:num_connections), function(y) {
           edge <- XML::newXMLNode("edge",
-                                  attrs=c("source"=connections[y, 'node1'],
-                                          "target"=connections[y, 'node2']),
+                                  attrs=c("source"=connections[y, "node1"],
+                                          "target"=connections[y, "node2"]),
                                   parent=graph_node)
           XML::newXMLNode("data", 10, attrs=c("key"="weight"), parent=edge)
           edge
