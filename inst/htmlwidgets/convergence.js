@@ -55,11 +55,13 @@ HTMLWidgets.widget({
         /* A layout object or name: http://cytoscapeweb.cytoscape.org/
            documentation/layout#section/Layout */
         layout: {
-          name: "ForceDirected",
+          name: "CompoundSpringEmbedder",
           options: {
             weightAttr: "weight",
-            autoStabilize: true,
-            maxTime: 2000
+            maxTime: 2000,
+            smartDistance: true,
+            smartRestLength: true,
+            restLength: 100
           }
         },
   
