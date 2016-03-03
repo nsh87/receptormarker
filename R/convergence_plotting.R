@@ -21,31 +21,42 @@ convergence_xml_path <- function() {
 #' @description An internal function that parses the output of the convergence
 #' tool and creates an XML file to represent a specific row (cluster) in the
 #' file.
-#' @param d A data frame of clusters, typically returned by
+#' @param convergence_obj An object of class
+#' \code{\link{convergenceGroups-class}}, typically returned by
 #' \code{\link{run_convergence}}.
-#' @param row_num An integer indicating which row number in \code{d} to graph.
+#' @param row_num An integer indicating which row number in 
+#' \code{convergenceGroups@groups} to graph.
 #' Each row should correspond to a single cluster.
 #' @param labels \code{TRUE} or \code{FALSE}, depending on whether or not node
 #' labels should be written to the XML and therefore displayed in Cytoscape.
 #' @param verbose \code{TRUE} or \code{FALSE}. If \code{TRUE} the XML file is
-#' coped to the \code{verbose_dir}.
+#' copied to the \code{verbose_dir}.
 #' @template -verbose_dir
 #' @return A path to the Cytoscape XML file.
 #' @keywords internal
-cytoscape_xml <- function(d, row_num, labels, verbose, verbose_dir) {
+cytoscape_xml <- function(convergence_obj, row_num, labels, verbose,
+                          verbose_dir) {
+  groups <- convergence_obj@groups
   xml_file <- convergence_xml_path()
   
-  # Get cluster nodes, label, and size
-  num_cols <- ncol(d)
-  cluster <- d[row_num, c(3:num_cols)]
+  # Get cluster group's nodes, label, and size
+  num_cols <- ncol(groups)
+  cluster <- groups[row_num, c(3:num_cols)]
   nodes <- na.omit(cluster[cluster != ""])
-  cluster_label <- d[row_num, 2]
-  num_nodes <- d[row_num, 1]
+  cluster_label <- groups[row_num, 2]
+  num_nodes <- groups[row_num, 1]
   # Ensure you have the correct number of nodes
   if (num_nodes != length(nodes)) {
     stop("Number of nodes parsed does not match expected number of nodes.",
          call.=FALSE)
   }
+  
+  # Get the network info so you can determine what connections to make
+  network <- unique(convergence_obj@network)
+  # Filter out singletons, leaving only 'local' and 'global' connections
+  network <- network[which(network['type'] != 'singleton'), ]
+  # Subset by nodes in this cluster group
+  network <- subset(network, node1 %in% nodes & node2 %in% nodes)
   
   # Create the XML tree
   schema_location <- paste0(
@@ -77,26 +88,34 @@ cytoscape_xml <- function(d, row_num, labels, verbose, verbose_dir) {
                                 parent=root)
 
   # If 'labels' is FALSE, don't show labels by using empty string for labels
+  node_labels <- nodes  # Duplicate nodes so you don't overwrite them
   if (!labels) {
-    nodes <- rep("", length(nodes))
+    node_labels <- rep("", length(nodes))
   }
+  
   # Add cluster nodes into the XML tree as children of graph_node, <graph>
   lapply(c(1:num_nodes), function(x) {
-    single_node <- XML::newXMLNode("node", attrs=c(id=x), parent=graph_node)
-    XML::newXMLNode("data", nodes[[x]], attrs=c("key"="label"),
+    single_node <- XML::newXMLNode("node", attrs=c(id=nodes[[x]]),
+                                   parent=graph_node)
+    XML::newXMLNode("data", node_labels[[x]], attrs=c("key"="label"),
                     parent=single_node)
   })
   
-  # Add edges to XML, connecting each node to every other node (only if there
-  # are more than one nodes)
+  # Use the network to connect the relevant nodes
   if (num_nodes != 1) {
-    lapply(c(1:(num_nodes - 1)), function(x) {
-      lapply(c((x + 1):num_nodes), function(y) {
-        edge <- XML::newXMLNode("edge", attrs=c("source"=x, "target"=y),
-                                parent=graph_node)
-        XML::newXMLNode("data", 10, attrs=c("key"="weight"), parent=edge)
-        edge
-      })
+    lapply(c(1:num_nodes), function(x) {
+      connections <- network[network['node1'] == nodes[[x]], ]
+      num_connections <- nrow(connections)
+      if (num_connections > 0) {
+        lapply(c(1:num_connections), function(y) {
+          edge <- XML::newXMLNode("edge",
+                                  attrs=c("source"=connections[y, 'node1'],
+                                          "target"=connections[y, 'node2']),
+                                  parent=graph_node)
+          XML::newXMLNode("data", 10, attrs=c("key"="weight"), parent=edge)
+          edge
+        })
+      }
     })
   }
   
@@ -200,7 +219,7 @@ convergence_plot <- function(convergence_obj, group_num=NULL,
   }
   
   # Step 1: Save a specific cluster (row) to XML to send to Cytoscape
-  xml_file <- cytoscape_xml(convergence_obj@groups, row_num=group_num, labels,
+  xml_file <- cytoscape_xml(convergence_obj, row_num=group_num, labels,
                             verbose, verbose_dir)
   
   xml <- XML::xmlRoot(XML::xmlTreeParse(xml_file))
