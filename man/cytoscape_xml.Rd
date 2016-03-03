@@ -4,20 +4,22 @@
 \alias{cytoscape_xml}
 \title{Create a XML file to plot with Cytoscape}
 \usage{
-cytoscape_xml(d, row_num, labels, verbose, verbose_dir)
+cytoscape_xml(convergence_obj, row_num, labels, verbose, verbose_dir)
 }
 \arguments{
-\item{d}{A data frame of clusters, typically returned by
+\item{convergence_obj}{An object of class
+\code{\link{convergenceGroups-class}}, typically returned by
 \code{\link{run_convergence}}.}
 
-\item{row_num}{An integer indicating which row number in \code{d} to graph.
+\item{row_num}{An integer indicating which row number in 
+\code{convergenceGroups@groups} to graph.
 Each row should correspond to a single cluster.}
 
 \item{labels}{\code{TRUE} or \code{FALSE}, depending on whether or not node
 labels should be written to the XML and therefore displayed in Cytoscape.}
 
 \item{verbose}{\code{TRUE} or \code{FALSE}. If \code{TRUE} the XML file is
-coped to the \code{verbose_dir}.}
+copied to the \code{verbose_dir}.}
 
 \item{verbose_dir}{A directory to write files to when \code{verbose} is
 \code{TRUE}.}
