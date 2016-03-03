@@ -56,8 +56,8 @@ cytoscape_xml <- function(convergence_obj, row_num, labels, verbose,
   # Filter out singletons, leaving only 'local' and 'global' connections
   network <- network[which(network["type"] != "singleton"), ]
   # Subset by nodes in this cluster group
-  network <- network[which(network[['node1']] %in% nodes &
-                           network[['node2']] %in% nodes), ]
+  network <- network[which(network[["node1"]] %in% nodes &
+                           network[["node2"]] %in% nodes), ]
   
   # Create the XML tree
   schema_location <- paste0(
