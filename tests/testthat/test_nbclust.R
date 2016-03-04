@@ -13,18 +13,19 @@ tcr_binary_data[is.na(tcr_binary_data)] <- 0
 # Load TCR data set with only data points and all data points as 0 or 1.
 #load(system.file("extdata", "tcr_binary_data.rda", package="receptormarker"))
 
-test_that("making sure argument is acceptable range works properly", {
+#test_that("making sure argument is acceptable range works properly", {
   
-})
+#})
 
-test_that("multiClust object can be generated with boolean data", {
-  expect_that(NbClust(tcr_binary_data,
-                      distance = "binary",
-                      max.nc = 5,
-                      method = "average"),
+test_that("NbClust object can be generated with boolean data", {
+  expect_that(suppressWarnings(NbClust(tcr_binary_data,
+                               distance = "binary",
+                               max.nc = 5,
+                               method = "average")),
               not(throws_error()))
 })
 
-test_that("multiClust object can be generated with non-boolean data", {
-  expect_that(multi_clust(fluidigm[1:40, ]), not(throws_error()))
+test_that("NbClust object can be generated with non-boolean data", {
+  expect_that(suppressWarnings(NbClust(f50, max.nc = 5, method = "average")),
+              not(throws_error()))
 })
