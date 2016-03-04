@@ -71,7 +71,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       (indice == 18) || (indice == 27) || (indice == 29) || (indice == 31) ||
       (indice == 32)) {
     if ((max.nc - min.nc) < 2) 
-      stop("The difference between the minimum and the maximum number of", 
+      stop("The difference between the minimum and the maximum number of ",
         "clusters must be at least equal to 2", call. = FALSE)
   }
   
