@@ -47,3 +47,17 @@ test_that("making sure NbClust object can be generated with non-boolean data", {
   expect_that(suppressWarnings(NbClust(f50, max.nc = 5, method = "average")),
               not(throws_error()))
 })
+
+test_that("making sure NbClust object picks right number of clusters", {
+  nb_best <- suppressWarnings(NbClust(f50,
+                                      min.nc = 2,
+                                      index = "alllong",
+                                      max.nc = 7,
+                                      method = "average"))
+  best <- aggregate(nb_best[["Best.nc"]][1, ], 
+                    by = list(nb_best[["Best.nc"]][1, ]), length)
+  index <- which.max(best[[2]])
+  k_best <- best[index, 1]
+  expect_identical(k_best, 3)
+})
+
