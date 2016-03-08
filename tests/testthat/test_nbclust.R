@@ -2,7 +2,7 @@ context("Unit test NbClust")
 
 # data prep
 data(fluidigm)
-f50 <- fluidigm[1:50, ]
+f40 <- fluidigm[1:40, ]
 data(iris)
 # Load pre-computed multiClust object from fluidigm data set. This same object
 # should be used in 'test_cluster_plotting.R' test cases. It was generated
@@ -12,23 +12,23 @@ load(system.file("extdata", "f_clust.rda", package="receptormarker"))
 load(system.file("extdata", "tcr_binary_data.rda", package="receptormarker"))
 
 test_that("making sure invalid arguments produce errors", {
-  expect_error(suppressWarnings(NbClust(f50, max.nc = 5, method = 9)),
+  expect_error(suppressWarnings(NbClust(f40, max.nc = 5, method = 9)),
                "clustering method")
   expect_error(suppressWarnings(NbClust(max.nc = 5, method = "average")),
                "Data matrix")
-  expect_error(suppressWarnings(NbClust(f50, max.nc = 5, method = "average",
+  expect_error(suppressWarnings(NbClust(f40, max.nc = 5, method = "average",
                                         distance = 9)),
                "distance")
-  expect_error(suppressWarnings(NbClust(f50, max.nc = 5, method = "average",
+  expect_error(suppressWarnings(NbClust(f40, max.nc = 5, method = "average",
                                         index = 9)),
                "clustering index")
-  expect_error(suppressWarnings(NbClust(f50, method = "average",
+  expect_error(suppressWarnings(NbClust(f40, method = "average",
                                         min.nc = "no")),
                "non-numeric")
-  expect_error(suppressWarnings(NbClust(f50, method = "average",
+  expect_error(suppressWarnings(NbClust(f40, method = "average",
                                         max.nc = "no")),
                "non-numeric")
-  expect_error(suppressWarnings(NbClust(f50, max.nc = 5, method = "average",
+  expect_error(suppressWarnings(NbClust(f40, max.nc = 5, method = "average",
                                         min.nc = 7)),
                "difference between the minimum")
 })
@@ -42,12 +42,12 @@ test_that("making sure NbClust object can be generated with boolean data", {
 })
 
 test_that("making sure NbClust object can be generated with non-boolean data", {
-  expect_that(suppressWarnings(NbClust(f50, max.nc = 5, method = "average")),
+  expect_that(suppressWarnings(NbClust(f40, max.nc = 5, method = "average")),
               not(throws_error()))
 })
 
 test_that("making sure NbClust object picks right number of clusters", {
-  nb_best <- suppressWarnings(NbClust(f50,
+  nb_best <- suppressWarnings(NbClust(f40,
                                       min.nc = 2,
                                       index = "alllong",
                                       max.nc = 7,
