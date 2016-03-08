@@ -98,7 +98,7 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
                         method = "kmeans", ...) {
   validate_not_null(list(d = d, krange = krange, iter.max = iter.max, 
                          runs = runs, method = method))
-  validate_num_data(d)
+  bool <- validate_num_data(d)
   krange <- validate_sort_range(krange) # returns sorted krange by ascending
   validate_pos_num(list(iter.max = iter.max, runs = runs))
   d <- d[complete.cases(d), ]
@@ -121,22 +121,44 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
   km[["clust_gap"]] <- cluster::clusGap(d, kmeans, 
                                         K.max = length(km[["clust_model"]]), 
                                         B = 15, verbose = FALSE)
-  tryCatch({
-    nb_best <- suppressWarnings(suppressMessages(NbClust(d,
-                                        min.nc = krange[1],
-                                        index = "alllong",
-                                        max.nc = krange[length(krange)],
-                                        method = "average")))
-  }, 
-  error=function(e) {
-    if(grepl("computationally singular", e)) {
-      stop("There are not enough rows of data to evaluate for clustering.",
-           call. = FALSE)
-    } else {
-      stop(e, call. = FALSE)
+  if (bool) {
+    tryCatch({
+      nb_best <- suppressWarnings(suppressMessages(
+        NbClust(d,
+                min.nc = krange[1],
+                index = "alllong",
+                max.nc = krange[length(krange)],
+                distance = "binary",
+                method = "average")))
+    },
+    error = function(e) {
+      if (grepl("computationally singular", e)) {
+        stop("There are not enough rows of data to evaluate for clustering.",
+             call. = FALSE)
+      } else {
+        stop(e, call. = FALSE)
+      }
     }
+    )
+  } else {
+    tryCatch({
+      nb_best <- suppressWarnings(suppressMessages(
+        NbClust(d,
+                min.nc = krange[1],
+                index = "alllong",
+                max.nc = krange[length(krange)],
+                method = "average")))
+    },
+    error = function(e) {
+      if (grepl("computationally singular", e)) {
+        stop("There are not enough rows of data to evaluate for clustering.",
+             call. = FALSE)
+      } else {
+        stop(e, call. = FALSE)
+      }
+    }
+    )
   }
-  )
   best <- aggregate(nb_best[["Best.nc"]][1, ], 
                     by = list(nb_best[["Best.nc"]][1, ]), length)
   index <- which.max(best[[2]])
