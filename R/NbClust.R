@@ -113,9 +113,9 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       (indice == 32))) {
       for (i in 1:sizeEigenTT) {
         if (eigenValues[i] < 0) {
-          message("The TSS matrix is indefinite. There must be too many ", 
+          warning("The TSS matrix is indefinite. There must be too many ", 
           "missing values. The following indices cannot be calculated:\n", 
-          "CCC, Scott, Marriot, Friedman, and Ratkowsky")
+          "CCC, Scott, Marriot, Friedman, and Ratkowsky", call. = FALSE)
           indef <- TRUE
           break
         }
