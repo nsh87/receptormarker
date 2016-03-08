@@ -67,5 +67,13 @@ test_that("multiClust object can be generated with boolean data", {
 })
 
 test_that("multiClust object can be generated with non-boolean data", {
-  expect_that(multi_clust(fluidigm[1:40, ]), not(throws_error()))
+  expect_that(multi_clust(fluidigm[1:50, ]), not(throws_error()))
 })
+
+test_that("multiClust object finds correct k_best", {
+  k_best <- multi_clust(fluidigm[1:50, ], krange = 2:7)[["k_best"]]
+  expect_identical(k_best, 3)
+  k_best <- multi_clust(tcr_binary_data, krange = 2:7)[["k_best"]]
+  expect_identical(k_best, 2)
+})
+
