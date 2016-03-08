@@ -124,13 +124,16 @@ validate_num_data <- function(d) {
                    call.=FALSE) 
             } else TRUE
           })
+  bool <- FALSE
   for (col in d) {
     uniq <- unique(col)
     if (all(uniq %in% 0:1)) {
       message("At least one column of 'd' contains only values 0 and 1.")
+      bool <- TRUE
       break
     }
   }
+  return(bool)
 }
 
 #' @title Validate that an argument contains positive integers
