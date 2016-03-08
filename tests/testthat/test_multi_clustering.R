@@ -76,4 +76,3 @@ test_that("multiClust object finds correct k_best", {
   k_best <- multi_clust(tcr_binary_data, krange = 2:7)[["k_best"]]
   expect_identical(k_best, 2)
 })
-

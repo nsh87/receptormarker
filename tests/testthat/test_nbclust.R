@@ -3,15 +3,12 @@ context("Unit test NbClust")
 # data prep
 data(fluidigm)
 f50 <- fluidigm[1:50, ]
-data(tcr)
-tcr_binary_data <- tcr[3:23]
-tcr_binary_data[is.na(tcr_binary_data)] <- 0
 # Load pre-computed multiClust object from fluidigm data set. This same object
 # should be used in 'test_cluster_plotting.R' test cases. It was generated
 # using 'data(fluidigm); f_clust <- fluidigm[1:50, ].
-#load(system.file("extdata", "f_clust.rda", package="receptormarker"))
+use load(system.file("extdata", "f_clust.rda", package="receptormarker"))
 # Load TCR data set with only data points and all data points as 0 or 1.
-#load(system.file("extdata", "tcr_binary_data.rda", package="receptormarker"))
+load(system.file("extdata", "tcr_binary_data.rda", package="receptormarker"))
 
 test_that("making sure invalid arguments produce errors", {
   expect_error(suppressWarnings(NbClust(f50, max.nc = 5, method = 9)),
@@ -71,4 +68,3 @@ test_that("making sure NbClust object picks right number of clusters", {
   k_best <- best[index, 1]
   expect_identical(k_best, 2)
 })
-
