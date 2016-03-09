@@ -34,14 +34,19 @@ does nothing, but functionality will be added in the future.}
     number of cluster centers requested.
   \code{sil_avg} A list of average silhouette scores for each number of
     cluster centers requested.
-  \code{num_clust} A list of the each number of clusters used.
+  \code{num_clust} A list of each number of clusters used.
   \code{sil} A list of \code{\link[cluster]{silhouette}} objects for each
     number of clusters.
   \code{wss} A list of total within sum of squares for each of the
     \code{\link[stats]{kmeans}} objects stored in \code{clust_model}.
   \code{clust_gap} A \code{\link[cluster]{clusGap}} object that uses the
     highest number of \code{krange} for the \code{K.max} argument.
-  \code{k_best} The optimal number of clusters based on silhouette score.
+  \code{k_best} The optimal number of clusters based on the algorithms used
+    by \code{\link[NbClust]{NbClust}}. These include: "kl", "ch",
+    "hartigan", "ccc", "scott", "marriot", "trcovw", "tracew", "friedman",
+    "rubin", "cindex", "db", "silhouette", "duda", "pseudot2", "beale",
+    "ratkowsky", "ball", "ptbiserial", "gap", "frey", "mcclain", "gamma",
+    "gplus", "tau", "dunn", "hubert", "sdindex", "dindex", "sdbw".
 }
 \description{
 This calls the function \code{\link[stats]{kmeans}} to perform kmeans 
