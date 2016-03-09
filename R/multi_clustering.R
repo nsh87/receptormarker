@@ -122,43 +122,28 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
                                         K.max = length(km[["clust_model"]]), 
                                         B = 15, verbose = FALSE)
   if (bool) {
-    tryCatch({
-      nb_best <- suppressWarnings(suppressMessages(
-        NbClust(d,
-                min.nc = krange[1],
-                index = "alllong",
-                max.nc = krange[length(krange)],
-                distance = "binary",
-                method = "average")))
-    },
-    error = function(e) {
-      if (grepl("computationally singular", e)) {
-        stop("There are not enough rows of data to evaluate for clustering.",
-             call. = FALSE)
-      } else {
-        stop(e, call. = FALSE)
-      }
-    }
-    )
+    distance <- "binary"
   } else {
-    tryCatch({
-      nb_best <- suppressWarnings(suppressMessages(
-        NbClust(d,
-                min.nc = krange[1],
-                index = "alllong",
-                max.nc = krange[length(krange)],
-                method = "average")))
-    },
-    error = function(e) {
-      if (grepl("computationally singular", e)) {
-        stop("There are not enough rows of data to evaluate for clustering.",
-             call. = FALSE)
-      } else {
-        stop(e, call. = FALSE)
-      }
-    }
-    )
+    distance <- "euclidean"
   }
+  tryCatch({
+    nb_best <- suppressWarnings(suppressMessages(
+      NbClust(d,
+              min.nc = krange[1],
+              index = "alllong",
+              max.nc = krange[length(krange)],
+              distance = distance,
+              method = "average")))
+  },
+  error = function(e) {
+    if (grepl("computationally singular", e)) {
+      stop("There are not enough rows of data to evaluate for clustering.",
+           call. = FALSE)
+    } else {
+      stop(e, call. = FALSE)
+    }
+  }
+  )
   best <- aggregate(nb_best[["Best.nc"]][1, ], 
                     by = list(nb_best[["Best.nc"]][1, ]), length)
   index <- which.max(best[[2]])
