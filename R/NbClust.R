@@ -1484,11 +1484,17 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   if (any((indice == 20) || (indice == 32))) {
     found <- FALSE
     for (ncG in min_nc:max_nc) {
-      if ((resCritical[ncG - min_nc + 1, 4] >= 0) && (!found)) {
-        ncGap <- ncG
-        indiceGap <- res[ncG - min_nc + 1, 20]
-        found <- TRUE
+      tryCatch({
+        if ((resCritical[ncG - min_nc + 1, 4] >= 0) && (!found)) {
+          ncGap <- ncG
+          indiceGap <- res[ncG - min_nc + 1, 20]
+          found <- TRUE
+        }
+      },
+      error = function(e) {
+        next
       }
+      )
     }
     if (found) {
       nc.Gap <- ncGap
