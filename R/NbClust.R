@@ -1492,7 +1492,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         }
       },
       error = function(e) {
-        next
+        found <- FALSE
       }
       )
     }
