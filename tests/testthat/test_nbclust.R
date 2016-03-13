@@ -4,6 +4,17 @@ context("Unit test NbClust")
 data(fluidigm)
 f40 <- fluidigm[1:40, ]
 data(iris)
+rep_row <- function(d, n) {
+  new_d <- c()
+  for (i in 1:n) {
+    new_d <- rbind(new_d, d)
+  }
+  return(new_d)
+}
+clust_data <- rbind(rep_row(c(1, rep(0, 8)), 20),
+                    rep_row(c(rep(0, 8), 1), 15),
+                    rep_row(c(rep(0, 4), 1, rep(0, 4)), 55))
+rownames(clust_data) <- 1:90
 # Load pre-computed multiClust object from fluidigm data set. This same object
 # should be used in 'test_cluster_plotting.R' test cases. It was generated
 # using 'data(fluidigm); f_clust <- fluidigm[1:50, ].
@@ -72,6 +83,17 @@ test_that("making sure NbClust object picks right number of clusters", {
                                       min.nc = 3,
                                       index = "alllong",
                                       max.nc = 7,
+                                      method = "average"))
+  best <- aggregate(nb_best[["Best.nc"]][1, ], 
+                    by = list(nb_best[["Best.nc"]][1, ]), length)
+  index <- which.max(best[[2]])
+  k_best <- best[index, 1]
+  expect_identical(k_best, 3)
+  nb_best <- suppressWarnings(NbClust(clust_data,
+                                      min.nc = 2,
+                                      index = "alllong",
+                                      max.nc = 7,
+                                      distance = "binary",
                                       method = "average"))
   best <- aggregate(nb_best[["Best.nc"]][1, ], 
                     by = list(nb_best[["Best.nc"]][1, ]), length)
