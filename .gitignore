@@ -5,6 +5,7 @@
 .Rproj.user
 .Rhistory
 .RData
+man/
 
 # Vim
 *.swo
