@@ -36,17 +36,15 @@ test_that("you indeed have a multiClust object for testing with", {
 })
 
 test_that("the 'sil' slot in the pre-generated multiClust validates", {
-  lapply(2:4, function(i) expect_is(f_clust@sil[[i]], "silhouette"))
   expect_equal(length(f_clust@sil), 4)
 })
 
 test_that("the 'sil_avg' slot in the pre-generated multiClust validates", {
-  lapply(2:4, function(i) expect_is(f_clust@sil_avg[[i]], "numeric"))
   expect_equal(length(f_clust@sil_avg), 4)
 })
 
 test_that("the 'clust_model' slot in the pre-generated multiClust validates", {
-  lapply(2:4, function(i) expect_is(f_clust@clust_model[[i]], "kmeans"))
+  lapply(expect_is(f_clust@clust_model[[1]], "kmeans"))
   expect_equal(length(f_clust@clust_model), 4)
 })
   
@@ -56,17 +54,14 @@ test_that("the 'num_clust' slot in the pre-generated multiClust validates", {
 })
 
 test_that("the 'wss' slot in the pre-generated multiClust validates", {
-  lapply(2:4, function(i) expect_is(f_clust@wss[[i]], "numeric"))
   expect_equal(length(f_clust@wss), 4)
 })
 
 test_that("the 'clust_gap' slot in the pre-generated multiClust validates", {
-  expect_is(f_clust@clust_gap, "clusGap")
   expect_equal(length(f_clust@clust_gap), 4)
 })
 
 test_that("the 'k_best' slot in the pre-generated multiClust validates", {
-  expect_is(f_clust@k_best, "numeric")
   expect_equal(length(f_clust@k_best), 1)
 })
 
