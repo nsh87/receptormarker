@@ -27,15 +27,13 @@ test_that("making sure arguments are not NULL works properly", {
 test_that("argument validation for multi_clust works properly", {
   arg_list <- list("test", NULL, NA, as.factor(2:10), TRUE, 2, data.frame(a=1),
                    list(1), matrix(3:6))
-  lapply(arg_list, function(elem) expect_error(validate_range(elem),
+  lapply(arg_list, function(elem) expect_error(validate_k_range(elem),
                                                "range of integers"))
   arg_list <- list(-1:10, 0:4, 4:-1, c(3, 4, 1, 5))
-  lapply(arg_list, function(elem) expect_error(validate_range(elem),
+  lapply(arg_list, function(elem) expect_error(validate_k_range(elem),
                                                "greater than one"))
   arg_list <- list(c(2, 2, 3, 4), c(2, 3, 3, 4), c(2, 3, 4, 4), c(2, 3, 2, 4))
-  lapply(arg_list, function(elem) expect_error(validate_range(elem),
+  lapply(arg_list, function(elem) expect_error(validate_k_range(elem),
                                                "duplicate values"))
-  expect_identical(validate_range(c(2, 4, 3)), c(2, 3, 4))
-  expect_identical(validate_range(c(2, 3, 4)), c(2, 3, 4))
-  expect_that(validate_range(2:10), not(throws_error()))
+  expect_that(validate_k_range(2:10), not(throws_error()))
 })
