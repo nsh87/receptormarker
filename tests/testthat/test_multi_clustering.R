@@ -73,17 +73,26 @@ test_that("multiClust object can be generated with non-boolean data", {
   expect_that(multi_clust(fluidigm[1:40, ]), not(throws_error()))
 })
 
-test_that("multi_clust() correctly handles boolean and non-boolean data", {
-  # These data sets are tested directly with NbClust in test_nbclust.R, however
-  # multi_clust() is supposed to detect boolean data itself and pass the correct
-  # arguments to NbClust; this basically is an end-to-end test to ensure that
-  # happens correctly.
-  k_best <- multi_clust(iris[, 1:4], krange = 2:7)@k_best
-  expect_identical(k_best, 3)
+# The data sets used below are tested directly with NbClust in test_nbclust.R,
+# however multi_clust() is supposed to detect boolean data itself and pass the
+# correct arguments to NbClust; this basically is an end-to-end test to ensure
+# that happens correctly.
+test_that("multi_clust() correctly handles contrived boolean data", {
   k_best <- multi_clust(contrived_bool, krange = 2:7)@k_best
   expect_identical(k_best, 3)
-  k_best <- multi_clust(fluidigm[1:40, ], krange = 2:7)@k_best
-  expect_identical(k_best, 3)
+})
+
+test_that("multi_clust() correctly handles tcr boolean data", {
   k_best <- multi_clust(tcr_binary_data, krange = 2:7)@k_best
   expect_identical(k_best, 2)
+})
+
+test_that("multi_clust() correctly handles non-boolean iris data", {
+  k_best <- multi_clust(iris[, 1:4], krange = 2:7)@k_best
+  expect_identical(k_best, 3)
+})
+
+test_that("multi_clust() correctly handles non-boolean fluidigm data", {
+  k_best <- multi_clust(fluidigm[1:50, ], krange = 2:7)@k_best
+  expect_identical(k_best, 3)
 })
