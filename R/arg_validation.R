@@ -108,32 +108,29 @@ is_boolean <- function(d) {
 #' @description An internal function that raises an error if the argument is not
 #' either a \emph{data.frame} or \emph{matrix}. Also, if all columns are not
 #' numeric, it will raise an error.
-#' @param d A \emph{data.frame} or \emph{matrix} whose class the function will
-#' confirm.
+#' @param d A \emph{data.frame} or \emph{matrix} whose class (and the classes
+#' of each of its columns) the function will confirm.
 #' @keywords internal
 validate_num_data <- function(d) {
-  classes <- c("data.frame", "matrix")
-  types <- c("numeric", "integer")
+  classes <- c("data.frame", "matrix")  # Acceptable classes for 'd'
+  types <- c("numeric", "integer")  # Acceptable types for each column of 'd'
   if (!(class(d) %in% classes)) {
     stop("The argument 'd' is not a data.frame or matrix.", call.=FALSE)
   }
-  lapply(d,
-          function(x) {
-            if (!(class(x) %in% types)) {
-              stop("The classes of the columns of 'd' are not all numeric.", 
-                   call.=FALSE) 
-            } else TRUE
-          })
-  bool <- FALSE
-  for (col in d) {
+  lapply(d, function(x) {
+    if (!(class(x) %in% types)) {
+      stop("The classes of the columns of 'd' are not all numeric.", 
+           call.=FALSE) 
+    }
+  })
+  for (i in ncol(d)) {
+    col <- d[, i]
     uniq <- unique(col)
     if (all(uniq %in% 0:1)) {
       message("At least one column of 'd' contains only values 0 and 1.")
-      bool <- TRUE
       break
     }
   }
-  return(bool)
 }
 
 #' @title Validate that an argument contains positive integers
