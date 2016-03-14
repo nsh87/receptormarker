@@ -36,11 +36,11 @@ test_that("you indeed have a multiClust object for testing with", {
 })
 
 test_that("the 'sil' slot in the pre-generated multiClust validates", {
-  expect_equal(length(f_clust@sil), 4)
+  expect_equal(length(f_clust@sil), 14)
 })
 
 test_that("the 'sil_avg' slot in the pre-generated multiClust validates", {
-  expect_equal(length(f_clust@sil_avg), 4)
+  expect_equal(length(f_clust@sil_avg), 14)
 })
 
 test_that("the 'clust_model' slot in the pre-generated multiClust validates", {
@@ -50,11 +50,11 @@ test_that("the 'clust_model' slot in the pre-generated multiClust validates", {
   
 test_that("the 'num_clust' slot in the pre-generated multiClust validates", {
   lapply(2:4, function(i) expect_equal(f_clust@num_clust[[i]], i))
-  expect_equal(length(f_clust@num_clust), 4)
+  expect_equal(length(f_clust@num_clust), 14)
 })
 
 test_that("the 'wss' slot in the pre-generated multiClust validates", {
-  expect_equal(length(f_clust@wss), 4)
+  expect_equal(length(f_clust@wss), 14)
 })
 
 test_that("the 'clust_gap' slot in the pre-generated multiClust validates", {
