@@ -1,5 +1,6 @@
 context("Unit test multi_clust and validation for it")
 
+data(iris)
 data(fluidigm)
 # Load pre-computed multiClust object from fluidigm data set. This same object
 # should be used in 'test_cluster_plotting.R' test cases. It was generated
@@ -7,6 +8,11 @@ data(fluidigm)
 load(system.file("extdata", "f_clust.rda", package="receptormarker"))
 # Load TCR data set with only data points and all data points as 0 or 1.
 load(system.file("extdata", "tcr_binary_data.rda", package="receptormarker"))
+# Create a contrived boolean data set
+contrived_bool <- data.frame(matrix(0, nrow=90, ncol=9))
+contrived_bool[1:20, 1] <- 1
+contrived_bool[21:35, 9] <- 1
+contrived_bool[36:90, 5] <- 1
 
 test_that("making sure argument is acceptable range works properly", {
   arg_list <- list("test", NULL, NA, as.factor(2:10), TRUE, 2, data.frame(a=1),
@@ -89,9 +95,17 @@ test_that("multiClust object can be generated with non-boolean data", {
   expect_that(multi_clust(fluidigm[1:40, ]), not(throws_error()))
 })
 
-test_that("multiClust object finds correct k_best", {
-  k_best <- multi_clust(fluidigm[1:40, ], krange = 2:7)[["k_best"]]
+test_that("multi_clust() correctly handles boolean and non-boolean data", {
+  # These data sets are tested directly with NbClust in test_nbclust.R, however
+  # multi_clust() is supposed to detect boolean data itself and pass the correct
+  # arguments to NbClust; this basically is an end-to-end test to ensure that
+  # happens correctly.
+  k_best <- multi_clust(iris[, 1:4], krange = 2:7)@k_best
   expect_identical(k_best, 3)
-  k_best <- multi_clust(tcr_binary_data, krange = 2:7)[["k_best"]]
+  k_best <- multi_clust(contrived_bool, krange = 2:7)@k_best
+  expect_identical(k_best, 3)
+  k_best <- multi_clust(fluidigm[1:40, ], krange = 2:7)@k_best
+  expect_identical(k_best, 3)
+  k_best <- multi_clust(tcr_binary_data, krange = 2:7)@k_best
   expect_identical(k_best, 2)
 })
