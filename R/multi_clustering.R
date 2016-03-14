@@ -129,7 +129,7 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
   km[["k_best"]] <- best[index, 1]
   new("multiClust", clust_model=km[["clust_model"]], sil_avg=km[["sil_avg"]],
       num_clust=km[["num_clust"]], sil=km[["sil"]], clust_gap=km[["clust_gap"]],
-      wss=km[["wss"]], k_bets=km[["k_best"]])
+      wss=km[["wss"]], k_best=km[["k_best"]])
 }
 
 #' @title Validate and sort an argument that is a range of integers
