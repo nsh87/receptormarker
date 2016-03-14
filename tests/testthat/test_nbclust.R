@@ -50,7 +50,7 @@ test_that("NbClust object can be generated with non-boolean data", {
               not(throws_error()))
 })
 
-test_that("NbClust object picks right number of clusters", {
+test_that("NbClust object picks right number of clusters with fluidigm", {
   nb_best <- suppressWarnings(NbClust(f40,
                                       min.nc = 2,
                                       index = "alllong",
@@ -61,6 +61,9 @@ test_that("NbClust object picks right number of clusters", {
   index <- which.max(best[[2]])
   k_best <- best[index, 1]
   expect_identical(k_best, 3)
+})
+
+test_that("NbClust object picks right number of clusters with tcr binary", {
   nb_best <- suppressWarnings(NbClust(tcr_binary_data,
                                       min.nc = 2,
                                       index = "alllong",
@@ -72,6 +75,9 @@ test_that("NbClust object picks right number of clusters", {
   index <- which.max(best[[2]])
   k_best <- best[index, 1]
   expect_identical(k_best, 2)
+})
+
+test_that("NbClust object picks right number of clusters with iris", {
   nb_best <- suppressWarnings(NbClust(iris[1:4],
                                       min.nc = 3,
                                       index = "alllong",
@@ -82,6 +88,9 @@ test_that("NbClust object picks right number of clusters", {
   index <- which.max(best[[2]])
   k_best <- best[index, 1]
   expect_identical(k_best, 3)
+})
+  
+test_that("NbClust object picks right number of clusters with contrived bool", {
   nb_best <- suppressWarnings(NbClust(contrived_bool,
                                       min.nc = 2,
                                       index = "alllong",
