@@ -15,7 +15,7 @@
 #'   \code{\link{multi_clust}} function and view the \emph{TIP} for a suggested
 #'   workflow.
 #'
-#' @param clust_obj A \code{multiClust} object from which to extract
+#' @param clust_obj A \code{\link{multiClust-class}} object from which to extract
 #'   \code{wss}.
 #' @param optimal Logical. If \code{TRUE}, the optimal number of clusters as
 #'   extracted from \code{clust_obj}, based on average silhouette width, is
@@ -75,7 +75,7 @@ wss_plot <- function(clust_obj, optimal = FALSE, ...) {
 #'   \code{\link{multi_clust}} function and view the \emph{TIP} for a suggested
 #'   workflow.
 #'
-#' @param clust_obj A \code{multiClust} object from which to extract
+#' @param clust_obj A \code{\link{multiClust-class}} object from which to extract
 #'   \code{clust_gap}.
 #' @param optimal Logical. If \code{TRUE}, the optimal number of clusters as
 #'   extracted from \code{clust_obj}, based on average silhouette width, is
@@ -124,9 +124,9 @@ gap_plot <- function(clust_obj, optimal = FALSE, ...) {
 #'   linear combination of the features. See \code{\link[stats]{princomp}} for
 #'   further details on its calculation. Here it is used strictly for its
 #'   ability to represent the data relatively well in just a couple dimensions.  
-#'   One may pass in the \code{k_best} element from the \code{multiClust} object
-#'   for \code{num_clust}, or use a different value. This is where other
-#'   visualizations can be useful.  
+#'   One may pass in the \code{k_best} element from the
+#'   \code{\link{multiClust-class}} object for \code{num_clust}, or use a
+#'   different value. This is where other visualizations can be useful.  
 #'   See the \emph{Details} section for the \code{\link{multi_clust}} function
 #'   and view the \emph{TIP} for a suggested workflow.
 #'
@@ -134,11 +134,11 @@ gap_plot <- function(clust_obj, optimal = FALSE, ...) {
 #'   such a matrix (such as a numeric vector or a data frame with all numeric
 #'   columns). Note: This should be the same one used to generate 
 #'   \code{clust_obj}.
-#' @param clust_obj A \code{multiClust} object from which to extract
-#'   \code{clust_model} based on the argument \code{num_clust}
+#' @param clust_obj A \code{\link{multiClust-class}} object from which to
+#' extract \code{clust_model} based on the argument \code{num_clust}
 #' @param num_clust An integer. The desired number of clusters to be used. Note:
 #'   This integer should fall within the krange used to generate the 
-#'   \code{multiClust} object.
+#'   \code{\link{multiClust-class}} object.
 #' @param ... Further arguments to be passed to the \code{\link{plot}} 
 #'   function (besides \code{xlab}, \code{ylab}, \code{main}).
 #'
@@ -184,17 +184,17 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
 #'   \code{\link[cluster]{silhouette}} for further details on its calculation.  
 #'   This plot allows one to see how well the individual clusters of a given
 #'   clustering perform according to silhouette width. One may pass in the
-#'   \code{k_best} element from the \code{multiClust} object for
+#'   \code{k_best} element from the \code{\link{multiClust-class}} object for
 #'   \code{num_clust}, or use a different value. This is where other
 #'   visualizations can be useful.  
 #'   See the \emph{Details} section for the \code{\link{multi_clust}} function
 #'   and view the \emph{TIP} for a suggested workflow.
 #'
-#' @param clust_obj A \code{multiClust} object from which to extract
-#'   \code{clust_model} based on the argument \code{num_clust}
+#' @param clust_obj A \code{\link{multiClust-class}} object from which to
+#' extract \code{clust_model} based on the argument \code{num_clust}
 #' @param num_clust An integer. The desired number of clusters to be used. Note:
 #'   This integer should fall within the krange used to generate the 
-#'   \code{multiClust} object.
+#'   \code{\link{multiClust-class}} object.
 #' @param ... Further arguments to be passed to the \code{\link{plot}} 
 #'   function (besides \code{xlab}, \code{ylab}, \code{main}).
 #'
@@ -237,7 +237,7 @@ sil_plot <- function(clust_obj, num_clust, ...) {
 #'   \code{\link{multi_clust}} function and view the \emph{TIP} for a suggested
 #'   workflow.
 #'
-#' @param clust_obj A \code{multiClust} object from which to extract
+#' @param clust_obj A \code{\link{multiClust-class}} object from which to extract
 #'   \code{clust_gap}.
 #' @param optimal Logical. If \code{TRUE}, the optimal number of clusters as
 #'   extracted from \code{clust_obj}, based on average silhouette width, is
@@ -333,9 +333,9 @@ boxplot_num_cols <- function(num_clust) {
 #'   relative expression level) are distributed. This function is primarily
 #'   intended to try to uncover what sort of underlying structure a given
 #'   clustering has found in the data.  
-#'   One may pass in the \code{k_best} element from the \code{multiClust} object
-#'   for \code{num_clust}, or use a different value. This is where other
-#'   visualizations can be useful.  
+#'   One may pass in the \code{k_best} element from the
+#'   \code{\link{multiClust-class}} object for \code{num_clust}, or use a
+#'   different value. This is where other visualizations can be useful.  
 #'   See the \emph{Details} section for the \code{\link{multi_clust}} function
 #'   and view the \emph{TIP} for a suggested workflow.
 #'   

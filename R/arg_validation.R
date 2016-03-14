@@ -1,7 +1,7 @@
 #' @title Validate than an object is of class \emph{convergenceGroups}
 #' @description An internal function that raises an error if the argument is not
-#' of class \emph{convergenceGroups} or if the \code{groups} are empty (i.e.
-#' if there are no convergence groups). 
+#' of class \code{\link{convergenceGroups-class}} or if the \code{groups} are
+#' empty (i.e. if there are no convergence groups). 
 #' @param convergence_obj An item to be checked for class membership.
 #' @keywords internal
 validate_convergence_clust <- function(convergence_obj) {
@@ -23,7 +23,7 @@ validate_convergence_clust <- function(convergence_obj) {
 
 #' @title Validate that an object is of class \emph{multiClust}
 #' @description An internal function that raises an error if the argument is not
-#' of class \emph{multiClust}.
+#' of class \code{\link{multiClust-class}}.
 #' @param clust_obj An item to be checked for class membership.
 #' @keywords internal
 validate_multi_clust <- function(clust_obj) {
