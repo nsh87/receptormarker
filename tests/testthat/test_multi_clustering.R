@@ -61,11 +61,17 @@ test_that("making sure multiClust object works properly", {
   expect_equal(length(f_clust[["k_best"]]), 1)
 })
 
-
 test_that("multiClust object can be generated with boolean data", {
   expect_that(multi_clust(tcr_binary_data), not(throws_error()))
 })
 
 test_that("multiClust object can be generated with non-boolean data", {
   expect_that(multi_clust(fluidigm[1:40, ]), not(throws_error()))
+})
+
+test_that("multiClust object finds correct k_best", {
+  k_best <- multi_clust(fluidigm[1:40, ], krange = 2:7)[["k_best"]]
+  expect_identical(k_best, 3)
+  k_best <- multi_clust(tcr_binary_data, krange = 2:7)[["k_best"]]
+  expect_identical(k_best, 2)
 })

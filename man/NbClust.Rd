@@ -46,7 +46,7 @@ Gamma, Gplus and Tau included).}
 \description{
 An internal function using the \code{\link[NbClust]{NbClust}}
   package. It provides 30 indices for determining the number of clusters and
-  proposes to user the best clustering scheme from the different results
+  proposes to the user the best clustering scheme from the different results
   obtained by varying all combinations of number of clusters, distance
   measures, and clustering methods.
 }
