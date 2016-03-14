@@ -21,7 +21,7 @@ validate_convergence_clust <- function(convergence_obj) {
 }
 
 
-#' @title Validate that an object is of class \emph{multiClust}
+#' @title Validate that an object is of class \code{\link{multiClust-class}}
 #' @description An internal function that raises an error if the argument is not
 #' of class \code{\link{multiClust-class}}.
 #' @param clust_obj An item to be checked for class membership.
