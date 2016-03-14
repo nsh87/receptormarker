@@ -75,8 +75,8 @@ wss_plot <- function(clust_obj, optimal = FALSE, ...) {
 #'   \code{\link{multi_clust}} function and view the \emph{TIP} for a suggested
 #'   workflow.
 #'
-#' @param clust_obj A \code{\link{multiClust-class}} object from which to extract
-#'   \code{clust_gap}.
+#' @param clust_obj A \code{\link{multiClust-class}} object from which to
+#'   extract \code{clust_gap}.
 #' @param optimal Logical. If \code{TRUE}, the optimal number of clusters as
 #'   extracted from \code{clust_obj}, based on average silhouette width, is
 #'   circled in the plot.
@@ -237,8 +237,8 @@ sil_plot <- function(clust_obj, num_clust, ...) {
 #'   \code{\link{multi_clust}} function and view the \emph{TIP} for a suggested
 #'   workflow.
 #'
-#' @param clust_obj A \code{\link{multiClust-class}} object from which to extract
-#'   \code{clust_gap}.
+#' @param clust_obj A \code{\link{multiClust-class}} object from which to
+#'   extract \code{clust_gap}.
 #' @param optimal Logical. If \code{TRUE}, the optimal number of clusters as
 #'   extracted from \code{clust_obj}, based on average silhouette width, is
 #'   circled in the plot.
@@ -348,11 +348,12 @@ boxplot_num_cols <- function(num_clust) {
 #'   such a matrix (such as a numeric vector or a data frame with all numeric
 #'   columns). Note: This should be the same one used to generate 
 #'   \code{clust_obj}.
-#' @param clust_obj A \code{multiClust} object from which to extract
+#' @param clust_obj A \code{\link{multiClust-class}} object from which to
+#'   extract
 #'   \code{clust_model} based on the argument \code{num_clust}
 #' @param num_clust An integer. The desired number of clusters to be used. Note:
 #'   This integer should fall within the krange used to generate the 
-#'   \code{multiClust} object.
+#'   \code{\link{multiClust-class}} object.
 #' @param ... Further arguments to be passed to the \code{\link{qplot}} 
 #'   function (besides \code{xlab}, \code{ylab}).
 #'
