@@ -131,21 +131,3 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
       num_clust=km[["num_clust"]], sil=km[["sil"]], clust_gap=km[["clust_gap"]],
       wss=km[["wss"]], k_best=km[["k_best"]])
 }
-
-#' @title Validate and sort an argument that is a range of integers
-#' @description An internal function that raises an error if the argument is not
-#' a positive, non-duplicate range of integers beginning > 1. It is sorted into
-#' ascending order.
-#' @param n_range An item to be checked to make sure it is a valid range.
-#' @keywords internal
-validate_k_range <- function(range) {
-  if (!(class(range) %in% c("integer", "numeric")) || length(range) <= 1) {
-    stop("The argument 'krange' must be a range of integers.", call.=FALSE)
-  } else if (any(range <= 1)) {
-    stop("The argument 'krange' must contain only values greater than one.", 
-         call.=FALSE)
-  } else if (anyDuplicated(range) != 0) {
-    stop("The argument 'krange' must not contain any duplicate values.",
-         call.=FALSE)
-  }
-}
