@@ -84,26 +84,6 @@ validate_sequences <- function(seqs) {
   }
 }
 
-
-#' Check if all columns of data.frame are boolean or binary
-#' 
-#' This is an internal function that returns \code{TRUE} if \code{d} is boolean
-#' or binary.
-#' @param d A data.frame or matrix.
-#' @return A logical indicating whether or not \emph{all} columns are boolean or
-#' binary.
-#' @keywords internal
-is_boolean <- function(d) {
-  for (col in d) {
-    uniq <- unique(col)
-    if (!all(uniq %in% 0:1)) {
-      return (FALSE)
-    }
-  }
-  return (TRUE)
-}
-
-
 #' @title Validate that the arg is either a numeric data.frame or matrix
 #' @description An internal function that raises an error if the argument is not
 #' either a \emph{data.frame} or \emph{matrix}. Also, if all columns are not
@@ -132,6 +112,7 @@ validate_num_data <- function(d) {
     }
   }
 }
+
 
 #' @title Validate that an argument contains positive integers
 #' @description An internal function that raises an error if the argument does
