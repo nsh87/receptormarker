@@ -1,6 +1,7 @@
 context("Unit test NbClust")
 
-# data prep
+# Data prep
+data(iris)
 data(fluidigm)
 f40 <- fluidigm[1:40, ]
 contrived_bool <- data.frame(matrix(0, nrow=90, ncol=9))
@@ -14,7 +15,7 @@ load(system.file("extdata", "f_clust.rda", package="receptormarker"))
 # Load TCR data set with only data points and all data points as 0 or 1.
 load(system.file("extdata", "tcr_binary_data.rda", package="receptormarker"))
 
-test_that("making sure invalid arguments produce errors", {
+test_that("invalid arguments to NbClust produce errors", {
   expect_error(suppressWarnings(NbClust(f40, max.nc = 5, method = 9)),
                "clustering method")
   expect_error(suppressWarnings(NbClust(max.nc = 5, method = "average")),
@@ -36,7 +37,7 @@ test_that("making sure invalid arguments produce errors", {
                "difference between the minimum")
 })
 
-test_that("making sure NbClust object can be generated with boolean data", {
+test_that("NbClust object can be generated with boolean data", {
   expect_that(suppressWarnings(NbClust(tcr_binary_data,
                                distance = "binary",
                                max.nc = 5,
@@ -44,12 +45,12 @@ test_that("making sure NbClust object can be generated with boolean data", {
               not(throws_error()))
 })
 
-test_that("making sure NbClust object can be generated with non-boolean data", {
+test_that("NbClust object can be generated with non-boolean data", {
   expect_that(suppressWarnings(NbClust(f40, max.nc = 5, method = "average")),
               not(throws_error()))
 })
 
-test_that("making sure NbClust object picks right number of clusters", {
+test_that("NbClust object picks right number of clusters", {
   nb_best <- suppressWarnings(NbClust(f40,
                                       min.nc = 2,
                                       index = "alllong",
