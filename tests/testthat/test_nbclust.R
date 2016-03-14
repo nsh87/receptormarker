@@ -50,7 +50,7 @@ test_that("NbClust object can be generated with non-boolean data", {
               not(throws_error()))
 })
 
-test_that("NbClust object picks right number of clusters with fluidigm", {
+test_that("NbClust object picks expected number of clusters with fluidigm", {
   nb_best <- suppressWarnings(NbClust(f40,
                                       min.nc = 2,
                                       index = "alllong",
@@ -63,7 +63,7 @@ test_that("NbClust object picks right number of clusters with fluidigm", {
   expect_identical(k_best, 3)
 })
 
-test_that("NbClust object picks right number of clusters with tcr binary", {
+test_that("NbClust object picks expected number of clusters with tcr binary", {
   nb_best <- suppressWarnings(NbClust(tcr_binary_data,
                                       min.nc = 2,
                                       index = "alllong",
