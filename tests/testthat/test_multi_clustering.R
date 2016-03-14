@@ -45,7 +45,7 @@ test_that("the 'sil_avg' slot in the pre-generated multiClust validates", {
 
 test_that("the 'clust_model' slot in the pre-generated multiClust validates", {
   expect_is(f_clust@clust_model[[2]], "kmeans")
-  expect_equal(length(f_clust@clust_model), 4)
+  expect_equal(length(f_clust@clust_model), 15)
 })
   
 test_that("the 'num_clust' slot in the pre-generated multiClust validates", {
