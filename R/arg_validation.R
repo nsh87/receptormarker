@@ -176,4 +176,3 @@ validate_k_range <- function(range) {
          call.=FALSE)
   }
 }
-
