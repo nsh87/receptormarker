@@ -5,29 +5,29 @@
 #' and plotting it.
 #' 
 #' @details This function is intended to be used as part of deciding the ideal
-#'   number of clusters to use for analysis. Within sum of squares (WSS) tells
-#'   one how tightly the data points within a cluster are clustered. Typically,
-#'   one looks for an "elbow" at which the WSS drops significantly. Sometimes,
-#'   the elbow in the WSS still does not contain enough clusters to understand
-#'   the data well. This is where other visualizations can be useful.  
-#'   Choosing \code{optimal = TRUE} will circle the optimal number of clusters
-#'   based on average silhouette width. See the \emph{Details} section for the
-#'   \code{\link{multi_clust}} function and view the \emph{TIP} for a suggested
-#'   workflow.
+#' number of clusters to use for analysis. Within sum of squares (WSS) tells
+#' one how tightly the data points within a cluster are clustered. Typically,
+#' one looks for an "elbow" at which the WSS drops significantly. Sometimes,
+#' the elbow in the WSS still does not contain enough clusters to understand
+#' the data well. This is where other visualizations can be useful.  
+#' Choosing \code{optimal = TRUE} will circle the optimal number of clusters
+#' based on average silhouette width. See the \emph{Details} section of the
+#' \code{\link{multi_clust}} function and view the \emph{TIP} for a suggested
+#' workflow.
 #'
-#' @param clust_obj A \code{\link{multiClust-class}} object from which to extract
-#'   \code{wss}.
+#' @param clust_obj A \code{\link{multiClust-class}} object from which to
+#' extract \code{wss}.
 #' @param optimal Logical. If \code{TRUE}, the optimal number of clusters as
-#'   extracted from \code{clust_obj}, based on average silhouette width, is
-#'   circled in the plot.
+#' extracted from \code{clust_obj}, based on average silhouette width, is
+#' circled in the plot.
 #' @param ... Further arguments to be passed to the \code{\link{plot}} 
-#'   function (besides \code{xlab}, \code{ylab}, \code{main}).
+#' function (besides \code{xlab}, \code{ylab}, \code{main}).
 #'
 #' @export
 #' 
 #' @seealso \code{\link{multi_clust}}, \code{\link{gap_plot}}, 
-#'   \code{\link{pca_plot}}, \code{\link{sil_plot}}, \code{\link{avg_sil_plot}},
-#'   \code{\link{clust_boxplot}}
+#' \code{\link{pca_plot}}, \code{\link{sil_plot}}, \code{\link{avg_sil_plot}},
+#' \code{\link{clust_boxplot}}
 #'
 #' @examples
 #' # First, create a multiClust object
@@ -39,7 +39,7 @@ wss_plot <- function(clust_obj, optimal = FALSE, ...) {
   validate_not_null(list(clust_obj = clust_obj, optimal = optimal))
   validate_true_false(list(optimal = optimal))
   validate_multi_clust(clust_obj)
-  wss <- clust_obj[["wss"]]
+  wss <- clust_obj@wss
   start <- length(wss[is.na(wss)]) + 1 # We start the krange right after NA's
   end <- length(wss)
   krange <- start:end
@@ -49,7 +49,7 @@ wss_plot <- function(clust_obj, optimal = FALSE, ...) {
        main = "Within Sum of Squares by K Clusters",
        ...)
   if (optimal) {
-    opti_clust <- clust_obj[["k_best"]]
+    opti_clust <- clust_obj@k_best
     index <- opti_clust - (start - 1) # Account for removal of NA's
     points(opti_clust, wss[index], col = "red", pch = 1, cex = 3)
     legend("topright", "Optimal Clusters", col = "red", pch = 1)
@@ -99,11 +99,11 @@ gap_plot <- function(clust_obj, optimal = FALSE, ...) {
   validate_not_null(list(clust_obj = clust_obj, optimal = optimal))
   validate_true_false(list(optimal = optimal))
   validate_multi_clust(clust_obj)
-  plot(clust_obj[["clust_gap"]], xlab = "# of K Clusters",
+  plot(clust_obj@clust_gap, xlab = "# of K Clusters",
        main = "Gap Analysis by K Clusters", ...)
   if (optimal) {
-    opti_clust <- clust_obj[["k_best"]]
-    gap_best <- clust_obj[["clust_gap"]]["Tab"][[1]][opti_clust, 3]
+    opti_clust <- clust_obj@k_best
+    gap_best <- clust_obj@clust_gap["Tab"][[1]][opti_clust, 3]
     points(opti_clust, gap_best, col = "red", pch = 1, cex = 3)
     legend("topleft", "Optimal Clusters", col = "red", pch = 1)
   }
@@ -162,7 +162,7 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
   sdev <- pca[["sdev"]]
   prop_var <- sdev ^ 2 / sum(sdev ^ 2)
   main <- paste0("PCA Plot (", round(sum(prop_var[1:2]) * 100), "% Variance)")
-  clusters <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
+  clusters <- clust_obj@clust_model[[num_clust]][["cluster"]]
   plot(pca[["scores"]][, 1:2], col = rainbow(num_clust)[clusters],
        xlab = "Principal Component 1",
        ylab = "Principal Component 2",
@@ -213,7 +213,7 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
 sil_plot <- function(clust_obj, num_clust, ...) {
   validate_multi_clust(clust_obj)
   validate_pos_num(list(num_clust = num_clust))
-  sil <- clust_obj[["sil"]][[num_clust]]
+  sil <- clust_obj@sil[[num_clust]]
   plot(sil, main = "Silhouette Plot of K Clusters", ...)
 }
 
@@ -261,7 +261,7 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
   validate_not_null(list(clust_obj = clust_obj, optimal = optimal))
   validate_true_false(list(optimal = optimal))
   validate_multi_clust(clust_obj)
-  sil <- clust_obj[["sil_avg"]]
+  sil <- clust_obj@sil_avg
   start <- length(sil[is.na(sil)]) + 1 # We start the krange right after NA's
   end <- length(sil)
   krange <- start:end
@@ -271,7 +271,7 @@ avg_sil_plot <- function(clust_obj, optimal = FALSE, ...) {
        main = "Average Silhouette Width by K Clusters",
        ...)
   if (optimal) {
-    opti_clust <- clust_obj[["k_best"]]
+    opti_clust <- clust_obj@k_best
     index <- opti_clust - (start - 1) # Account for removal of NA's
     points(opti_clust, sil[index], col = "red", pch = 1, cex = 3)
     legend("bottomright", "Optimal Clusters", col = "red", pch = 1)
@@ -373,7 +373,7 @@ clust_boxplot <- function(d, clust_obj, num_clust, ...) {
   validate_multi_clust(clust_obj)
   validate_pos_num(list(num_clust = num_clust))
   meas_vars <- colnames(d)
-  d["cluster"] <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
+  d["cluster"] <- clust_obj@clust_model[[num_clust]][["cluster"]]
   if (is_boolean(d[meas_vars])) {
     d_bool <- aggregate(. ~ cluster, data = d, sum)
     d_bool[meas_vars] <- d_bool[meas_vars] / nrow(d)
