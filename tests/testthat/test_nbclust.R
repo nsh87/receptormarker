@@ -78,7 +78,7 @@ test_that("NbClust object picks right number of clusters with tcr binary", {
 })
 
 test_that("NbClust object picks right number of clusters with iris", {
-  nb_best <- suppressWarnings(NbClust(iris[1:4],
+  nb_best <- suppressWarnings(NbClust(iris[, 1:4],
                                       min.nc = 3,
                                       index = "alllong",
                                       max.nc = 7,
