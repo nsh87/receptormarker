@@ -44,7 +44,7 @@ test_that("the 'sil_avg' slot in the pre-generated multiClust validates", {
 })
 
 test_that("the 'clust_model' slot in the pre-generated multiClust validates", {
-  lapply(expect_is(f_clust@clust_model[[1]], "kmeans"))
+  lapply(expect_is(f_clust@clust_model[[2]], "kmeans"))
   expect_equal(length(f_clust@clust_model), 4)
 })
   
