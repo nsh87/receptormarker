@@ -98,7 +98,8 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
                         method = "kmeans", ...) {
   validate_not_null(list(d = d, krange = krange, iter.max = iter.max, 
                          runs = runs, method = method))
-  bool <- validate_num_data(d)
+  validate_num_data(d)
+  bool <- is_boolean(d)
   krange <- validate_sort_range(krange) # returns sorted krange by ascending
   validate_pos_num(list(iter.max = iter.max, runs = runs))
   d <- d[complete.cases(d), ]
