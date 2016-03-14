@@ -3,7 +3,7 @@ context("Unit test cluster plotting")
 data(fluidigm)
 # Load pre-computed multiClust object from fluidigm data set. This same object
 # should be used in 'test_multi_clustering.R' test cases. It was generated
-# using 'data(fluidigm); f_clust <- fluidigm[1:50, ].
+# using 'data(fluidigm); f_clust <- multi_clust(fluidigm[1:50, ]).
 load(system.file("extdata", "f_clust.rda", package="receptormarker"))
 
 test_that("making sure validation functions work properly in wss_plot", {

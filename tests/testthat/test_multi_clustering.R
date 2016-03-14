@@ -3,7 +3,7 @@ context("Unit test multi_clust and validation for it")
 data(fluidigm)
 # Load pre-computed multiClust object from fluidigm data set. This same object
 # should be used in 'test_cluster_plotting.R' test cases. It was generated
-# using 'data(fluidigm); f_clust <- fluidigm[1:50, ].
+# using 'data(fluidigm); f_clust <- multi_clust(fluidigm[1:50, ]).
 load(system.file("extdata", "f_clust.rda", package="receptormarker"))
 # Load TCR data set with only data points and all data points as 0 or 1.
 load(system.file("extdata", "tcr_binary_data.rda", package="receptormarker"))
