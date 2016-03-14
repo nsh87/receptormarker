@@ -1,6 +1,6 @@
 context("Test internal functions that validate other function arguments")
 
-test_that("making sure arguments are TRUE/FALSE works properly", {
+test_that("validation of TRUE/FALSE works properly", {
   arg_list <- list(fake_param=TRUE, another_param=23)
   expect_error(validate_true_false(arg_list), "another_param")
   arg_list <- list(fake_param=TRUE, another_param=1)
@@ -14,7 +14,7 @@ test_that("making sure arguments are TRUE/FALSE works properly", {
 })
 
 
-test_that("making sure arguments are not NULL works properly", {
+test_that("not NULL argument validation works properly", {
   arg_list <- list(fake_param=NULL, another_param=42)
   expect_error(validate_not_null(arg_list), "fake_param")
   arg_list <- list(fake_param=TRUE, another_param=23, third_param=c(1:10),

@@ -14,7 +14,7 @@ contrived_bool[1:20, 1] <- 1
 contrived_bool[21:35, 9] <- 1
 contrived_bool[36:90, 5] <- 1
 
-test_that("making sure argument is multiClust object works properly", {
+test_that("argument validation of the multiClust object works properly", {
   arg_list <- list("test", NULL, NA, as.factor(2:10), TRUE, 2, data.frame(a=1),
                    list(1), matrix(3:6))
   lapply(arg_list, function(elem) expect_error(validate_multi_clust(elem),
@@ -23,7 +23,7 @@ test_that("making sure argument is multiClust object works properly", {
 })
 
 
-test_that("making sure validation functions work properly in multi_clust", {
+test_that("argument validation functions work properly in multi_clust", {
   expect_error(multi_clust(NULL), "d")
   expect_error(multi_clust(1), "data.frame or matrix")
   expect_error(multi_clust(fluidigm, krange=1), "range of integers")
