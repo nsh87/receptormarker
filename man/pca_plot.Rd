@@ -12,12 +12,12 @@ such a matrix (such as a numeric vector or a data frame with all numeric
 columns). Note: This should be the same one used to generate 
 \code{clust_obj}.}
 
-\item{clust_obj}{A \code{multiClust} object from which to extract
-\code{clust_model} based on the argument \code{num_clust}}
+\item{clust_obj}{A \code{\link{multiClust-class}} object from which to
+extract \code{clust_model} based on the argument \code{num_clust}}
 
 \item{num_clust}{An integer. The desired number of clusters to be used. Note:
 This integer should fall within the krange used to generate the 
-\code{multiClust} object.}
+\code{\link{multiClust-class}} object.}
 
 \item{...}{Further arguments to be passed to the \code{\link{plot}} 
 function (besides \code{xlab}, \code{ylab}, \code{main}).}
@@ -37,9 +37,9 @@ This function is intended to be used to view the shape of a given
   linear combination of the features. See \code{\link[stats]{princomp}} for
   further details on its calculation. Here it is used strictly for its
   ability to represent the data relatively well in just a couple dimensions.  
-  One may pass in the \code{k_best} element from the \code{multiClust} object
-  for \code{num_clust}, or use a different value. This is where other
-  visualizations can be useful.  
+  One may pass in the \code{k_best} element from the
+  \code{\link{multiClust-class}} object for \code{num_clust}, or use a
+  different value. This is where other visualizations can be useful.  
   See the \emph{Details} section for the \code{\link{multi_clust}} function
   and view the \emph{TIP} for a suggested workflow.
 }
