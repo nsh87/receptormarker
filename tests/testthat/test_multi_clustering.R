@@ -9,10 +9,13 @@ load(system.file("extdata", "f_clust.rda", package="receptormarker"))
 # Load TCR data set with only data points and all data points as 0 or 1.
 load(system.file("extdata", "tcr_binary_data.rda", package="receptormarker"))
 # Create a contrived boolean data set
-contrived_bool <- data.frame(matrix(0, nrow=90, ncol=9))
+contrived_bool <- data.frame(matrix(0, nrow=120, ncol=9))
 contrived_bool[1:20, 1] <- 1
 contrived_bool[21:35, 9] <- 1
-contrived_bool[36:90, 5] <- 1
+contrived_bool[36:40, 5] <- 1
+contrived_bool[41:60, 2] <- 1
+contrived_bool[61:105, 7] <- 1
+contrived_bool[106:120, 8] <- 1
 
 test_that("argument validation of the multiClust object works properly", {
   arg_list <- list("test", NULL, NA, as.factor(2:10), TRUE, 2, data.frame(a=1),
@@ -78,8 +81,8 @@ test_that("multiClust object can be generated with non-boolean data", {
 # correct arguments to NbClust; this basically is an end-to-end test to ensure
 # that happens correctly.
 test_that("multi_clust() correctly handles contrived boolean data", {
-  k_best <- multi_clust(contrived_bool, krange = 2:7)@k_best
-  expect_identical(k_best, 3)
+  k_best <- multi_clust(contrived_bool, krange = 2:6)@k_best
+  expect_identical(k_best, 6)
 })
 
 test_that("multi_clust() correctly handles tcr boolean data", {
