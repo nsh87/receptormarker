@@ -92,7 +92,7 @@ test_that("multi_clust() correctly handles tcr boolean data", {
 
 test_that("multi_clust() correctly handles non-boolean iris data", {
   k_best <- multi_clust(iris[, 1:4], krange = 2:7)@k_best
-  expect_identical(k_best, 3)
+  expect_identical(k_best, 2)
 })
 
 test_that("multi_clust() correctly handles non-boolean fluidigm data", {

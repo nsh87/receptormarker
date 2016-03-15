@@ -80,7 +80,7 @@ test_that("NbClust object picks expected number of clusters with tcr binary", {
 
 test_that("NbClust object picks right number of clusters with iris", {
   nb_best <- suppressWarnings(receptormarker::NbClust(iris[, 1:4],
-                                      min.nc = 3,
+                                      min.nc = 2,
                                       index = "alllong",
                                       max.nc = 7,
                                       method = "average"))
@@ -88,7 +88,7 @@ test_that("NbClust object picks right number of clusters with iris", {
                     by = list(nb_best[["Best.nc"]][1, ]), length)
   index <- which.max(best[[2]])
   k_best <- best[index, 1]
-  expect_identical(k_best, 3)
+  expect_identical(k_best, 2)
 })
   
 test_that("NbClust object picks right number of clusters with contrived bool", {
