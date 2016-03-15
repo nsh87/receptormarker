@@ -107,7 +107,7 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
   }
   tryCatch({
     nb_best <- suppressWarnings(suppressMessages(
-      receptormarker::NbClust(d,
+              NbClust(d,
               min.nc = krange[1],
               index = "alllong",
               max.nc = krange[length(krange)],

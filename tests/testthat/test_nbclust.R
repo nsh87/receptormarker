@@ -17,28 +17,28 @@ load(system.file("extdata", "tcr_binary_data.rda", package="receptormarker"))
 
 test_that("invalid arguments to NbClust produce errors", {
   expect_error(suppressWarnings(
-    receptormarker::NbClust(f40, max.nc = 5, method = 9)), "clustering method")
+    NbClust(f40, max.nc = 5, method = 9)), "clustering method")
   expect_error(suppressWarnings(
-    receptormarker::NbClust(max.nc = 5, method = "average")), "Data matrix")
+    NbClust(max.nc = 5, method = "average")), "Data matrix")
   expect_error(suppressWarnings(
-    receptormarker::NbClust(f40, max.nc = 5, method = "average", distance = 9)),
+    NbClust(f40, max.nc = 5, method = "average", distance = 9)),
     "distance")
   expect_error(suppressWarnings(
-    receptormarker::NbClust(f40, max.nc = 5, method = "average", index = 9)),
+    NbClust(f40, max.nc = 5, method = "average", index = 9)),
     "clustering index")
   expect_error(suppressWarnings(
-    receptormarker::NbClust(f40, method = "average", min.nc = "no")),
+    NbClust(f40, method = "average", min.nc = "no")),
     "non-numeric")
   expect_error(suppressWarnings(
-    receptormarker::NbClust(f40, method = "average", max.nc = "no")),
+    NbClust(f40, method = "average", max.nc = "no")),
     "non-numeric")
   expect_error(suppressWarnings(
-    receptormarker::NbClust(f40, max.nc = 5, method = "average", min.nc = 7)),
+    NbClust(f40, max.nc = 5, method = "average", min.nc = 7)),
     "difference between the minimum")
 })
 
 test_that("NbClust object can be generated with boolean data", {
-  expect_that(suppressWarnings(receptormarker::NbClust(tcr_binary_data,
+  expect_that(suppressWarnings(NbClust(tcr_binary_data,
                                distance = "binary",
                                max.nc = 5,
                                method = "average")),
@@ -47,12 +47,12 @@ test_that("NbClust object can be generated with boolean data", {
 
 test_that("NbClust object can be generated with non-boolean data", {
   expect_that(suppressWarnings(
-    receptormarker::NbClust(f40, max.nc = 5, method = "average")),
+    NbClust(f40, max.nc = 5, method = "average")),
     not(throws_error()))
 })
 
 test_that("NbClust object picks expected number of clusters with fluidigm", {
-  nb_best <- suppressWarnings(receptormarker::NbClust(f40,
+  nb_best <- suppressWarnings(NbClust(f40,
                                       min.nc = 2,
                                       index = "alllong",
                                       max.nc = 7,
@@ -65,7 +65,7 @@ test_that("NbClust object picks expected number of clusters with fluidigm", {
 })
 
 test_that("NbClust object picks expected number of clusters with tcr binary", {
-  nb_best <- suppressWarnings(receptormarker::NbClust(tcr_binary_data,
+  nb_best <- suppressWarnings(NbClust(tcr_binary_data,
                                       min.nc = 2,
                                       index = "alllong",
                                       max.nc = 7,
@@ -79,7 +79,7 @@ test_that("NbClust object picks expected number of clusters with tcr binary", {
 })
 
 test_that("NbClust object picks right number of clusters with iris", {
-  nb_best <- suppressWarnings(receptormarker::NbClust(iris[, 1:4],
+  nb_best <- suppressWarnings(NbClust(iris[, 1:4],
                                       min.nc = 2,
                                       index = "alllong",
                                       max.nc = 7,
@@ -92,7 +92,7 @@ test_that("NbClust object picks right number of clusters with iris", {
 })
   
 test_that("NbClust object picks right number of clusters with contrived bool", {
-  nb_best <- suppressWarnings(receptormarker::NbClust(contrived_bool,
+  nb_best <- suppressWarnings(NbClust(contrived_bool,
                                       min.nc = 2,
                                       index = "alllong",
                                       max.nc = 7,
