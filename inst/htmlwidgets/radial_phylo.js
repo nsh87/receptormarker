@@ -76,17 +76,20 @@ HTMLWidgets.widget({
         };
     });
   
-    window.onload = function(){
-        YUI().use('plot', 'oop', 'json-stringify', 'io-base', 'event', 'event-delegate', function(Y){
-            var uri = HTMLWidgets.getAttachmentUrl('phyloxml', 'xml');
-            function complete(id, o, args) {
-                Y.Plot.radial(width, height, id, o, args);
-                init(); //unitip
-            }
-            Y.on('io:complete', complete, Y);
-            var request = Y.io(uri);
-        });
-    };
+  YUI_config = {
+    comboBase: 'https://yui-s.yahooapis.com/combo?'
+  }
+  window.onload = function(){
+      YUI(YUI_config).use('plot', 'oop', 'json-stringify', 'io-base', 'event', 'event-delegate', function(Y){
+          var uri = HTMLWidgets.getAttachmentUrl('phyloxml', 'xml');
+          function complete(id, o, args) {
+              Y.Plot.radial(width, height, id, o, args);
+              init(); //unitip
+          }
+          Y.on('io:complete', complete, Y);
+          var request = Y.io(uri);
+      });
+  };
 
     // Create DL image as PNG link
   	var a = document.createElement('a');
