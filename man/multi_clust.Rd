@@ -5,7 +5,7 @@
 \title{Cluster using kmeans over multiple k and find optimal k}
 \usage{
 multi_clust(d, krange = 2:15, iter.max = 300, runs = 10,
-  method = "kmeans", ...)
+  method = "kmeans", index = "alllong", ...)
 }
 \arguments{
 \item{d}{A numeric matrix of data, or an object that can be coerced to
@@ -24,6 +24,10 @@ algorithm for each k.}
 
 \item{method}{Either "kmeans", "hclust", or "both". Currently, it
 does nothing, but functionality will be added in the future.}
+
+\item{index}{The index to be calculated for determining the optimal k, passed
+to \code{\link{NbClust}} (see its documentation for details on this
+parameter).}
 
 \item{...}{Further arguments to be passed to \code{\link[stats]{kmeans}}.}
 }
@@ -46,7 +50,7 @@ be 9.
 }
 \details{
 The \code{\link{multiClust-class}} object returned is primarily
-intended for use with  #' the plotting functions in the \emph{receptormarker}
+intended for use with the plotting functions in the \emph{receptormarker}
 package (the See Also section contains a complete list). However, its
 elements can also be accessed directly for other uses. See the
 \code{\link{multiClust-class}} documentation for details.
