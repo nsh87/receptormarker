@@ -55,6 +55,9 @@
 #' algorithm for each k.
 #' @param method Either "kmeans", "hclust", or "both". Currently, it
 #' does nothing, but functionality will be added in the future.
+#' @param index The index to be calculated for determining the optimal k, passed
+#' to \code{\link{NbClust}} (see its documentation for details on this
+#' parameter).
 #' @param ... Further arguments to be passed to \code{\link[stats]{kmeans}}.
 #' @return An object of class \code{\link{multiClust-class}}. This object can
 #' be used to create several plots (refer to the See Also section) that aid
@@ -72,9 +75,9 @@
 #' data(fluidigm)
 #' fluidigm_clust <- multi_clust(fluidigm[1:40, ])
 multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10, 
-                        method = "kmeans", ...) {
+                        method = "kmeans", index = "alllong", ...) {
   validate_not_null(list(d = d, krange = krange, iter.max = iter.max, 
-                         runs = runs, method = method))
+                         runs = runs, method = method, index = index))
   validate_k_range(krange)
   validate_pos_num(list(iter.max = iter.max, runs = runs))
   validate_num_data(d)
@@ -109,7 +112,7 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
     nb_best <- suppressWarnings(suppressMessages(
               NbClust(d,
               min.nc = krange[1],
-              index = "alllong",
+              index = index,
               max.nc = krange[length(krange)],
               distance = distance,
               method = "average")))
