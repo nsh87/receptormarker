@@ -163,11 +163,21 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
   prop_var <- sdev ^ 2 / sum(sdev ^ 2)
   main <- paste0("PCA Plot (", round(sum(prop_var[1:2]) * 100), "% Variance)")
   clusters <- clust_obj@clust_model[[num_clust]][["cluster"]]
-  plot(pca[["scores"]][, 1:2], col = rainbow(num_clust)[clusters],
+  clust_colors <- rainbow(num_clust)[clusters]
+  par(mar = c(5.1, 4.1, 4.1, 8.1), xpd = TRUE)
+  plot(pca[["scores"]][, 1:2], col = clust_colors,
        xlab = "Principal Component 1",
        ylab = "Principal Component 2",
        main = main,
        ...)
+  legend("topright",
+         inset = c(-0.3, 0),
+         legend = 1:num_clust,
+         lty = rep(1, num_clust),
+         col = clust_colors,
+         cex = 0.6,
+         title = "Cluster")
+  par(mar = c(5.1, 4.1, 4.1, 4.1))
 }
 
 #' Plot silhouette scores for a given clustering of data.
