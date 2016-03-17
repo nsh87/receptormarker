@@ -9,7 +9,7 @@
 #' suggest that k=9 and 7 algorithms suggest that k=6 then the optimal k will
 #' be 9.
 #' @details The \code{\link{multiClust-class}} object returned is primarily
-#' intended for use with  #' the plotting functions in the \emph{receptormarker}
+#' intended for use with the plotting functions in the \emph{receptormarker}
 #' package (the See Also section contains a complete list). However, its
 #' elements can also be accessed directly for other uses. See the
 #' \code{\link{multiClust-class}} documentation for details.
