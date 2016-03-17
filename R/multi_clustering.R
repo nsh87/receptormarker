@@ -128,8 +128,8 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
   )
   best <- aggregate(nb_best[["Best.nc"]][1, ], 
                     by = list(nb_best[["Best.nc"]][1, ]), length)
-  index <- which.max(best[[2]])
-  km[["k_best"]] <- best[index, 1]
+  idx <- which.max(best[[2]])
+  km[["k_best"]] <- best[idx, 1]
   new("multiClust", clust_model=km[["clust_model"]], sil_avg=km[["sil_avg"]],
       num_clust=km[["num_clust"]], sil=km[["sil"]], clust_gap=km[["clust_gap"]],
       wss=km[["wss"]], k_best=km[["k_best"]])
