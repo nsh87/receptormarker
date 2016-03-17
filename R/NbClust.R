@@ -8,7 +8,8 @@
 # Public License for more details.
 
 #' NbClust Package for determining the best number of clusters
-#' @description An internal function using the \code{\link[NbClust]{NbClust}}
+#' @description An internal function using a local, modified version of the
+#'   \href{https://cran.r-project.org/web/packages/NbClust/NbClust.pdf}{NbClust}
 #'   package. It provides 30 indices for determining the number of clusters and
 #'   proposes to the user the best clustering scheme from the different results
 #'   obtained by varying all combinations of number of clusters, distance
