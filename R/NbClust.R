@@ -39,6 +39,7 @@
 #'   Gamma, Gplus and Tau included).
 #' @param alphaBeale significance value for Beale's index.
 #' @param plots boolean. Whether or not to view plots
+#' @seealso \code{\link{multi_clust}}
 #' @keywords internal
 NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
                     min.nc = 2, max.nc = 15, method = NULL, index = "all",
