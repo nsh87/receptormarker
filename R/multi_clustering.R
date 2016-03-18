@@ -57,7 +57,7 @@
 #' "kmeans".
 #' @param method Either "kmeans" or "exhaustive". If "kmeans", then the average
 #' silhouette score will be used to estimate the optimal k using KMeans
-#' clustering. If "exhausting", then \code{\link{NbClust}} will be used to
+#' clustering. If "exhaustive", then \code{\link{NbClust}} will be used to
 #' estimate optimal k, although this takes significantly longer and is more
 #' error prone since the data is run through upwards of 20 algorithms for
 #' clustering; consider this method to be in beta.
@@ -89,9 +89,13 @@ multi_clust <- function(d, krange = 2:15, iter.max = 500, runs = 10,
   validate_num_data(d)
   validate_multi_clust_method(method)
   krange <- sort(krange)
-  bool <- is_boolean(d)
+  if (is_boolean(d)) {
+    distance <- "binary"
+  } else {
+    distance <- "euclidean"
+  }
   d <- d[complete.cases(d), ]
-  d_dist <- dist(d)
+  d_dist <- dist(d, method = distance)
   km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
              clust_gap = NULL, wss = NULL, k_best = NULL)
   # Perform KMeans clustering for every k in krange
@@ -114,16 +118,11 @@ multi_clust <- function(d, krange = 2:15, iter.max = 500, runs = 10,
   # Estimate K using the average silhouette score if method == 'kmeans'
   if (method == "kmeans") {
     km[["k_best"]] <- which.max(km[["sil_avg"]])
-  } else {
-  # Estimate K using NbClust if method == 'exhaustive'
-    if (bool) {
-      distance <- "binary"
-    } else {
-      distance <- "euclidean"
-    }
+  } else if (method == "exhaustive") {
+    # Estimate K using NbClust if method == 'exhaustive'
     tryCatch({
       nb_best <- suppressWarnings(suppressMessages(
-                NbClust(d,
+        NbClust(d,
                 min.nc = krange[1],
                 index = index,
                 max.nc = krange[length(krange)],
