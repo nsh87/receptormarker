@@ -53,8 +53,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   method <- pmatch(method, c("ward.D2", "single", "complete", "average",
                              "mcquitty", "median", "centroid", "kmeans",
                              "ward.D"))
-  
-  
+
   indice <- pmatch(index, c("kl", "ch", "hartigan", "ccc", "scott", "marriot",
                             "trcovw", "tracew", "friedman", "rubin", "cindex",
                             "db", "silhouette", "duda", "pseudot2", "beale",
@@ -62,32 +61,33 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
                             "mcclain", "gamma", "gplus", "tau", "dunn",
                             "hubert", "sdindex", "dindex", "sdbw", "all", 
                             "alllong"))
-  if (is.na(indice)) 
+
+  if (is.na(indice)) {
     stop("invalid clustering index", call. = FALSE)
-  
-  if (indice == -1) 
+  } else if (indice == -1) {
     stop("ambiguous index", call. = FALSE)
-  
-  if ((indice == 3) || (indice == 5) || (indice == 6) || (indice == 7) ||
-      (indice == 8) || (indice == 9) || (indice == 10) || (indice == 11) ||
-      (indice == 18) || (indice == 27) || (indice == 29) || (indice == 31) ||
-      (indice == 32)) {
+  }
+
+  if (indice == 3 || indice == 5 || indice == 6 || indice == 7 ||
+      indice == 8 || indice == 9 || indice == 10 || indice == 11 ||
+      indice == 18 || indice == 27 || indice == 29 || indice == 31 ||
+      indice == 32) {
     if ((max.nc - min.nc) < 2) 
       stop("The difference between the minimum and the maximum number of ",
         "clusters must be at least equal to 2", call. = FALSE)
   }
-  
+
   if (is.null(data)) {
     if (method == 8) {
       stop("\n", "method = kmeans, data matrix is needed", call. = FALSE)
     } else {
-      if ((indice == 1) || (indice == 2) || (indice == 3) || (indice == 4) || 
-        (indice == 5) || (indice == 6) || (indice == 7) || (indice == 8) || 
-        (indice == 9) || (indice == 10) || (indice == 12) || (indice == 14) || 
-        (indice == 15) || (indice == 16) || (indice == 17) || (indice == 
-        18) || (indice == 19) || (indice == 20) || (indice == 23) || (indice == 
-        24) || (indice == 25) || (indice == 27) || (indice == 28) || (indice == 
-        29) || (indice == 30) || (indice == 31) || (indice == 32)) 
+      if (indice == 1 || indice == 2 || indice == 3 || indice == 4 || 
+        indice == 5 || indice == 6 || indice == 7 || indice == 8 || 
+        indice == 9 || indice == 10 || indice == 12 || indice == 14 || 
+        indice == 15 || indice == 16 || indice == 17 || indice == 18 || 
+        indice == 19 || indice == 20 || indice == 23 || indice == 24 || 
+        indice == 25 || indice == 27 || indice == 28 || indice == 29 || 
+        indice == 30 || indice == 31 || indice == 32) 
         stop("\n", "Data matrix is needed. Only frey, mcclain, cindex, ", 
           "sihouette and dunn can be computed.", "\n", call. = FALSE)
       
@@ -99,28 +99,24 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     }
   } else {
     jeu1 <- as.matrix(data)
-    numberObsBefore <- dim(jeu1)[1]
     jeu <- na.omit(jeu1)  # returns the object with incomplete cases removed 
-    nn <- numberObsAfter <- dim(jeu)[1]
+    nn <- dim(jeu)[1]
     pp <- dim(jeu)[2]
     TT <- t(jeu) %*% jeu
     sizeEigenTT <- length(eigen(TT)[["values"]])
     eigenValues <- eigen(TT / (nn - 1))[["values"]]
-    
+
     # Only for indices using vv : CCC, Scott, marriot, tracecovw, tracew,
     # friedman, rubin
-    
-    if (any((indice == 4) || (indice == 5) || (indice == 6) || (indice == 7) || 
-      (indice == 8) || (indice == 9) || (indice == 10) || (indice == 31) || 
-      (indice == 32))) {
-      for (i in 1:sizeEigenTT) {
-        if (eigenValues[i] < 0) {
-          warning("The TSS matrix is indefinite. There must be too many ", 
-          "missing values. The following indices cannot be calculated:\n", 
-          "CCC, Scott, Marriot, Friedman, and Ratkowsky", call. = FALSE)
-          indef <- TRUE
-          break
-        }
+
+    if (indice == 4 || indice == 5 || indice == 6 || indice == 7 || 
+      indice == 8 || indice == 9 || indice == 10 || indice == 31 || 
+      indice == 32) {
+      if (any(eigenValues < 0)) {
+        warning("The TSS matrix is indefinite. There must be too many ",
+                "missing values. The following indices cannot be calculated:\n",
+                "CCC, Scott, Marriot, Friedman, and Ratkowsky", call. = FALSE)
+        indef <- TRUE
       }
       s1 <- sqrt(eigenValues)
       ss <- rep(1, sizeEigenTT)
@@ -134,6 +130,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         vv <- prod(ss)
       }
     }
+
   }
   
   # &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&#
