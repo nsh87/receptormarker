@@ -121,45 +121,27 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   # &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&#
   # Distances # #
   # &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&#
-  
-  if (is.null(distance)) 
-    distanceM <- 7
-  if (!is.null(distance)) 
-    distanceM <- pmatch(distance, c("euclidean", "maximum", "manhattan",
-                                    "canberra", "binary", "minkowski"))
-  if (is.na(distanceM)) {
-    stop("invalid distance", call. = FALSE)
-  }
   if (is.null(diss)) {
-    if (distanceM == 1) {
-      md <- dist(jeu, method = "euclidean") # dist function computes and returns
-                                            # the distance matrix computed by
-                                            # using the specified distance
-                                            # measure to compute the distances
-                                            # between the rows of a data matrix.
-    }
-    if (distanceM == 2) {
-      md <- dist(jeu, method = "maximum")
-    } else if (distanceM == 3) {
-      md <- dist(jeu, method = "manhattan")
-    } else if (distanceM == 4) {
-      md <- dist(jeu, method = "canberra")
-    } else if (distanceM == 5) {
-      md <- dist(jeu, method = "binary")
-    } else if (distanceM == 6) {
-      md <- dist(jeu, method = "minkowski")
-    } else if (distanceM == 7) {
+    if (is.null(distance)) {
       stop("dissimilarity matrix and distance are both NULL", call. = FALSE)
+    } else {
+      distanceM <- pmatch(distance, c("euclidean", "maximum", "manhattan",
+                                      "canberra", "binary", "minkowski"))
+      if (is.na(distanceM)) {
+        stop("invalid distance", call. = FALSE)
+      } else {
+        md <- dist(jeu, method = distance) # dist function computes and returns
+                                           # the distance matrix computed by
+                                           # using the specified distance
+                                           # measure to compute the distances
+                                           # between the rows of a data matrix.
+      }
     }
+  } else if (!is.null(distance)) {
+    stop("dissimilarity matrix and distance are both not null", call. = FALSE)
+  } else {
+    md <- diss
   }
-  if (!is.null(diss)) {
-    if ((distanceM == 1) || (distanceM == 2) || (distanceM == 3) ||
-        (distanceM == 4) || (distanceM == 5) || (distanceM == 6)) 
-      stop("dissimilarity matrix and distance are both not null", call. = FALSE)
-    else 
-      md <- diss
-  }
-  
   # &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&# #
   # Methods # #
   # &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&#
