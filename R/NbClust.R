@@ -50,7 +50,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   
   if (is.null(method)) 
     stop("method is NULL", call. = FALSE)
-  method <- pmatch(method, c("ward.D2", "single", "complete", "average",
+  methodM <- pmatch(method, c("ward.D2", "single", "complete", "average",
                              "mcquitty", "median", "centroid", "kmeans",
                              "ward.D"))
 
@@ -75,7 +75,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   }
 
   if (is.null(data)) {
-    if (method == 8) {
+    if (methodM == 8) {
       stop("\n", "method = kmeans, data matrix is needed", call. = FALSE)
     } else {
       if (any(indice == c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 15, 16, 17, 18,
@@ -145,7 +145,6 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   # &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&# #
   # Methods # #
   # &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&#
-
   res <- array(0, c(max_nc - min_nc + 1, 30))
   x_axis <- min_nc:max_nc
   resCritical <- array(0, c(max_nc - min_nc + 1, 4))
@@ -159,26 +158,12 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
                      "Ball", "Ptbiserial", "Gap", "Frey", "McClain", "Gamma",
                      "Gplus", "Tau", "Dunn", "Hubert", "SDindex", "Dindex",
                      "SDbw")
-  if (is.na(method)) 
+  if (is.na(methodM)) {
     stop("invalid clustering method", call. = FALSE)
-  if (method == -1) 
+  } else if (methodM == -1) {
     stop("ambiguous method", call. = FALSE)
-  if (method == 1) {
-    hc <- hclust(md, method = "ward.D2")
-  } else if (method == 2) {
-    hc <- hclust(md, method = "single")
-  } else if (method == 3) {
-    hc <- hclust(md, method = "complete")
-  } else if (method == 4) {
-    hc <- hclust(md, method = "average")
-  } else if (method == 5) {
-    hc <- hclust(md, method = "mcquitty")
-  } else if (method == 6) {
-    hc <- hclust(md, method = "median")
-  } else if (method == 7) {
-    hc <- hclust(md, method = "centroid")
-  } else if (method == 9) {
-    hc <- hclust(md, method = "ward.D")
+  } else if (methodM != 8) {
+    hc <- hclust(md, method = method)
   }
   
   # &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&# #
@@ -1147,7 +1132,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         clall1 <- cbind(cl0, cl1, cl2)
       }
     }
-    if (method == 8) {
+    if (methodM == 8) {
       set.seed(1)
       cl2 <- kmeans(jeu, nc + 1)[["cluster"]]
       set.seed(1)
@@ -1312,7 +1297,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
                                  method = "ward.D", d = NULL,
                                  centrotypes = "centroids")
       }
-      if (method == 8) {
+      if (methodM == 8) {
         resultSGAP <- Indice.Gap(x = jeu, clall = clall,
                                  reference.distribution = "unif", B = 10,
                                  method = "k-means", d = NULL,
