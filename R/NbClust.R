@@ -1117,8 +1117,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   ################ 
   
   for (nc in min_nc:max_nc) {
-    if (any(method == 1) || (method == 2) || (method == 3) || (method == 4) || 
-      (method == 5) || (method == 6) || (method == 7) || (method == 9)) {
+    if (any(methodM == c(1, 2, 3, 4, 5, 6, 7, 9))) {
       cl1 <- cutree(hc, k = nc)
       cl2 <- cutree(hc, k = nc + 1)
       clall <- cbind(cl1, cl2)
@@ -1126,13 +1125,11 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       if (nc >= 2) {
         cl0 <- cutree(hc, k = nc - 1)
         clall1 <- cbind(cl0, cl1, cl2)
-      }
-      if (nc == 1) {
+      } else if (nc == 1) {
         cl0 <- rep(NA, nn)
         clall1 <- cbind(cl0, cl1, cl2)
       }
-    }
-    if (methodM == 8) {
+    } else if (methodM == 8) {
       set.seed(1)
       cl2 <- kmeans(jeu, nc + 1)[["cluster"]]
       set.seed(1)
@@ -1144,15 +1141,13 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         set.seed(1)
         cl0 <- kmeans(jeu, nc - 1)[["cluster"]]
         clall1 <- cbind(cl0, cl1, cl2)
-      }
-      if (nc == 2) {
+      } else if (nc == 2) {
         set.seed(1)
         cl1 <- kmeans(jeu, nc)[["cluster"]]
         clall <- cbind(cl1, cl2)
         cl0 <- rep(1, nn)
         clall1 <- cbind(cl0, cl1, cl2)
-      }
-      if (nc == 1) {
+      } else if (nc == 1) {
         stop("Number of clusters must be higher than 2", call. = FALSE)
       }
     }
@@ -1249,49 +1244,49 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     }
     ########### Gap - 20e colonne de res ############
     if (any((indice == 20) || (indice == 32))) {
-      if (method == 1) {
+      if (methodM == 1) {
         resultSGAP <- Indice.Gap(x = jeu, clall = clall,
                                  reference.distribution = "unif", B = 10,
                                  method = "ward.D2", d = NULL,
                                  centrotypes = "centroids")
       }
-      if (method == 2) {
+      if (methodM == 2) {
         resultSGAP <- Indice.Gap(x = jeu, clall = clall,
                                  reference.distribution = "unif", B = 10,
                                  method = "single", d = NULL,
                                  centrotypes = "centroids")
       }
-      if (method == 3) {
+      if (methodM == 3) {
         resultSGAP <- Indice.Gap(x = jeu, clall = clall,
                                  reference.distribution = "unif", B = 10,
                                  method = "complete", d = NULL,
                                  centrotypes = "centroids")
       }
-      if (method == 4) {
+      if (methodM == 4) {
         resultSGAP <- Indice.Gap(x = jeu, clall = clall,
                                  reference.distribution = "unif", B = 10,
                                  method = "average", d = NULL,
                                  centrotypes = "centroids")
       }
-      if (method == 5) {
+      if (methodM == 5) {
         resultSGAP <- Indice.Gap(x = jeu, clall = clall,
                                  reference.distribution = "unif", B = 10,
                                  method = "mcquitty", d = NULL,
                                  centrotypes = "centroids")
       }
-      if (method == 6) {
+      if (methodM == 6) {
         resultSGAP <- Indice.Gap(x = jeu, clall = clall,
                                  reference.distribution = "unif", B = 10,
                                  method = "median", d = NULL,
                                  centrotypes = "centroids")
       }
-      if (method == 7) {
+      if (methodM == 7) {
         resultSGAP <- Indice.Gap(x = jeu, clall = clall,
                                  reference.distribution = "unif", B = 10,
                                  method = "centroid", d = NULL,
                                  centrotypes = "centroids")
       }
-      if (method == 9) {
+      if (methodM == 9) {
         resultSGAP <- Indice.Gap(x = jeu, clall = clall,
                                  reference.distribution = "unif", B = 10,
                                  method = "ward.D", d = NULL,
@@ -1877,8 +1872,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     
     ########################## The Best partition ###################
     
-    if (any((method == 1) || (method == 2) || (method == 3) || (method == 4) ||
-      (method == 5) || (method == 6) || (method == 7) || (method == 9))) 
+    if (any((methodM == 1) || (methodM == 2) || (methodM == 3) || (methodM == 4) ||
+      (methodM == 5) || (methodM == 6) || (methodM == 7) || (methodM == 9))) 
       partition <- cutree(hc, k = j)
     else {
       set.seed(1)
@@ -1894,8 +1889,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
           (indice == 22) || (indice == 23) || (indice == 24) ||
           (indice == 25) || (indice == 26) || (indice == 28) ||
           (indice == 30))) {
-    if (any((method == 1) || (method == 2) || (method == 3) || (method == 4) ||
-      (method == 5) || (method == 6) || (method == 7) || (method == 9))) 
+    if (any((methodM == 1) || (methodM == 2) || (methodM == 3) || (methodM == 4) ||
+      (methodM == 5) || (methodM == 6) || (methodM == 7) || (methodM == 9))) 
       partition <- cutree(hc, k = best.nc)
     else {
       set.seed(1)
