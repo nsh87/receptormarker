@@ -231,17 +231,13 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     distance <- matrix(0, ncol = 1, nrow = n)
     density <- matrix(0, ncol = 1, nrow = k)
     centers.matrix <- centers(cl, x)
-    stdev <- Average.scattering(cl, x)[["stdev"]]
+    stdev <- as.vector(Average.scattering(cl, x)[["stdev"]])
     for (i in 1:n) {
-      u <- 1
-      while (cl[i] != u)
-        u <- u + 1
-      for (j in 1:ncol(x)) {
-        distance[i] <- distance[i] + (x[i, j] - centers.matrix[u, j]) ^ 2
-      }
-      distance[i] <- sqrt(distance[i])
-      if (distance[i] <= stdev) 
-        density[u] <- density[u] + 1
+      u <- cl[i]
+      distance[i] <- sqrt(sum((x[i, ] - centers.matrix[u, ]) ^ 2))
+    }
+    for (u in 1:k) {
+      density[u] <- sum(as.vector(distance[cl == u]) <= stdev)
     }
     dens <- list(distance = distance, density = density)
     return(dens)
