@@ -189,40 +189,36 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   Average.scattering <- function(cl, x) {
     x <- as.matrix(x)
     n <- length(cl)
+    m <- ncol(x)
     k <- max(cl)
     centers.matrix <- centers(cl, x)
     cluster.size <- numeric(0)
-    variance.clusters <- matrix(0, ncol = ncol(x), nrow = k)
-    var <- matrix(0, ncol = ncol(x), nrow = k)
-    for (u in 1:k) 
-      cluster.size[u] <- sum(cl == u)
+    variance.clusters <- matrix(0, ncol = m, nrow = k)
+    var <- matrix(0, ncol = m, nrow = k)
     for (u in 1:k) {
-      for (j in 1:ncol(x)) {
-        for (i in 1:n) {
-          if (cl[i] == u) 
-            variance.clusters[u, j] <- (variance.clusters[u, j] + (x[i, j] - 
-              centers.matrix[u, j]) ^ 2)
-        }
+      cluster.size[u] <- sum(cl == u)
+    }
+    for (u in 1:k) {
+      for (j in 1:m) {
+        variance.clusters[u, j] <- sum((x[cl == u, j] -
+          centers.matrix[u, j]) ^ 2) / cluster.size[u]
       }
     }
-    for (u in 1:k) {
-      for (j in 1:ncol(x))
-        variance.clusters[u, j] <- variance.clusters[u, j] / cluster.size[u]
-    }
     variance.matrix <- numeric(0)
-    for (j in 1:ncol(x))
+    for (j in 1:m) {
       variance.matrix[j] <- var(x[, j]) * (n - 1) / n
+    }
     Somme.variance.clusters <- 0
-    for (u in 1:k)
-      Somme.variance.clusters <- (Somme.variance.clusters +
-                                    sqrt(variance.clusters[u, ] %*%
-                                           variance.clusters[u, ]))
+    for (u in 1:k) {
+      Somme.variance.clusters <- Somme.variance.clusters +
+        sqrt(variance.clusters[u, ] %*% variance.clusters[u, ])
+    }
     # Standard deviation
     stdev <- 1 / k * sqrt(Somme.variance.clusters)
     
     # Average scattering for clusters
-    scat <- 1 / k * (Somme.variance.clusters / sqrt(variance.matrix %*%
-                                                      variance.matrix))
+    scat <- 1 / k * Somme.variance.clusters /
+      sqrt(variance.matrix %*% variance.matrix)
     scat <- list(stdev = stdev, centers = centers.matrix,
                  variance.intraclusters = variance.clusters, scatt = scat)
     return(scat)
