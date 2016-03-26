@@ -251,22 +251,18 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     centers.matrix <- centers(cl, x)
     stdev <- Average.scattering(cl, x)[["stdev"]]
     density.bw <- matrix(0, ncol = k, nrow = k)
-    u <- 1
     for (u in 1:k) {
       for (v in 1:k) {
         if (v != u) {
           distance <- matrix(0, ncol = 1, nrow = n)
           moy <- (centers.matrix[u, ] + centers.matrix[v, ]) / 2
           for (i in 1:n) {
-          if ((cl[i] == u) || (cl[i] == v)) {
-            for (j in 1:ncol(x)) {
-              distance[i] <- distance[i] + (x[i, j] - moy[j]) ^ 2
+            if (any(cl[i] == c(u, v))) {
+              distance[i] <- sqrt(sum((x[i, ] - moy) ^ 2))
+              if (distance[i] <= stdev) {
+                density.bw[u, v] <- density.bw[u, v] + 1
+              }
             }
-            distance[i] <- sqrt(distance[i])
-            if (distance[i] <= stdev) {
-            density.bw[u, v] <- density.bw[u, v] + 1
-            }
-          }
           }
         }
       }
@@ -275,8 +271,9 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     S <- 0
     for (u in 1:k) {
       for (v in 1:k) {
-        if (max(density.clust[u], density.clust[v]) != 0) 
-          S <- S + (density.bw[u, v] / max(density.clust[u], density.clust[v]))
+        max_dens <- max(density.clust[u], density.clust[v])
+        if (max_dens != 0) 
+          S <- S + density.bw[u, v] / max_dens
       }
     }
     density.bw <- S / (k * (k - 1))
