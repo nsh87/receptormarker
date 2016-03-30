@@ -185,6 +185,10 @@ validate_rings <- function(rings, d) {
           stop(err, call.=FALSE)
         }
       }
+    } else if ("all" %in% rings && length(rings) > 1) {
+        err <- paste0(c("Only a single column can be annotated with rings ",
+                        "when using the value 'all'"), collapse="")
+        stop(err, call.=FALSE)
     } else {
       return()
     }
@@ -437,7 +441,7 @@ calculate_canvas_size <- function(xml_file, condensed, rings) {
   canvas_size <- base_size + extra_room
   # Need to add extra room if there are outer rings (~100 pixels per ring works)
   if (!is.null(rings)) {
-    canvas_size <- canvas_size + length(rings) * 100
+    canvas_size <- canvas_size + length(rings) * 110
   }
   if (!(is.null(rings)) && num_elements <= 90) {
     canvas_size <- canvas_size + 200
@@ -555,7 +559,145 @@ index_with_wrap <- function(index, v) {
 }
 
 
-#' @title Add rings to a PhyloXML
+#' @title Add rings to a PhyloXML for each unique value in a single column
+#' @description An internal function that creates an outer ring for each
+#' unique value in a single column. Ring annotations are not mutually exclusive,
+#' so if a single sequence repeats and it has multiple labels in the annotated
+#' column then the single sequence will have multiple rings annotated.
+#' @template -xml_file
+#' @template -seqs
+#' @param d_clean The cleaned data frame from which the \code{seqs} were
+#' extracted, both preferably cleaned by \code{\link{clean_data}}.
+#' @param seqs_col Either an integer corresponding to a column index or a string
+#' corresponding to a column name in d that contains the sequences.
+#' @template -rings
+#' @template -condensed
+#' @return A path to the PhyloXML file annotated with rings data.
+#' @seealso \code{\link{radial_phylo}}, \code{\link{add_phylo_outer_rings}}
+#' @keywords internal
+add_phylo_outer_rings_all <- function(xml_file, seqs, d_clean, seqs_col,
+                                      rings, condensed) {
+  colors <- c(green="#82A538", orange="#B1903C", blue="#626DBC", pink="#B5598F",
+              turqoise="#0DA765", yellow="#E9E700", purple="#64059C",
+              tangerine="#DE531C")
+  # Need to create a color map, mapping each unique ring value to a color in
+  # the color wheel you're using.
+  ring_col <- names(rings)[[1]]
+  ring_values <- unique(d_clean[, ring_col])
+  ring_map <- vapply(seq_along(ring_values), FUN.VALUE=character(1),
+                     FUN=function(x) {
+    index_with_wrap(x, colors)[["name"]]
+  })
+  names(ring_map) <- ring_values
+  
+  # If condensed == TRUE, the sequences in xml_file are unique; in order to get
+  # attributes for each ring, for each sequence you have to look at each
+  # occurrence of it and annotate appropriately.
+  doc <- XML::xmlParse(xml_file)
+  root <- XML::xmlRoot(doc)
+  ns <- c(ns=XML::xmlNamespace(root))
+  unique_seqs <- unique(seqs)
+  # For each sequence...
+  for (seq in unique_seqs) {
+    search_str <- paste0("//ns:name[text()='", seq, "']")  # Grab all XML nodes
+    seq_nodes <- XML::getNodeSet(root, search_str, namespaces=ns)
+    # Get all rows of data where sequence == seq
+    seq_data_rows <- d_clean[d_clean[, seqs_col] == seq, ]
+    # Need to add rings data to the parent (clade) of each XML node:
+    # <clade>
+    #   <name>CATSREWGEAYEQYF</name>
+    #   <branch_length>0.141994136</branch_length>
+    #   <chart>
+    #     <outergroup1>green</outergroup1>  # This colors first ring green
+    #     <outergroup4>pink</outergroup4>  # This colors fourth ring pink
+    #   </chart>
+    # </clade>
+    node_parents <- lapply(seq_nodes, XML::xmlParent)
+    lapply(seq_along(node_parents), function(y, i) {
+      parent <- y[[i]]  # Current parent node
+      if (condensed == FALSE) {
+        # Annotate the appropriate ring based on the value in the ring column
+        data_row <- seq_data_rows[i, ]
+        # Get the value in the current row's ring column
+        val <- data_row[[ring_col]]
+        # Get the index of that value in the ring map
+        idx <- which(names(ring_map) == val)
+        # Add the appropriate XML node to color the appropriate ring
+        outer_ring_name <- paste0(c("outergroup", idx), collapse="")
+        outer_ring_el <- XML::newXMLNode(outer_ring_name, ring_map[[idx]])
+        # No <chart> node if condensed == FALSE so add it now
+        chart_el <- XML::newXMLNode("chart")
+        chart_el <- XML::addChildren(chart_el, kids=c(outer_ring_el))
+        parent <- XML::addChildren(parent, chart_el)
+      } else if (condensed == TRUE) {
+        # For this sequence, get the unique values in the ring column and
+        # annotate each of them.
+        unique_ring_col_vals <- unique(seq_data_rows[, ring_col])
+        rings_to_add <- lapply(unique_ring_col_vals, function(val) {
+          # Very similar to above
+          idx <- which(names(ring_map) == val)
+          outer_ring_name <- paste0(c("outergroup", idx), collapse="")
+          outer_ring_el <- XML::newXMLNode(outer_ring_name, ring_map[[idx]])
+          outer_ring_el
+        })
+        # The <chart> node exists if condensed == TRUE
+        chart_el <- XML::xmlElementsByTagName(parent, "chart")[[1]]
+        if (length(rings_to_add) > 0) {
+          chart_el <- XML::addChildren(chart_el, kids=rings_to_add)
+          parent <- XML::addChildren(parent, chart_el)
+        }
+      }
+      parent
+    }
+    , y=node_parents
+    )
+  }
+  # Add ring styles. If condensed == FALSE there won't be a <styles> or
+  # <charts> section yet. Have to create them box. <charts> section dictates
+  # how the rings will be drawn and what data type they are. <style> matches
+  # up with the colors ('orange', 'blue', etc.)
+  xpath <- "/ns:phyloxml/ns:phylogeny"  # nolint
+  phylogeny_set <- XML::getNodeSet(root, xpath, namespaces=ns)
+  phylogeny <- phylogeny_set[[1]]
+  # Outer rings color styles
+  outergroups <- vector(mode="list", length=length(ring_map))
+  for (q in c(1:length(ring_map))) {
+    outergroup_name <- paste0(c("outergroup", q), collapse="")
+    outergroups[[q]] <- XML::newXMLNode(outergroup_name, attrs=c(disjointed=q,
+                                                                type="binary"))
+  }
+  # List names are not preserved in lapply...have to use indices
+  color_styles <- lapply(seq_along(ring_map), function(y, n, i) {
+    hex_color <- colors[[y[[i]]]]
+    XML::newXMLNode(y[[i]], attrs=c(fill=hex_color, opacity="#0.95",
+                                    stroke="#DDDDDD"))
+  }
+  , y=ring_map, n=names(ring_map)
+  )
+  if (condensed == FALSE) {
+    render_el <- XML::newXMLNode("render")
+    charts_el <- XML::newXMLNode("charts")
+    charts_el <- XML::addChildren(charts_el, kids=outergroups)
+    styles_el <- XML::newXMLNode("styles")
+    styles_el <- XML::addChildren(styles_el, kids=color_styles)
+    render_el <- XML::addChildren(render_el, charts_el, styles_el)
+    phylogeny <- XML::addChildren(phylogeny, render_el)
+  } else if (condensed == TRUE) {
+    xpath <- "/ns:phyloxml/ns:phylogeny/ns:render/ns:charts"  # nolint
+    charts_el <- XML::getNodeSet(root, xpath, namespaces=ns)[[1]]
+    charts_el <- XML::addChildren(charts_el, kids=outergroups)
+    xpath <- "/ns:phyloxml/ns:phylogeny/ns:render/ns:styles"  # nolint
+    styles_el <- XML::getNodeSet(root, xpath, namespaces=ns)[[1]]
+    styles_el <- XML::addChildren(styles_el, kids=color_styles) 
+  }
+  XML::saveXML(doc=doc, file=xml_file,
+               prefix="<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+               indent=FALSE)
+  xml_file
+}
+
+
+#' @title Add rings to a PhyloXML corresponding to a matched value
 #' @description An internal function that adds a given number of rings to a
 #' condensed or not-condensed radial phylogram. Using the sequences in the
 #' PhyloXML, it examines the provided data \code{d_clean} and adds the XML data
@@ -571,7 +713,7 @@ index_with_wrap <- function(index, v) {
 #' @template -rings
 #' @template -condensed
 #' @return A path to the PhyloXML file annotated with rings data.
-#' @seealso \code{\link{radial_phylo}}
+#' @seealso \code{\link{radial_phylo}}, \code{\link{add_phylo_outer_rings_all}}
 #' @keywords internal
 add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
                                   rings, condensed) {
@@ -872,7 +1014,10 @@ radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
   }
   
   # Add outer-rings to phylo if there are any requested
-  if (!is.null(rings)) {
+  if (!is.null(rings) && "all" %in% rings) {
+    xml_file <- add_phylo_outer_rings_all(xml_file, seqs, clean[["d"]],
+                                          seqs_col, rings, condense)
+  } else if (!is.null(rings)) {
     xml_file <- add_phylo_outer_rings(xml_file, seqs, clean[["d"]], seqs_col,
                                       rings, condense)
   }
