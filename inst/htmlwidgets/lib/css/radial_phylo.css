@@ -16,3 +16,28 @@
 .custom-tooltip {
   font-size: 11px !important;
 }
+
+#legend {
+  position: absolute;
+  bottom: 4px;
+}
+
+#legend_list {
+  list-style: none;
+  padding: 0px;
+}
+
+#legend_list li {
+  float: left;
+  margin-right: 10px;
+  font-family: "Verdana";
+  font-size: 12px;
+}
+
+#legend_list span {
+  border: 1px solid #cccccc;
+  float: left;
+  width: 10px;
+  height: 10px;
+  margin: 2px;
+}

@@ -5,8 +5,11 @@
 \title{Create an interactive radial phylogram}
 \usage{
 radial_phylo(d, seqs_col = NULL, dist = "ident", condense = FALSE,
-  rings = NULL, canvas_size = "auto", font_size = 12, scale = TRUE,
-  label = TRUE, browser = FALSE, verbose = FALSE, fast = FALSE)
+  rings = NULL, canvas_size = "auto", font_size = 12,
+  color_wheel = c(green = "#82A538", orange = "#B1903C", blue = "#626DBC",
+  pink = "#B5598F", turqoise = "#0DA765", yellow = "#E9E700", purple =
+  "#64059C", tangerine = "#DE531C"), scale = TRUE, label = TRUE,
+  browser = FALSE, verbose = FALSE, fast = FALSE)
 }
 \arguments{
 \item{d}{A data frame or character vector containing protein sequences.}
@@ -73,6 +76,12 @@ Details section for more information.}
 \item{font_size}{An integer font size for the phylogram's labels. It is
 suggested to leave this at the default value and then adjust only if
 necessary.}
+
+\item{color_wheel}{A named character vector where the names typically
+describe a color and the values correspond to 6-character hex color codes
+(preceded with "#"). These colors are used for the outer \code{rings} of the
+phylogram. If more colors than supplied are needed, the colors in the will be
+recycled, starting from the beginning.}
 
 \item{scale}{\code{TRUE} or \code{FALSE}, depending on whether or not the
 phylogram should scale to fit the browser or RStudio Viewer window. If

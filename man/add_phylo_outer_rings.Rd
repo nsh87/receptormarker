@@ -4,7 +4,8 @@
 \alias{add_phylo_outer_rings}
 \title{Add rings to a PhyloXML corresponding to a matched value}
 \usage{
-add_phylo_outer_rings(xml_file, seqs, d_clean, seqs_col, rings, condensed)
+add_phylo_outer_rings(xml_file, seqs, d_clean, seqs_col, rings, colors,
+  condensed)
 }
 \arguments{
 \item{xml_file}{A path to a PhyloXML file.}

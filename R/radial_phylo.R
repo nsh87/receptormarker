@@ -132,8 +132,41 @@ validate_d_seqs <- function(d, seqs_col) {
       validate_sequences(seqs)
       return()
     } else {
-      err <- paste0(c("Unexpected error retrieving sequences. Please check",
-                      "parameters 'd' and 'seqs_col'."), collapse=" ")
+      err <- paste0(c("Unexpected error retrieving sequences. Please check ",
+                      "parameters 'd' and 'seqs_col'."), collapse="")
+      stop(err, call.=FALSE)
+    }
+  },
+  error = function(e) {
+    stop(e)
+  }
+  )
+}
+
+
+#' @title Validate the \code{color_wheel} for a phylogram
+#' @description An internal function that raises an error if \code{color_wheel}
+#' is not a named character vectors or if the hex codes are not valid.
+#' @param color_wheel The \code{color_wheel} argument supplied to make the
+#' radial phylogram.
+#' @keywords internal
+validate_color_wheel <- function(color_wheel) {
+  tryCatch({
+    if (class(color_wheel) != "character") {
+      err <- paste0(c("The argument 'color_wheel' must be a named character ",
+                      "vector"), collapse="")
+      stop(err, call.=FALSE)
+    } else if (length(
+        names(color_wheel)[names(color_wheel) != ""]) != length(color_wheel)) {
+      err <- paste0(c("All elements in the argument 'color_wheel' must be ",
+                      "named", collapse=""))
+      stop(err, call.=FALSE)
+    } else if (any(is.na(color_wheel))) {
+      # You can't have rings <- c(black=NA)
+      stop("Values in the argument 'color_wheel' cannot be NA", call.=FALSE)
+    } else if (any(grepl("^#[0-9a-zA-Z]{6}$", color_wheel)) == FALSE) {
+      err <- paste0(c("Values in the argument 'color_wheel' must be valid hex ",
+                      "color codes", collapse=""))
       stop(err, call.=FALSE)
     }
   },
@@ -572,14 +605,13 @@ index_with_wrap <- function(index, v) {
 #' corresponding to a column name in d that contains the sequences.
 #' @template -rings
 #' @template -condensed
-#' @return A path to the PhyloXML file annotated with rings data.
+#' @return A list containing the path to the PhyloXML \code{xml_file} annotated
+#' with rings data, and the \code{ring_map} matching unique values in the
+#' annotated column with their colors.
 #' @seealso \code{\link{radial_phylo}}, \code{\link{add_phylo_outer_rings}}
 #' @keywords internal
 add_phylo_outer_rings_all <- function(xml_file, seqs, d_clean, seqs_col,
-                                      rings, condensed) {
-  colors <- c(green="#82A538", orange="#B1903C", blue="#626DBC", pink="#B5598F",
-              turqoise="#0DA765", yellow="#E9E700", purple="#64059C",
-              tangerine="#DE531C")
+                                      rings, colors, condensed) {
   # Need to create a color map, mapping each unique ring value to a color in
   # the color wheel you're using.
   ring_col <- names(rings)[[1]]
@@ -694,6 +726,10 @@ add_phylo_outer_rings_all <- function(xml_file, seqs, d_clean, seqs_col,
                prefix="<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
                indent=FALSE)
   xml_file
+  # Generate better ring color map to return
+  color_map <- colors[ring_map]
+  names(color_map) <- names(ring_map)
+  list("xml_file"=xml_file, "ring_map"=color_map)
 }
 
 
@@ -716,10 +752,7 @@ add_phylo_outer_rings_all <- function(xml_file, seqs, d_clean, seqs_col,
 #' @seealso \code{\link{radial_phylo}}, \code{\link{add_phylo_outer_rings_all}}
 #' @keywords internal
 add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
-                                  rings, condensed) {
-  colors <- c(green="#82A538", orange="#B1903C", blue="#626DBC", pink="#B5598F",
-              turqoise="#0DA765", yellow="#E9E700", purple="#64059C",
-              tangerine="#DE531C")
+                                  rings, colors, condensed) {
   # If condensed == TRUE, the sequences in xml_file are unique; in order to get
   # attributes for each ring, for each sequence you have to average each
   # attribute across all duplicate sequences, which means two algorithms
@@ -931,6 +964,11 @@ remove_phyloxml_labels <- function(xml_file) {
 #' @param font_size An integer font size for the phylogram's labels. It is
 #' suggested to leave this at the default value and then adjust only if
 #' necessary.
+#' @param color_wheel A named character vector where the names typically
+#' describe a color and the values correspond to 6-character hex color codes
+#' (preceded with "#"). These colors are used for the outer \code{rings} of the
+#' phylogram. If more colors than supplied are needed, the colors in the will be
+#' recycled, starting from the beginning.
 #' @param scale \code{TRUE} or \code{FALSE}, depending on whether or not the
 #' phylogram should scale to fit the browser or RStudio Viewer window. If
 #' \code{FALSE} and the phylogram is on a large canvas, it will be necessary to
@@ -956,6 +994,10 @@ remove_phyloxml_labels <- function(xml_file) {
 #' @export
 radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
                          rings=NULL, canvas_size="auto", font_size=12,
+                         color_wheel=c(green="#82A538", orange="#B1903C",
+                                       blue="#626DBC", pink="#B5598F",
+                                       turqoise="#0DA765", yellow="#E9E700",
+                                       purple="#64059C", tangerine="#DE531C"),
                          scale=TRUE, label=TRUE, browser=FALSE, verbose=FALSE,
                          fast=FALSE) {
   
@@ -965,8 +1007,8 @@ radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
   # Validate function parameters
   validate_not_null(list(d=d, dist=dist, condense=condense,
                          canvas_size=canvas_size, font_size=font_size,
-                         scale=scale, label=label, browser=browser,
-                         verbose=verbose, fast=fast))
+                         color_wheel=color_wheel, scale=scale, label=label,
+                         browser=browser, verbose=verbose, fast=fast))
   validate_canvas_size(canvas_size)
   validate_font_size(font_size)
   validate_true_false(list(condense=condense, scale=scale, browser=browser,
@@ -974,6 +1016,9 @@ radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
   validate_distance(dist)
   validate_d_seqs(d, seqs_col)
   validate_rings(rings, d)
+  validate_color_wheel(color_wheel)
+  
+  ring_map = ""  # Used to make color legend for ring annotations if they exist
   
   # Not necessary to have as func parameters; these will get set automatically
   width <- NULL
@@ -1015,11 +1060,14 @@ radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
   
   # Add outer-rings to phylo if there are any requested
   if (!is.null(rings) && "all" %in% rings) {
-    xml_file <- add_phylo_outer_rings_all(xml_file, seqs, clean[["d"]],
-                                          seqs_col, rings, condense)
+    r <- add_phylo_outer_rings_all(xml_file, seqs, clean[["d"]],
+                                   seqs_col, rings, color_wheel,
+                                   condense)
+    xml_file <- r[["xml_file"]]
+    ring_map <- r[["ring_map"]]
   } else if (!is.null(rings)) {
     xml_file <- add_phylo_outer_rings(xml_file, seqs, clean[["d"]], seqs_col,
-                                      rings, condense)
+                                      rings, color_wheel, condense)
   }
   
   # Calculate canvas size based on number of nodes in phylo.xml
@@ -1040,7 +1088,9 @@ radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
   x <- list(
     canvas_size = canvas_size,
     scale = scale,
-    font_size = font_size
+    font_size = font_size,
+    legend_values = names(ring_map),
+    legend_colors = unname(ring_map)
   )
   
   

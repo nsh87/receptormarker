@@ -90,6 +90,21 @@ HTMLWidgets.widget({
           var request = Y.io(uri);
       });
   };
+  
+    // Add function to allow creating elements after other elements
+  
+    // Create legend
+    if (x.legend_colors.length > 0) {
+      var legend = $("<div>", {id: "legend"});
+      var legend_list = $("<ul>", {id: "legend_list"});
+      $(legend).insertAfter($("#htmlwidget_container"));
+      $(legend).append(legend_list);
+      
+      // Create list elements for each legend item
+      $.each(x.legend_colors, function(i, item) {
+        $(legend_list).append("<li><span style='background-color: " + x.legend_colors[i] + ";'></span>" + x.legend_values[i] + "</li>");
+      });
+    }
 
     // Create DL image as PNG link
   	var a = document.createElement('a');

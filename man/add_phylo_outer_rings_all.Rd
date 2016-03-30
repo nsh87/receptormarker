@@ -4,7 +4,8 @@
 \alias{add_phylo_outer_rings_all}
 \title{Add rings to a PhyloXML for each unique value in a single column}
 \usage{
-add_phylo_outer_rings_all(xml_file, seqs, d_clean, seqs_col, rings, condensed)
+add_phylo_outer_rings_all(xml_file, seqs, d_clean, seqs_col, rings, colors,
+  condensed)
 }
 \arguments{
 \item{xml_file}{A path to a PhyloXML file.}
@@ -55,7 +56,9 @@ PhyloXML represents a condensed phylogram (i.e. a phylogram with only
 unique sequences and bars representing clonal expansion).}
 }
 \value{
-A path to the PhyloXML file annotated with rings data.
+A list containing the path to the PhyloXML \code{xml_file} annotated
+with rings data, and the \code{ring_map} matching unique values in the
+annotated column with their colors.
 }
 \description{
 An internal function that creates an outer ring for each
