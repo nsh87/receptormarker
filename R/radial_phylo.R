@@ -666,6 +666,32 @@ add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
   xml_file
 }
 
+#' @title Remove sequence labels from PhyloXML
+#' @description An internal function that removes the labels from the phylogram.
+#' @template -xml_file
+#' @return A path to the PhyloXML file with sequences removed.
+#' @seealso \code{\link{radial_phylo}}
+#' @keywords internal
+remove_phyloxml_labels <- function(xml_file) {
+  doc <- XML::xmlParse(xml_file)
+  root <- XML::xmlRoot(doc)
+  ns <- c(ns=XML::xmlNamespace(root))
+  # Get all elements that don't start with Biopython's "InnerXXX"
+  named_nodes <- XML::getNodeSet(root,
+                                 "//ns:name[not(starts-with(text(), 'Inner'))]",
+                                 namespaces=ns)
+  
+  # Remove all sequences from <name> nodes
+  lapply(named_nodes, function(n) {
+    node_name <- XML::xmlValue(n)
+    XML::xmlValue(n) <- ""
+  })
+  
+  XML::saveXML(doc=doc, file=xml_file,
+               prefix="<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+               indent=FALSE)
+  xml_file
+}
 
 #' @title Create an interactive radial phylogram
 #' @description Creates a JavaScript-based radial phylogram in RStudio or a
@@ -729,6 +755,8 @@ add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
 #' phylogram should scale to fit the browser or RStudio Viewer window. If
 #' \code{FALSE} and the phylogram is on a large canvas, it will be necessary to
 #' scroll to see the entire canvas.
+#' @param label \code{TRUE} or \code{FALSE}, depending on whether or not
+#' sequence labels should be present in the phylogram.
 #' @template -browser
 #' @param verbose \code{TRUE} or \code{FALSE}. If \code{TRUE} additional output
 #' is printed to the R console and the sequences, multiple sequence alignment,
@@ -748,19 +776,20 @@ add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
 #' @export
 radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
                          canvas_size="auto", font_size=12, scale=TRUE,
-                         browser=FALSE, verbose=FALSE, fast=FALSE) {
+                         label=TRUE, browser=FALSE, verbose=FALSE, fast=FALSE) {
   
   check_muscle(level="stop")
   biopy_existence <- check_bio_python(level="warn")
   
   # Validate function parameters
   validate_not_null(list(d=d, condense=condense, canvas_size=canvas_size,
-                         font_size=font_size, scale=scale, browser=browser,
-                         verbose=verbose, fast=fast))
+                         font_size=font_size, scale=scale, 
+                         label=label, browser=browser, verbose=verbose,
+                         fast=fast))
   validate_canvas_size(canvas_size)
   validate_font_size(font_size)
   validate_true_false(list(condense=condense, scale=scale, browser=browser,
-                        verbose=verbose, fast=fast))
+                           label=label, verbose=verbose, fast=fast))
   validate_d_seqs(d, seqs_col)
   validate_rings(rings, d)
   
@@ -808,14 +837,18 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
                                       rings, condense)
   }
   
-  # Also write the phyloxml to the verbose folder if the user wants it
-  if (verbose && file.exists(xml_file)) {
-    file.copy(xml_file, verbose_dir)
-  }
-  
   # Calculate canvas size based on number of nodes in phylo.xml
   if (canvas_size == "auto") {
     canvas_size <- calculate_canvas_size(xml_file, condense, rings) 
+  }
+  
+  if (!label) {
+    xml_file <- remove_phyloxml_labels(xml_file) 
+  }
+  
+  # Also write the phyloxml to the verbose folder if the user wants it
+  if (verbose && file.exists(xml_file)) {
+    file.copy(xml_file, verbose_dir)
   }
   
   # Forward options to radial_phylo.js using 'x'

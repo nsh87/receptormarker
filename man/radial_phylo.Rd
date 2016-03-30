@@ -5,8 +5,8 @@
 \title{Create an interactive radial phylogram}
 \usage{
 radial_phylo(d, seqs_col = NULL, condense = FALSE, rings = NULL,
-  canvas_size = "auto", font_size = 12, scale = TRUE, browser = FALSE,
-  verbose = FALSE, fast = FALSE)
+  canvas_size = "auto", font_size = 12, scale = TRUE, label = TRUE,
+  browser = FALSE, verbose = FALSE, fast = FALSE)
 }
 \arguments{
 \item{d}{A data frame or character vector containing protein sequences.}
@@ -50,6 +50,9 @@ necessary.}
 phylogram should scale to fit the browser or RStudio Viewer window. If
 \code{FALSE} and the phylogram is on a large canvas, it will be necessary to
 scroll to see the entire canvas.}
+
+\item{label}{\code{TRUE} or \code{FALSE}, depending on whether or not
+sequence labels should be present in the phylogram.}
 
 \item{browser}{\code{TRUE} or \code{FALSE}, depending on whether or not the 
 visualization should open in a browser window. Only applicable if using
