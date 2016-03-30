@@ -4,9 +4,9 @@
 \alias{radial_phylo}
 \title{Create an interactive radial phylogram}
 \usage{
-radial_phylo(d, seqs_col = NULL, condense = FALSE, rings = NULL,
-  canvas_size = "auto", font_size = 12, scale = TRUE, label = TRUE,
-  browser = FALSE, verbose = FALSE, fast = FALSE)
+radial_phylo(d, seqs_col = NULL, dist = "ident", condense = FALSE,
+  rings = NULL, canvas_size = "auto", font_size = 12, scale = TRUE,
+  label = TRUE, browser = FALSE, verbose = FALSE, fast = FALSE)
 }
 \arguments{
 \item{d}{A data frame or character vector containing protein sequences.}
@@ -15,6 +15,16 @@ radial_phylo(d, seqs_col = NULL, condense = FALSE, rings = NULL,
 to a column index or a string corresponding to a column name in \code{d}
 that contains the sequences. If \code{d} is a character vector,
 \code{seqs_col} should be \code{NULL}.}
+
+\item{dist}{A string representing a distance matrix to use for calculating
+distances from the sequence alignment. Only applicable if Biopython is
+installed and available. Must be one of 'benner6', 'benner22',
+'benner74', 'blosum100', 'blosum30', 'blosum35', 'blosum40', 'blosum45',
+'blosum50', 'blosum55', 'blosum60', 'blosum62', 'blosum65', 'blosum70',
+'blosum75', 'blosum80', 'blosum85', 'blosum90', 'blosum95', 'feng', 'fitch',
+'genetic', 'gonnet', 'grant', 'ident', 'johnson', 'levin', 'mclach',
+'miyata', 'nwsgappep', 'pam120', 'pam180', 'pam250', 'pam30', 'pam300',
+'pam60', 'pam90', 'rao', 'risler', 'structure'.}
 
 \item{condense}{\code{TRUE} or \code{FALSE}, depending on whether or not the
 radial phylogram should only contain unique sequences. If \code{TRUE}, clonal

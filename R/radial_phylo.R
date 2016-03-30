@@ -20,6 +20,34 @@ validate_font_size <- function(font_size) {
 }
 
 
+#' @title Validate the distance calculator to use on sequence alignment
+#' @description The distance calculator that BioPython creates uses any one of a
+#' number of distance matrices. This function validates that the user input
+#' a single one of these matrices to use for distance calculation.
+#' @param dist A string representing the distance matrix to use for distance
+#' calculations.
+#' @keywords internal
+validate_distance <- function(dist) {
+  distances <- c('benner6', 'benner22', 'benner74', 'blosum100',
+                 'blosum30', 'blosum35', 'blosum40', 'blosum45', 'blosum50',
+                 'blosum55', 'blosum60', 'blosum62', 'blosum65', 'blosum70',
+                 'blosum75', 'blosum80', 'blosum85', 'blosum90', 'blosum95',
+                 'feng', 'fitch', 'genetic', 'gonnet', 'grant', 'ident',
+                 'johnson', 'levin', 'mclach', 'miyata', 'nwsgappep', 'pam120',
+                 'pam180', 'pam250', 'pam30', 'pam300', 'pam60', 'pam90', 'rao',
+                 'risler', 'structure')
+  if (is.na(dist)) {
+    stop("Argument 'dist' must be a real value", call.=FALSE)
+  } else if (class(dist) != "character") {
+    stop("Argument 'dist' must be a string", call.=FALSE)
+  } else if (length(dist) != 1) {
+    stop("Argument 'dist' must be a single string", call.=FALSE)
+  } else if (!(dist %in% distances)) {
+    stop("Argument 'dist' is not a valid distance matrix", call.=FALSE) 
+  }
+}
+
+
 #' @title Validate a radial phylogram's canvas size
 #' @description An internal function that creates an error if \code{canvas_size}
 #' is invalid.
@@ -302,15 +330,16 @@ newick_to_phyloxml <- function(newick_file, verbose, verbose_dir) {
 #' seems to have no effect.
 #' @return A path to the PhyloXML file.
 #' @keywords internal
-phyloxml_via_biopython <- function(ms_alignment, verbose) {
+phyloxml_via_biopython <- function(ms_alignment, dist, verbose) {
   xml_file <- phyloxml_path()
   phyloxml_from_msa <- system.file("py", "phyloxml_from_msa.py",
                                    package="receptormarker")
   system(sprintf(
-    "python %s --msa %s --dest %s",
+    "python %s --msa %s --dest %s --distance %s",
     phyloxml_from_msa,
     ms_alignment,
-    xml_file
+    xml_file,
+    dist
     ),
     ignore.stdout=!verbose,
     ignore.stderr=!verbose
@@ -737,6 +766,15 @@ remove_phyloxml_labels <- function(xml_file) {
 #' PNG.
 #' @template -d
 #' @template -seqs_col
+#' @param dist A string representing a distance matrix to use for calculating
+#' distances from the sequence alignment. Only applicable if Biopython is
+#' installed and available. Must be one of 'benner6', 'benner22',
+#' 'benner74', 'blosum100', 'blosum30', 'blosum35', 'blosum40', 'blosum45',
+#' 'blosum50', 'blosum55', 'blosum60', 'blosum62', 'blosum65', 'blosum70',
+#' 'blosum75', 'blosum80', 'blosum85', 'blosum90', 'blosum95', 'feng', 'fitch',
+#' 'genetic', 'gonnet', 'grant', 'ident', 'johnson', 'levin', 'mclach',
+#' 'miyata', 'nwsgappep', 'pam120', 'pam180', 'pam250', 'pam30', 'pam300',
+#' 'pam60', 'pam90', 'rao', 'risler', 'structure'.
 #' @param condense \code{TRUE} or \code{FALSE}, depending on whether or not the
 #' radial phylogram should only contain unique sequences. If \code{TRUE}, clonal
 #' expansion (i.e. sequence frequency data) will be represented by orthogonal
@@ -774,22 +812,24 @@ remove_phyloxml_labels <- function(xml_file) {
 #' radial_phylo(tcr, 'seqs', condense=TRUE, rings=c(FOXP3=1, GATA3=1),
 #' browser=TRUE)
 #' @export
-radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
-                         canvas_size="auto", font_size=12, scale=TRUE,
-                         label=TRUE, browser=FALSE, verbose=FALSE, fast=FALSE) {
+radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
+                         rings=NULL, canvas_size="auto", font_size=12,
+                         scale=TRUE, label=TRUE, browser=FALSE, verbose=FALSE,
+                         fast=FALSE) {
   
   check_muscle(level="stop")
   biopy_existence <- check_bio_python(level="warn")
   
   # Validate function parameters
-  validate_not_null(list(d=d, condense=condense, canvas_size=canvas_size,
-                         font_size=font_size, scale=scale, 
-                         label=label, browser=browser, verbose=verbose,
-                         fast=fast))
+  validate_not_null(list(d=d, dist=dist, condense=condense,
+                         canvas_size=canvas_size, font_size=font_size,
+                         scale=scale, label=label, browser=browser,
+                         verbose=verbose, fast=fast))
   validate_canvas_size(canvas_size)
   validate_font_size(font_size)
   validate_true_false(list(condense=condense, scale=scale, browser=browser,
                            label=label, verbose=verbose, fast=fast))
+  validate_distance(dist)
   validate_d_seqs(d, seqs_col)
   validate_rings(rings, d)
   
@@ -820,7 +860,7 @@ radial_phylo <- function(d, seqs_col=NULL, condense=FALSE, rings=NULL,
     # Step 5: Convert the .newick to phylo.xml
     xml_file <- newick_to_phyloxml(newick_file, verbose, verbose_dir)
   } else {
-    xml_file_with_hash <- phyloxml_via_biopython(ms_alignment[["file"]],
+    xml_file_with_hash <- phyloxml_via_biopython(ms_alignment[["file"]], dist,
                                                  verbose)
     xml_file <- remove_phyloxml_hash(xml_file_with_hash, dedupe_hash)
   }
