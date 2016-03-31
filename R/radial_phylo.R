@@ -54,14 +54,14 @@ validate_arc <- function(arc) {
 #' calculations.
 #' @keywords internal
 validate_distance <- function(dist) {
-  distances <- c('benner6', 'benner22', 'benner74', 'blosum100',
-                 'blosum30', 'blosum35', 'blosum40', 'blosum45', 'blosum50',
-                 'blosum55', 'blosum60', 'blosum62', 'blosum65', 'blosum70',
-                 'blosum75', 'blosum80', 'blosum85', 'blosum90', 'blosum95',
-                 'feng', 'fitch', 'genetic', 'gonnet', 'grant', 'ident',
-                 'johnson', 'levin', 'mclach', 'miyata', 'nwsgappep', 'pam120',
-                 'pam180', 'pam250', 'pam30', 'pam300', 'pam60', 'pam90', 'rao',
-                 'risler', 'structure')
+  distances <- c("benner6", "benner22", "benner74", "blosum100",
+                 "blosum30", "blosum35", "blosum40", "blosum45", "blosum50",
+                 "blosum55", "blosum60", "blosum62", "blosum65", "blosum70",
+                 "blosum75", "blosum80", "blosum85", "blosum90", "blosum95",
+                 "feng", "fitch", "genetic", "gonnet", "grant", "ident",
+                 "johnson", "levin", "mclach", "miyata", "nwsgappep", "pam120",
+                 "pam180", "pam250", "pam30", "pam300", "pam60", "pam90", "rao",
+                 "risler", "structure")
   if (any(is.na(dist))) {
     stop("Argument 'dist' must be a real value", call.=FALSE)
   } else if (class(dist) != "character") {
@@ -953,7 +953,6 @@ remove_phyloxml_labels <- function(xml_file) {
   
   # Remove all sequences from <name> nodes
   lapply(named_nodes, function(n) {
-    node_name <- XML::xmlValue(n)
     XML::xmlValue(n) <- ""
   })
   
@@ -1009,13 +1008,13 @@ remove_phyloxml_labels <- function(xml_file) {
 #' @template -seqs_col
 #' @param dist A string representing a distance matrix to use for calculating
 #' distances from the sequence alignment. Only applicable if Biopython is
-#' installed and available. Must be one of 'benner6', 'benner22',
-#' 'benner74', 'blosum100', 'blosum30', 'blosum35', 'blosum40', 'blosum45',
-#' 'blosum50', 'blosum55', 'blosum60', 'blosum62', 'blosum65', 'blosum70',
-#' 'blosum75', 'blosum80', 'blosum85', 'blosum90', 'blosum95', 'feng', 'fitch',
-#' 'genetic', 'gonnet', 'grant', 'ident', 'johnson', 'levin', 'mclach',
-#' 'miyata', 'nwsgappep', 'pam120', 'pam180', 'pam250', 'pam30', 'pam300',
-#' 'pam60', 'pam90', 'rao', 'risler', 'structure'.
+#' installed and available. Must be one of "benner6", "benner22",
+#" "benner74", "blosum100", "blosum30", "blosum35", "blosum40", "blosum45",
+#" "blosum50", "blosum55", "blosum60", "blosum62", "blosum65", "blosum70",
+#" "blosum75", "blosum80", "blosum85", "blosum90", "blosum95", "feng", "fitch",
+#" "genetic", "gonnet", "grant", "ident", "johnson", "levin", "mclach",
+#" "miyata", "nwsgappep", "pam120", "pam180", "pam250", "pam30", "pam300",
+#" "pam60", "pam90", "rao", "risler", "structure".
 #' @param condense \code{TRUE} or \code{FALSE}, depending on whether or not the
 #' radial phylogram should only contain unique sequences. If \code{TRUE}, clonal
 #' expansion (i.e. sequence frequency data) will be represented by orthogonal
@@ -1089,7 +1088,7 @@ radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
   validate_rings(rings, d)
   validate_color_wheel(color_wheel)
   
-  ring_map = ""  # Used to make color legend for ring annotations if they exist
+  ring_map <- ""  # Used to make color legend for ring annotations if they exist
   
   # Not necessary to have as func parameters; these will get set automatically
   width <- NULL
