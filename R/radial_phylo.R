@@ -953,7 +953,7 @@ remove_phyloxml_labels <- function(xml_file) {
 #' @param condense \code{TRUE} or \code{FALSE}, depending on whether or not the
 #' radial phylogram should only contain unique sequences. If \code{TRUE}, clonal
 #' expansion (i.e. sequence frequency data) will be represented by orthogonal
-#' vertical bars on the perimiter of the phylogram.
+#' vertical bars on the perimeter of the phylogram.
 #' @template -rings
 #' @param canvas_size An integer representing the desired width and height of
 #' the SVG canvas in pixels. Defaults to \code{"auto"} to automatically

@@ -32,7 +32,7 @@ installed and available. Must be one of 'benner6', 'benner22',
 \item{condense}{\code{TRUE} or \code{FALSE}, depending on whether or not the
 radial phylogram should only contain unique sequences. If \code{TRUE}, clonal
 expansion (i.e. sequence frequency data) will be represented by orthogonal
-vertical bars on the perimiter of the phylogram.}
+vertical bars on the perimeter of the phylogram.}
 
 \item{rings}{A named character vector that can be used to create outer-ring
 annotations on the radial phylogram. There are two ways \code{rings} can
