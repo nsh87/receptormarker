@@ -80,8 +80,8 @@ necessary.}
 \item{color_wheel}{A named character vector where the names typically
 describe a color and the values correspond to 6-character hex color codes
 (preceded with "#"). These colors are used for the outer \code{rings} of the
-phylogram. If more colors than supplied are needed, the colors in the will be
-recycled, starting from the beginning.}
+phylogram. If more colors than those supplied are needed, the colors in the
+wheel will be recycled, starting from the beginning.}
 
 \item{scale}{\code{TRUE} or \code{FALSE}, depending on whether or not the
 phylogram should scale to fit the browser or RStudio Viewer window. If
