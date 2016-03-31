@@ -5,7 +5,7 @@
 \title{Create an interactive radial phylogram}
 \usage{
 radial_phylo(d, seqs_col = NULL, dist = "ident", condense = FALSE,
-  rings = NULL, canvas_size = "auto", font_size = 12, arc = 20,
+  rings = NULL, canvas_size = "auto", font_size = 12, arc = "auto",
   color_wheel = c(green = "#82A538", orange = "#B1903C", blue = "#626DBC",
   pink = "#B5598F", turqoise = "#0DA765", yellow = "#E9E700", purple =
   "#64059C", tangerine = "#DE531C"), scale = TRUE, label = TRUE,
@@ -78,7 +78,8 @@ suggested to leave this at the default value and then adjust only if
 necessary.}
 
 \item{arc}{An integer betwen 1 and 359 indicating the size of the split in
-the phylogram, in degrees.}
+the phylogram, in degrees. Defaults to \code{"auto"} to automatically
+estimate the appropriate arc size.}
 
 \item{color_wheel}{A named character vector where the names typically
 describe a color and the values correspond to 6-character hex color codes

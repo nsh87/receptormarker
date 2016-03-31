@@ -28,10 +28,14 @@ validate_font_size <- function(font_size) {
 validate_arc <- function(arc) {
   if (any(is.na(arc))) {
     stop("Argument 'arc' must be a real value", call.=FALSE)
-  } else if (class(arc) != "numeric") {
-    stop("Argument 'arc' must be an integer", call.=FALSE)
+  } else if (!(class(arc) %in% c("character", "numeric"))) {
+    stop("Argument 'arc' must be an integer or 'auto'", call.=FALSE)
   } else if (length(arc) != 1) {
-    stop("Argument 'arc' must be a single integer", call.=FALSE)
+    stop("Argument 'arc' must be a single integer or 'auto'", call.=FALSE)
+  } else if (class(arc) == "character" && arc != "auto") {
+    stop("Argument 'arc' must be a single integer or 'auto'", call.=FALSE)
+  } else if (arc == "auto") {
+    return()
   } else if(arc == 0) {
     stop("Argument 'arc' must be greater than 0", call.=FALSE)
   } else if (length(grep("^[0-9]{1,3}$", arc)) != 1) {
@@ -433,6 +437,46 @@ remove_phyloxml_hash <- function(xml_file, hash) {
                prefix="<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
                indent=FALSE)
   xml_file
+}
+
+
+#' @title Calculate the arc size for a radial phylogram
+#' @description An internal function that takes into account the number of
+#' sequences in a PhyloXML and adjusts the arc size the achieve uniform spacing
+#' between sequences.
+#' @template -xml_file
+#' @return An integer value representing the arc size for the phylogram
+#' @seealso \code{\link{radial_phylo}}
+#' @keywords internal
+calculate_arc_size <- function(xml_file) {
+  doc <- XML::xmlParse(xml_file)
+  root <- XML::xmlRoot(doc)
+  ns <- c(ns=XML::xmlNamespace(root))
+  named_nodes <- XML::xpathApply(root, "//ns:name", XML::xmlValue,
+                                 namespaces=ns)
+  named_nodes <- as.character(named_nodes)
+  # Biopython adds a name "Inner123" to nodes that don't get shown. Need to
+  # not count these when determining how many names are on phylogram
+  named_nodes <- named_nodes[grepl("^[^Inner]", named_nodes)]
+  num_elements <- length(named_nodes)
+  if (num_elements == 0) {
+    stop("Cannot generate phylogram: no sequences to plot", call.=FALSE)
+  } else if (num_elements <= 15) {
+    arc <- 300
+  } else if (num_elements <= 30) {
+    arc <- 270
+  } else if (num_elements <= 50) {
+    arc <- 200
+  } else if (num_elements <= 100) {
+    arc <- 80
+  } else if (num_elements <= 150) {
+    arc <- 30
+  } else if (num_elements <= 1000) {
+    arc <- 20
+  } else {
+    arc <- 10
+  }
+  arc
 }
 
 
@@ -987,7 +1031,8 @@ remove_phyloxml_labels <- function(xml_file) {
 #' suggested to leave this at the default value and then adjust only if
 #' necessary.
 #' @param arc An integer betwen 1 and 359 indicating the size of the split in
-#' the phylogram, in degrees.
+#' the phylogram, in degrees. Defaults to \code{"auto"} to automatically
+#' estimate the appropriate arc size.
 #' @param color_wheel A named character vector where the names typically
 #' describe a color and the values correspond to 6-character hex color codes
 #' (preceded with "#"). These colors are used for the outer \code{rings} of the
@@ -1017,7 +1062,8 @@ remove_phyloxml_labels <- function(xml_file) {
 #' browser=TRUE)
 #' @export
 radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
-                         rings=NULL, canvas_size="auto", font_size=12, arc=20,
+                         rings=NULL, canvas_size="auto", font_size=12,
+                         arc="auto",
                          color_wheel=c(green="#82A538", orange="#B1903C",
                                        blue="#626DBC", pink="#B5598F",
                                        turqoise="#0DA765", yellow="#E9E700",
@@ -1098,6 +1144,10 @@ radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
   # Calculate canvas size based on number of nodes in phylo.xml
   if (canvas_size == "auto") {
     canvas_size <- calculate_canvas_size(xml_file, condense, rings) 
+  }
+  
+  if (arc == "auto") {
+    arc <- calculate_arc_size(xml_file)
   }
   
   if (!label) {
