@@ -4,7 +4,7 @@
 #' @param font_size A font size
 #' @keywords internal
 validate_font_size <- function(font_size) {
-  if (is.na(font_size)) {
+  if (any(is.na(font_size))) {
     stop("Argument 'font_size' must be a real value", call.=FALSE)
   } else if (class(font_size) != "numeric") {
     stop("Argument 'font_size' must be an integer", call.=FALSE)
@@ -16,6 +16,28 @@ validate_font_size <- function(font_size) {
              grep("^[0-9]{1,2}$", font_size) != 1) {
     stop("Argument 'font_size' must be an integer between 1 and 99",
          call.=FALSE)
+  }
+}
+
+
+#' @title Validate arc size to be used with a radial phylogram
+#' @description An internal function that raises an error if an arc size is not
+#' an integer between 1 and 359.
+#' @param arc An arc size in degrees.
+#' @keywords internal
+validate_arc <- function(arc) {
+  if (any(is.na(arc))) {
+    stop("Argument 'arc' must be a real value", call.=FALSE)
+  } else if (class(arc) != "numeric") {
+    stop("Argument 'arc' must be an integer", call.=FALSE)
+  } else if (length(arc) != 1) {
+    stop("Argument 'arc' must be a single integer", call.=FALSE)
+  } else if(arc == 0) {
+    stop("Argument 'arc' must be greater than 0", call.=FALSE)
+  } else if (length(grep("^[0-9]{1,3}$", arc)) != 1) {
+    stop("Argument 'arc' must be an integer between 1 and 359", call.=FALSE)
+  } else if (!(arc > 0 && arc < 360)) {
+    stop("Argument 'arc' must be an integer between 1 and 359", call.=FALSE)
   }
 }
 
@@ -36,7 +58,7 @@ validate_distance <- function(dist) {
                  'johnson', 'levin', 'mclach', 'miyata', 'nwsgappep', 'pam120',
                  'pam180', 'pam250', 'pam30', 'pam300', 'pam60', 'pam90', 'rao',
                  'risler', 'structure')
-  if (is.na(dist)) {
+  if (any(is.na(dist))) {
     stop("Argument 'dist' must be a real value", call.=FALSE)
   } else if (class(dist) != "character") {
     stop("Argument 'dist' must be a string", call.=FALSE)
@@ -964,6 +986,8 @@ remove_phyloxml_labels <- function(xml_file) {
 #' @param font_size An integer font size for the phylogram's labels. It is
 #' suggested to leave this at the default value and then adjust only if
 #' necessary.
+#' @param arc An integer betwen 1 and 359 indicating the size of the split in
+#' the phylogram, in degrees.
 #' @param color_wheel A named character vector where the names typically
 #' describe a color and the values correspond to 6-character hex color codes
 #' (preceded with "#"). These colors are used for the outer \code{rings} of the
@@ -993,7 +1017,7 @@ remove_phyloxml_labels <- function(xml_file) {
 #' browser=TRUE)
 #' @export
 radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
-                         rings=NULL, canvas_size="auto", font_size=12,
+                         rings=NULL, canvas_size="auto", font_size=12, arc=20,
                          color_wheel=c(green="#82A538", orange="#B1903C",
                                        blue="#626DBC", pink="#B5598F",
                                        turqoise="#0DA765", yellow="#E9E700",
@@ -1006,11 +1030,12 @@ radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
   
   # Validate function parameters
   validate_not_null(list(d=d, dist=dist, condense=condense,
-                         canvas_size=canvas_size, font_size=font_size,
+                         canvas_size=canvas_size, font_size=font_size, arc=arc,
                          color_wheel=color_wheel, scale=scale, label=label,
                          browser=browser, verbose=verbose, fast=fast))
   validate_canvas_size(canvas_size)
   validate_font_size(font_size)
+  validate_arc(arc)
   validate_true_false(list(condense=condense, scale=scale, browser=browser,
                            label=label, verbose=verbose, fast=fast))
   validate_distance(dist)
@@ -1089,6 +1114,7 @@ radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
     canvas_size = canvas_size,
     scale = scale,
     font_size = font_size,
+    arc = arc,
     legend_values = names(ring_map),
     legend_colors = unname(ring_map)
   )

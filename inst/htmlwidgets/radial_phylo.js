@@ -61,6 +61,7 @@ HTMLWidgets.widget({
                 
                 // set some options of the phylogram
                 Smits.PhyloCanvas.Render.Parameters.Circular.bufferRadius = 0.28;
+                Smits.PhyloCanvas.Render.Parameters.Circular.bufferAngle = parseInt(x.arc);
                 Smits.PhyloCanvas.Render.Parameters.Circular.bufferOuterLabels = 0;
                 Smits.PhyloCanvas.Render.Style.text["font-size"] = parseInt(x.font_size);
                 
