@@ -5,7 +5,7 @@
 \title{Add rings to a PhyloXML corresponding to a matched value}
 \usage{
 add_phylo_outer_rings(xml_file, seqs, d_clean, seqs_col, rings, colors,
-  condensed)
+  ring_thickness, condensed)
 }
 \arguments{
 \item{xml_file}{A path to a PhyloXML file.}
@@ -50,6 +50,13 @@ single sequence could have colored rings for, say, "P1" and "P3" at
 the same time if there are identical sequences for the first and third
 patients in \code{d}. Note that due to the large number of rings this can
 create, only a single column can be labeled using this method.}
+
+\item{colors}{A named character vector where the names typically
+describe a color and the values correspond to 6-character hex color codes
+(preceded with "#"). This should correspond to the \code{color_wheel}
+parameter passed to \code{\link{radial_phylo}}.}
+
+\item{ring_thickness}{An integer representing the thickness of the rings.}
 
 \item{condensed}{\code{TRUE} or \code{FALSE}, depending on whether or not the
 PhyloXML represents a condensed phylogram (i.e. a phylogram with only

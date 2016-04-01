@@ -8,8 +8,8 @@ radial_phylo(d, seqs_col = NULL, dist = "ident", condense = FALSE,
   rings = NULL, canvas_size = "auto", font_size = 12, arc = "auto",
   color_wheel = c(green = "#82A538", orange = "#B1903C", blue = "#626DBC",
   pink = "#B5598F", turqoise = "#0DA765", yellow = "#E9E700", purple =
-  "#64059C", tangerine = "#DE531C"), scale = TRUE, label = TRUE,
-  browser = FALSE, verbose = FALSE, fast = FALSE)
+  "#64059C", tangerine = "#DE531C"), ring_thickness = 10, scale = TRUE,
+  label = TRUE, browser = FALSE, verbose = FALSE, fast = FALSE)
 }
 \arguments{
 \item{d}{A data frame or character vector containing protein sequences.}
@@ -80,6 +80,8 @@ describe a color and the values correspond to 6-character hex color codes
 (preceded with "#"). These colors are used for the outer \code{rings} of the
 phylogram. If more colors than those supplied are needed, the colors in the
 wheel will be recycled, starting from the beginning.}
+
+\item{ring_thickness}{An integer representing the thickness of the rings.}
 
 \item{scale}{\code{TRUE} or \code{FALSE}, depending on whether or not the
 phylogram should scale to fit the browser or RStudio Viewer window. If

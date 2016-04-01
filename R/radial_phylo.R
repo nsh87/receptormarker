@@ -20,6 +20,28 @@ validate_font_size <- function(font_size) {
 }
 
 
+#' @title Validate a ring thickness to be used with a radial phylogram
+#' @description An internal function that raises an error if a ring
+#' thickness is not an integer between 1 and 99.
+#' @param ring_thickness A ring thickness
+#' @keywords internal
+validate_ring_thickness <- function(ring_thickness) {
+  if (any(is.na(ring_thickness))) {
+    stop("Argument 'ring_thickness' must be a real value", call.=FALSE)
+  } else if (class(ring_thickness) != "numeric") {
+    stop("Argument 'ring_thickness' must be an integer", call.=FALSE)
+  } else if (length(ring_thickness) != 1) {
+    stop("Argument 'ring_thickness' must be a single integer", call.=FALSE)
+  } else if(ring_thickness == 0) {
+    stop("Argument 'ring_thickness' must be greater than 0", call.=FALSE)
+  } else if (length(grep("^[0-9]{1,3}$", ring_thickness)) != 1 ||
+             grep("^[0-9]{1,2}$", ring_thickness) != 1) {
+    stop("Argument 'ring_thickness' must be an integer between 1 and 99",
+         call.=FALSE)
+  }
+}
+
+
 #' @title Validate arc size to be used with a radial phylogram
 #' @description An internal function that raises an error if an arc size is not
 #' an integer between 1 and 359.
@@ -540,7 +562,7 @@ calculate_canvas_size <- function(xml_file, condensed, rings) {
   canvas_size <- base_size + extra_room
   # Need to add extra room if there are outer rings (~100 pixels per ring works)
   if (!is.null(rings)) {
-    canvas_size <- canvas_size + length(rings) * 110
+    canvas_size <- canvas_size + length(rings) * 120
   }
   if (!(is.null(rings)) && num_elements <= 90) {
     canvas_size <- canvas_size + 200
@@ -670,6 +692,11 @@ index_with_wrap <- function(index, v) {
 #' @param seqs_col Either an integer corresponding to a column index or a string
 #' corresponding to a column name in d that contains the sequences.
 #' @template -rings
+#' @param colors A named character vector where the names typically
+#' describe a color and the values correspond to 6-character hex color codes
+#' (preceded with "#"). This should correspond to the \code{color_wheel}
+#' parameter passed to \code{\link{radial_phylo}}.
+#' @param ring_thickness An integer representing the thickness of the rings.
 #' @template -condensed
 #' @return A list containing the path to the PhyloXML \code{xml_file} annotated
 #' with rings data, and the \code{ring_map} matching unique values in the
@@ -677,7 +704,8 @@ index_with_wrap <- function(index, v) {
 #' @seealso \code{\link{radial_phylo}}, \code{\link{add_phylo_outer_rings}}
 #' @keywords internal
 add_phylo_outer_rings_all <- function(xml_file, seqs, d_clean, seqs_col,
-                                      rings, colors, condensed) {
+                                      rings, colors, ring_thickness,
+                                      condensed) {
   # Need to create a color map, mapping each unique ring value to a color in
   # the color wheel you're using.
   ring_col <- names(rings)[[1]]
@@ -762,7 +790,8 @@ add_phylo_outer_rings_all <- function(xml_file, seqs, d_clean, seqs_col,
   for (q in c(1:length(ring_map))) {
     outergroup_name <- paste0(c("outergroup", q), collapse="")
     outergroups[[q]] <- XML::newXMLNode(outergroup_name, attrs=c(disjointed=q,
-                                                                type="binary"))
+                                              type="binary",
+                                              thickness=ring_thickness))
   }
   # List names are not preserved in lapply...have to use indices
   color_styles <- lapply(seq_along(ring_map), function(y, n, i) {
@@ -813,12 +842,17 @@ add_phylo_outer_rings_all <- function(xml_file, seqs, d_clean, seqs_col,
 #' @param seqs_col Either an integer corresponding to a column index or a string
 #' corresponding to a column name in d that contains the sequences.
 #' @template -rings
+#' @param colors A named character vector where the names typically
+#' describe a color and the values correspond to 6-character hex color codes
+#' (preceded with "#"). This should correspond to the \code{color_wheel}
+#' parameter passed to \code{\link{radial_phylo}}.
+#' @param ring_thickness An integer representing the thickness of the rings.
 #' @template -condensed
 #' @return A path to the PhyloXML file annotated with rings data.
 #' @seealso \code{\link{radial_phylo}}, \code{\link{add_phylo_outer_rings_all}}
 #' @keywords internal
 add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
-                                  rings, colors, condensed) {
+                                  rings, colors, ring_thickness, condensed) {
   # If condensed == TRUE, the sequences in xml_file are unique; in order to get
   # attributes for each ring, for each sequence you have to average each
   # attribute across all duplicate sequences, which means two algorithms
@@ -906,7 +940,8 @@ add_phylo_outer_rings <- function(xml_file, seqs, d_clean, seqs_col,
   for (q in c(1:length(rings))) {
     outergroup_name <- paste0(c("outergroup", q), collapse="")
     outergroups[[q]] <- XML::newXMLNode(outergroup_name, attrs=c(disjointed=q,
-                                                               type="binary"))
+                                                     type="binary",
+                                                     thickness=ring_thickness))
   }
   # List names are not preserved in lapply...have to use indices
   color_styles <- lapply(seq_along(colors), function(y, n, i) {
@@ -1037,6 +1072,7 @@ remove_phyloxml_labels <- function(xml_file) {
 #' (preceded with "#"). These colors are used for the outer \code{rings} of the
 #' phylogram. If more colors than those supplied are needed, the colors in the
 #' wheel will be recycled, starting from the beginning.
+#' @param ring_thickness An integer representing the thickness of the rings.
 #' @param scale \code{TRUE} or \code{FALSE}, depending on whether or not the
 #' phylogram should scale to fit the browser or RStudio Viewer window. If
 #' \code{FALSE} and the phylogram is on a large canvas, it will be necessary to
@@ -1067,6 +1103,7 @@ radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
                                        blue="#626DBC", pink="#B5598F",
                                        turqoise="#0DA765", yellow="#E9E700",
                                        purple="#64059C", tangerine="#DE531C"),
+                         ring_thickness=10,
                          scale=TRUE, label=TRUE, browser=FALSE, verbose=FALSE,
                          fast=FALSE) {
   
@@ -1076,10 +1113,12 @@ radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
   # Validate function parameters
   validate_not_null(list(d=d, dist=dist, condense=condense,
                          canvas_size=canvas_size, font_size=font_size, arc=arc,
-                         color_wheel=color_wheel, scale=scale, label=label,
-                         browser=browser, verbose=verbose, fast=fast))
+                         color_wheel=color_wheel, ring_thickness,
+                         scale=scale, label=label, browser=browser,
+                         verbose=verbose, fast=fast))
   validate_canvas_size(canvas_size)
   validate_font_size(font_size)
+  validate_ring_thickness(ring_thickness)
   validate_arc(arc)
   validate_true_false(list(condense=condense, scale=scale, browser=browser,
                            label=label, verbose=verbose, fast=fast))
@@ -1131,13 +1170,14 @@ radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
   # Add outer-rings to phylo if there are any requested
   if (!is.null(rings) && "all" %in% rings) {
     r <- add_phylo_outer_rings_all(xml_file, seqs, clean[["d"]],
-                                   seqs_col, rings, color_wheel,
+                                   seqs_col, rings, color_wheel, ring_thickness,
                                    condense)
     xml_file <- r[["xml_file"]]
     ring_map <- r[["ring_map"]]
   } else if (!is.null(rings)) {
     xml_file <- add_phylo_outer_rings(xml_file, seqs, clean[["d"]], seqs_col,
-                                      rings, color_wheel, condense)
+                                      rings, color_wheel, ring_thickness,
+                                      condense)
   }
   
   # Calculate canvas size based on number of nodes in phylo.xml
