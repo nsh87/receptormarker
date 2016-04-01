@@ -5,11 +5,12 @@
 \title{Create an interactive radial phylogram}
 \usage{
 radial_phylo(d, seqs_col = NULL, dist = "ident", condense = FALSE,
-  rings = NULL, canvas_size = "auto", font_size = 12, arc = "auto",
-  color_wheel = c(green = "#82A538", orange = "#B1903C", blue = "#626DBC",
-  pink = "#B5598F", turqoise = "#0DA765", yellow = "#E9E700", purple =
-  "#64059C", tangerine = "#DE531C"), ring_thickness = 10, scale = TRUE,
-  label = TRUE, browser = FALSE, verbose = FALSE, fast = FALSE)
+  rings = NULL, canvas_size = "auto", font_size = 12,
+  tree_margin = 0.28, arc = "auto", color_wheel = c(green = "#82A538",
+  orange = "#B1903C", blue = "#626DBC", pink = "#B5598F", turqoise = "#0DA765",
+  yellow = "#E9E700", purple = "#64059C", tangerine = "#DE531C"),
+  ring_thickness = 10, scale = TRUE, label = TRUE, browser = FALSE,
+  verbose = FALSE, fast = FALSE)
 }
 \arguments{
 \item{d}{A data frame or character vector containing protein sequences.}
@@ -70,6 +71,10 @@ Details section for more information.}
 \item{font_size}{An integer font size for the phylogram's labels. It is
 suggested to leave this at the default value and then adjust only if
 necessary.}
+
+\item{tree_margin}{A number between 0 and 1 indicating the size of the
+tree with respect to the phylogram. To give more focus on the
+sequence labels, increase this value and increase \code{font_size}.}
 
 \item{arc}{An integer betwen 1 and 359 indicating the size of the split in
 the phylogram, in degrees. Defaults to \code{"auto"} to automatically

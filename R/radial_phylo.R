@@ -20,6 +20,28 @@ validate_font_size <- function(font_size) {
 }
 
 
+#' @title Validate the tree margin to be used with a radial phylogram
+#' @description An internal function that raises an error if a tree margin
+#' is not a number between 0 and 1.
+#' @param tree_margin A tree margin
+#' @keywords internal
+validate_tree_margin <- function(tree_margin) {
+  if (any(is.na(tree_margin))) {
+    stop("Argument 'tree_margin' must be a real value", call.=FALSE)
+  } else if (class(tree_margin) != "numeric") {
+    stop("Argument 'tree_margin' must be a number", call.=FALSE)
+  } else if (length(tree_margin) != 1) {
+    stop("Argument 'tree_margin' must be a single number", call.=FALSE)
+  } else if (!(tree_margin > 0)) {
+    stop("Argument 'tree_margin' must be greater than 0 and less than 1",
+         call.=FALSE)
+  } else if (!(tree_margin < 1)) {
+    stop("Argument 'tree_margin' must be greater than 0 and less than 1",
+         call.=FALSE)
+  }
+}
+
+
 #' @title Validate a ring thickness to be used with a radial phylogram
 #' @description An internal function that raises an error if a ring
 #' thickness is not an integer between 1 and 99.
@@ -1064,6 +1086,9 @@ remove_phyloxml_labels <- function(xml_file) {
 #' @param font_size An integer font size for the phylogram's labels. It is
 #' suggested to leave this at the default value and then adjust only if
 #' necessary.
+#' @param tree_margin A number between 0 and 1 indicating the size of the
+#' tree with respect to the phylogram. To give more focus on the
+#' sequence labels, increase this value and increase \code{font_size}.
 #' @param arc An integer betwen 1 and 359 indicating the size of the split in
 #' the phylogram, in degrees. Defaults to \code{"auto"} to automatically
 #' estimate the appropriate arc size.
@@ -1098,7 +1123,7 @@ remove_phyloxml_labels <- function(xml_file) {
 #' @export
 radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
                          rings=NULL, canvas_size="auto", font_size=12,
-                         arc="auto",
+                         tree_margin=0.28, arc="auto",
                          color_wheel=c(green="#82A538", orange="#B1903C",
                                        blue="#626DBC", pink="#B5598F",
                                        turqoise="#0DA765", yellow="#E9E700",
@@ -1112,12 +1137,14 @@ radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
   
   # Validate function parameters
   validate_not_null(list(d=d, dist=dist, condense=condense,
-                         canvas_size=canvas_size, font_size=font_size, arc=arc,
+                         canvas_size=canvas_size, font_size=font_size,
+                         tree_margin=tree_margin, arc=arc,
                          color_wheel=color_wheel, ring_thickness,
                          scale=scale, label=label, browser=browser,
                          verbose=verbose, fast=fast))
   validate_canvas_size(canvas_size)
   validate_font_size(font_size)
+  validate_tree_margin(tree_margin)
   validate_ring_thickness(ring_thickness)
   validate_arc(arc)
   validate_true_false(list(condense=condense, scale=scale, browser=browser,
@@ -1203,6 +1230,7 @@ radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
     canvas_size = canvas_size,
     scale = scale,
     font_size = font_size,
+    tree_margin = tree_margin,
     arc = arc,
     legend_values = names(ring_map),
     legend_colors = unname(ring_map)
