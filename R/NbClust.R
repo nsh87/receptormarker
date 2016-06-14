@@ -348,8 +348,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
           suv <- dmat[cl1 == u, cl1 == v]
           bv <- c(bv, suv)
           if (u < v) {
-          separation.matrix[u, v] <- separation.matrix[v, u] <- min(suv)
-          between.dist1 <- c(between.dist1, suv)
+            separation.matrix[u, v] <- separation.matrix[v, u] <- min(suv)
+            between.dist1 <- c(between.dist1, suv)
           }
         }
       }
@@ -360,12 +360,12 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     meanbetween1 <- mean(between.dist1)
     s.plus <- s.moins <- 0
     for (k in 1:nwithin1) {
-      s.plus <- s.plus + (colSums(outer(between.dist1, within.dist1[k], ">")))
-      s.moins <- s.moins + (colSums(outer(between.dist1, within.dist1[k], "<")))
+      s.plus <- s.plus + sum(between.dist1 > within.dist1[k])
+      s.moins <- s.moins + sum(between.dist1 < within.dist1[k])
     }
     Index.Gamma <- (s.plus - s.moins) / (s.plus + s.moins)
-    Index.Gplus <- (2 * s.moins) / (n1 * (n1 - 1))
-    t.tau <- (nwithin1 * nbetween1) - (s.plus + s.moins)
+    Index.Gplus <- 2 * s.moins / (n1 * (n1 - 1))
+    t.tau <- nwithin1 * nbetween1 - (s.plus + s.moins)
     Index.Tau <- (s.plus - s.moins) / (((n1 * (n1 - 1) / 2 - t.tau) *
                                           (n1 * (n1 - 1) / 2)) ^ (1 / 2))
     results <- list(gamma = Index.Gamma, gplus = Index.Gplus, tau = Index.Tau)
