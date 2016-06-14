@@ -297,7 +297,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   }
   
   ################################## # Hubert index # #
-  
+
   Index.Hubert <- function(x, cl) {
     k <- max(cl)
     n <- dim(x)[1]
@@ -305,34 +305,23 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     P <- as.matrix(md)
     meanP <- mean(P)
     variance.matrix <- numeric(0)
-    md <- dist(x, method = "euclidean")
+    m <- (n - 1) / n
     for (j in 1:n) {
-      variance.matrix[j] <- var(P[, j]) * (n - 1) / n
+      variance.matrix[j] <- var(P[, j]) * m
     }
     varP <- sqrt(variance.matrix %*% variance.matrix)
     centers.clusters <- centers(cl, x)
     for (i in 1:n) {
-      for (u in 1:k) {
-        if (cl[i] == u) 
-          y[i, ] <- centers.clusters[u, ]
-      }
+          y[i, ] <- centers.clusters[cl[i], ]
     }
     Q <- as.matrix(dist(y, method = "euclidean"))
     meanQ <- mean(Q)
     for (j in 1:n) {
-      variance.matrix[j] <- var(Q[, j]) * (n - 1) / n
+      variance.matrix[j] <- var(Q[, j]) * m
     }
     varQ <- sqrt(variance.matrix %*% variance.matrix)
     M <- n * (n - 1) / 2
-    S <- 0
-    n1 <- n - 1
-    for (i in 1:n1) {
-      j <- i + 1
-      while (j <= n) {
-        S <- S + (P[i, j] - meanP) * (Q[i, j] - meanQ)
-        j <- j + 1
-      }
-    }
+    S <- sum(((P - meanP) * (Q - meanQ))[upper.tri(P)])
     gamma <- S / (M * varP * varQ)
     return(gamma)
   }
