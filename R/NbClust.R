@@ -450,10 +450,12 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     for (m1 in 2:nn) {
       m12 <- m1 - 1
       for (m2 in 1:m12) {
-        if (cl1[m1] == cl1[m2])
+        if (cl1[m1] == cl1[m2]) {
           m01[m1, m2] <- 0
-        if (cl1[m1] != cl1[m2])
+        }
+        else {
           m01[m1, m2] <- 1
+        }
         pb[m3, 1] <- m01[m1, m2]
         pb[m3, 2] <- md2[m1, m2]
         m3 <- m3 + 1
