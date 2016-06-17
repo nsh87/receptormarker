@@ -180,7 +180,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     centers <- matrix(nrow = k, ncol = ncol(x))
     for (i in 1:k) {
       for (j in 1:ncol(x)) {
-        centers[i, j] <- mean(x[cl == i, j])
+        centers[i, j] <- .Internal(mean(x[cl == i, j]))
       }
     }
     return(centers)
@@ -303,7 +303,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     n <- dim(x)[1]
     y <- matrix(0, ncol = dim(x)[2], nrow = n)
     P <- as.matrix(md)
-    meanP <- mean(P)
+    meanP <- .Internal(mean(P))
     variance.matrix <- numeric(0)
     m <- (n - 1) / n
     for (j in 1:n) {
@@ -315,7 +315,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
           y[i, ] <- centers.clusters[cl[i], ]
     }
     Q <- as.matrix(dist(y, method = "euclidean"))
-    meanQ <- mean(Q)
+    meanQ <- .Internal(mean(Q))
     for (j in 1:n) {
       variance.matrix[j] <- var(Q[, j]) * m
     }
@@ -340,7 +340,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       cluster.size[u] <- sum(cl1 == u)
       du <- as.dist(dmat[cl1 == u, cl1 == u])
       within.dist1 <- c(within.dist1, du)
-      average.distance[u] <- mean(du)
+      average.distance[u] <- .Internal(mean(du))
       median.distance[u] <- median(du)
       bv <- numeric(0)
       for (v in 1:cn1) {
@@ -356,8 +356,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     }
     nwithin1 <- length(within.dist1)
     nbetween1 <- length(between.dist1)
-    meanwithin1 <- mean(within.dist1)
-    meanbetween1 <- mean(between.dist1)
+    meanwithin1 <- .Internal(mean(within.dist1))
+    meanbetween1 <- .Internal(mean(between.dist1))
     s.plus <- s.moins <- 0
     for (k in 1:nwithin1) {
       s.plus <- s.plus + sum(between.dist1 > within.dist1[k])
@@ -427,10 +427,10 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     }
     nwithin1 <- length(within.dist1)
     nbetween1 <- length(between.dist1)
-    meanwithin1 <- mean(within.dist1)
-    meanbetween1 <- mean(between.dist1)
-    meanwithin2 <- mean(within.dist2)
-    meanbetween2 <- mean(between.dist2)
+    meanwithin1 <- .Internal(mean(within.dist1))
+    meanbetween1 <- .Internal(mean(between.dist1))
+    meanwithin2 <- .Internal(mean(within.dist2))
+    meanbetween2 <- .Internal(mean(between.dist2))
     Index.15 <- (meanbetween2 - meanbetween1) / (meanwithin2 - meanwithin1)
     Index.28 <- (meanwithin1 / nwithin1) / (meanbetween1 / nbetween1)
     results <- list(frey = Index.15, mcclain = Index.28)
@@ -480,8 +480,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         y <- y[cc.ind]
       }
       ind <- y == levs[level]
-      diff.mu <- mean(x[ind]) - mean(x[!ind])
-      prob <- mean(ind)
+      diff.mu <- .Internal(mean(x[ind])) - .Internal(mean(x[!ind]))
+      prob <- .Internal(mean(ind))
       diff.mu * sqrt(prob * (1 - prob)) / sd(x) # code error
     }
     ptbiserial <- biserial.cor(x = pb[, 2], y = pb[, 1], level = 2)
@@ -495,15 +495,14 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     wss <- function(x) {
       x <- as.matrix(x)
       n <- length(x)
-      centers <- matrix(nrow = 1, ncol = ncol(x))
-      if (ncol(x) == 1) {
-        centers[1, ] <- mean(x)
-      }
-      if (is.null(dim(x))) {
-        bb <- matrix(x, byrow = FALSE, nrow = 1, ncol = ncol(x))
-        centers[1, ] <- apply(bb, 2, mean)
+      centers <- matrix(nrow = 1, ncol = dim2)
+      if (dim2 == 1) {
+        centers[1, ] <- .Internal(mean(x))
+      } else if (is.null(dim(x))) {
+        bb <- matrix(x, byrow = FALSE, nrow = 1, ncol = dim2)
+        centers[1, ] <- colMeans(bb)
       } else {
-        centers[1, ] <- apply(x, 2, mean)
+        centers[1, ] <- colMeans(x)
       }
       x.2 <- sweep(x, 2, centers[1, ], "-")
       withins <- sum(x.2 ^ 2)
@@ -632,16 +631,16 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       centers <- matrix(nrow = k, ncol = ncol(x))
       for (i in 1:k) {
         if (ncol(x) == 1) {
-          centers[i, ] <- mean(x[cl == i, ])
+          centers[i, ] <- .Internal(mean(x[cl == i, ]))
         }
         if (is.null(dim(x[cl == i, ]))) {
           bb <- matrix(x[cl == i, ], byrow = FALSE, nrow = 1, ncol = ncol(x))
-          centers[i, ] <- apply(bb, 2, mean)
+          centers[i, ] <- colMeans(bb)
         } else {
-          centers[i, ] <- apply(x[cl == i, ], 2, mean)
+          centers[i, ] <- colMeans(x[cl == i, ])
         }
       }
-      allmean <- apply(x, 2, mean)
+      allmean <- colMeans(x)
       dmean <- sweep(x, 2, allmean, "-")
       allmeandist <- sum(dmean ^ 2)
       withins <- rep(0, k)
@@ -663,7 +662,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       varallmeandist <- rep(0, nvar)
       varwgss <- rep(0, nvar)
       for (l in 1:nvar)
-        varallmean[l] <- mean(x[, l])
+        varallmean[l] <- .Internal(mean(x[, l]))
       vardmean <- sweep(x, 2, varallmean, "-")
       for (l in 1:nvar) {
         varallmeandist[l] <- sum((vardmean[, l]) ^ 2)
@@ -767,7 +766,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       centers <- gss(x, cl, d)[["centers"]]
       varwithins <- varwithinss(x, centers, cl)
       zvargss <- vargss(x, clsize, varwithins)
-      ratio <- mean(sqrt(zvargss[["varbgss"]] / zvargss[["vartss"]]))
+      ratio <- .Internal(mean(sqrt(zvargss[["varbgss"]] / zvargss[["vartss"]])))
       ratkowsky <- ratio / sqrt(qq)
       return(ratkowsky)
     }
@@ -847,7 +846,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     if (centrotypes == "centroids") {
       for (i in 1:k) {
         for (j in 1:ncol(x)) {
-          centers[i, j] <- mean(x[cl == i, j])
+          centers[i, j] <- .Internal(mean(x[cl == i, j]))
         }
       }
     } else {
@@ -861,7 +860,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         centerI <- rep(centerI, sum(ind))
         centerI <- matrix(centerI, nrow = sum(ind), ncol = ncol(x),
                           byrow = TRUE)
-        S[i] <- mean(sqrt(apply((x[ind, ] - centerI) ^ 2, 1, sum)) ^ q) ^
+        S[i] <- .Internal(mean(sqrt(rowSums((x[ind, ] - centerI) ^ 2)) ^ q)) ^
           (1 / q)
       } else
         S[i] <- 0
@@ -875,7 +874,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       }
       r[i] <- max(R[i, ][is.finite(R[i, ])])
     }
-    DB <- mean(r[is.finite(r)])
+    DB <- .Internal(mean(r[is.finite(r)]))
     resul <- list(DB = DB, r = r, R = R, d = M, S = S, centers = centers)
     resul
   }
@@ -927,7 +926,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       }
       pcsim <- function(X, d, centrotypes) {
         if (centrotypes == "centroids") {
-          Xmm <- apply(X, 2, mean)
+          Xmm <- colMeans(X)
         }
         for (k in (1:dim(X)[2])) {
           X[, k] <- X[, k] - Xmm[k]
@@ -1008,7 +1007,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
           }
         }
       }
-      Sgap <- mean(log(WkB[1, ])) - log(Wk0)
+      Sgap <- .Internal(mean(log(WkB[1, ])) - log(Wk0))
       Sdgap <- sqrt(1 + 1 / B) * sqrt(var(log(WkB[1, ]))) * sqrt((B - 1) / B)
       resul <- list(Sgap = Sgap, Sdgap = Sdgap)
       resul
