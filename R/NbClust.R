@@ -509,17 +509,20 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       wss <- sum(withins)
       return(wss)
     }
-    ncg1 <- 1
     ncg1max <- max(cl1)
-    while ((sum(cl1 == ncg1) == sum(cl2 == ncg1)) && ncg1 <= ncg1max) {
-      ncg1 <- ncg1 + 1
+    for (i in 1:ncg1max) {
+      if (sum(cl1 == i) != sum(cl2 == i)) {
+        ncg1 <- i
+        break
+      }
     }
     g1 <- ncg1
-    ncg2 <- max(cl2)
-    nc2g2 <- ncg2 - 1
-    while ((sum(cl1 == nc2g2) == sum(cl2 == ncg2)) && nc2g2 >= 1) {
-      ncg2 <- ncg2 - 1
-      nc2g2 <- nc2g2 - 1
+    ncg2max <- max(cl2)
+    for (i in ncg2max:1) {
+      if (sum(cl1 == i - 1) != sum(cl2 == i)) {
+        ncg2 <- i
+        break
+      }
     }
     g2 <- ncg2
     NK <- sum(cl2 == g1)
@@ -534,7 +537,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     duda <- (WK + WL) / WM
     BKL <- WM - WK - WL
     pseudot2 <- BKL / ((WK + WL) / (NK + NL - 2))
-    beale <- (BKL / (WK + WL)) / (((NM - 1) / (NM - 2)) * (2 ^ (2 / dim2) - 1))
+    beale <- BKL / (WK + WL) / ((NM - 1) / (NM - 2) * (2 ^ (2 / dim2) - 1))
     results <- list(duda = duda, pseudot2 = pseudot2, NM = NM, NK = NK, NL = NL,
       beale = beale)
     return(results)
