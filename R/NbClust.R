@@ -551,13 +551,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     qq <- max(cl)
     z <- matrix(0, ncol = qq, nrow = n)
     clX <- as.matrix(cl)
-    for (i in 1:n) {
-      for (j in 1:qq) {
-      z[i, j] == 0 # code error
-      if (clX[i, 1] == j) {
-        z[i, j] <- 1
-      }
-      }
+    for (j in 1:qq) {
+      z[clX == j, j] <- 1
     }
     xbar <- solve(t(z) %*% z) %*% t(z) %*% x
     B <- t(xbar) %*% t(z) %*% z %*% xbar
@@ -583,29 +578,27 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     )
     rubin <- sum(diag(P)) / sum(diag(W))
     R2 <- 1 - sum(diag(W)) / sum(diag(P))
-    v1 <- 1
     u <- rep(0, pp)
     c <- (vv / qq) ^ (1 / pp)
     u <- s / c
-    k1 <- sum((u >= 1) == TRUE)
+    k1 <- sum(u >= 1)
     p1 <- min(k1, qq - 1)
     if (exists("indef")) {
       ccc <- NA
     } else if (all(p1 > 0, p1 < pp)) {
-      for (i in 1:p1)
-        v1 <- v1 * s[i]
+      v1 <- prod(s[1:p1])
       c <- (v1 / qq) ^ (1 / p1)
       u <- s / c
       b1 <- sum(1 / (n + u[1:p1]))
       b2 <- sum(u[p1 + 1:pp] ^ 2 / (n + u[p1 + 1:pp]), na.rm = TRUE)
-      E_R2 <- 1 - ((b1 + b2) / sum(u ^ 2)) * ((n - qq) ^ 2 / n) * (1 + 4 / n)
-      ccc <- log((1 - E_R2) / (1 - R2)) * (sqrt(n * p1 / 2) /
-                                             ((0.001 + E_R2) ^ 1.2))
+      E_R2 <- 1 - (b1 + b2) / sum(u ^ 2) * (n - qq) ^ 2 / n * (1 + 4 / n)
+      ccc <- log((1 - E_R2) / (1 - R2)) * sqrt(n * p1 / 2) /
+        (0.001 + E_R2) ^ 1.2
     } else {
       b1 <- sum(1 / (n + u))
-      E_R2 <- 1 - (b1 / sum(u ^ 2)) * ((n - qq) ^ 2 / n) * (1 + 4 / n)
-      ccc <- log((1 - E_R2) / (1 - R2)) * (sqrt(n * pp / 2) /
-                                             ((0.001 + E_R2) ^ 1.2))
+      E_R2 <- 1 - b1 / sum(u ^ 2) * (n - qq) ^ 2 / n * (1 + 4 / n)
+      ccc <- log((1 - E_R2) / (1 - R2)) * sqrt(n * pp / 2) /
+        (0.001 + E_R2) ^ 1.2
     }
     results <- list(ccc = ccc, scott = scott, marriot = marriot,
                     trcovw = trcovw, tracew = tracew, friedman = friedman,
