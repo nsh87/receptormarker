@@ -613,7 +613,6 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     cl0 <- clall[, 1]
     cl1 <- clall[, 2]
     cl2 <- clall[, 3]
-    clall <- clall
     nb.cl0 <- table(cl0)
     nb.cl1 <- table(cl1)
     nb.cl2 <- table(cl2)
@@ -628,8 +627,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       for (i in 1:k) {
         if (ncol(x) == 1) {
           centers[i, ] <- .Internal(mean(x[cl == i, ]))
-        }
-        if (is.null(dim(x[cl == i, ]))) {
+        } else if (is.null(dim(x[cl == i, ]))) {
           bb <- matrix(x[cl == i, ], byrow = FALSE, nrow = 1, ncol = ncol(x))
           centers[i, ] <- colMeans(bb)
         } else {
