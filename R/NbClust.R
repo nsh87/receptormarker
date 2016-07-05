@@ -677,9 +677,9 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       if (nb1.cl1 > 0) {
         KL <- NA
       }
-      if (sum(c("centroids", "medoids") == centrotypes) == 0)
+      if (!any(c("centroids", "medoids") == centrotypes))
         stop("Wrong centrotypes argument", call. = FALSE)
-      if ("medoids" == centrotypes && is.null(d))
+      if (centrotypes == "medoids" && is.null(d))
         stop("For argument centrotypes = 'medoids' d cannot be null",
              call. = FALSE)
       if (!is.null(d)) {
@@ -692,7 +692,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       g <- k <- max(clall[, 2])
       KL <- abs((g - 1) ^ (2 / m) * gss(x, clall[, 1], d)[["wgss"]] -
                 g ^ (2 / m) * gss(x, clall[, 2], d)[["wgss"]]) /
-        abs((g) ^ (2 / m) * gss(x, clall[, 2], d)[["wgss"]] -
+        abs(g ^ (2 / m) * gss(x, clall[, 2], d)[["wgss"]] -
             (g + 1) ^ (2 / m) * gss(x, clall[, 3], d)[["wgss"]])
       return(KL)
     }
