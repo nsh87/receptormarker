@@ -762,21 +762,22 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     }
     
     indice <- pmatch(index, c("kl", "ch", "hart", "ratkowsky", "ball", "all"))
-    if (is.na(indice)) 
-      stop("invalid clustering index", call. = FALSE)
-    if (indice == -1) 
-      stop("ambiguous index", call. = FALSE)
     vecallindex <- numeric(5)
-    if (any((indice == 1) || (indice == 6))) 
+    if (is.na(indice)) {
+      stop("invalid clustering index", call. = FALSE)
+    } else if (indice == -1) {
+      stop("ambiguous index", call. = FALSE)
+    } else if (any(indice == 1 || indice == 6)) { 
       vecallindex[1] <- indice.kl(x, clall, d)
-    if (any((indice == 2) || (indice == 6))) 
+    } else if (any(indice == 2 || indice == 6)) {
       vecallindex[2] <- indice.ch(x, cl = clall[, 2], d)
-    if (any((indice == 3) || (indice == 6))) 
+    } else if (any(indice == 3 || indice == 6)) {
       vecallindex[3] <- indice.hart(x, clall, d)
-    if (any((indice == 4) || (indice == 6))) 
+    } else if (any(indice == 4 || indice == 6)) {
       vecallindex[4] <- indice.ratkowsky(x, cl = cl1, d)
-    if (any((indice == 5) || (indice == 6))) 
+    } else if (any(indice == 5 || indice == 6)) {
       vecallindex[5] <- indice.ball(x, cl = cl1, d)
+    }
     names(vecallindex) <- c("kl", "ch", "hart", "ratkowsky", "ball")
     if (indice < 6) 
       vecallindex <- vecallindex[indice]
