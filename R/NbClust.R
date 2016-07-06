@@ -701,11 +701,13 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       if (nb1.cl1 > 0) {
         CH <- NA
       }
-      if (sum(c("centroids", "medoids") == centrotypes) == 0) 
+      if (!any(c("centroids", "medoids") == centrotypes) {
         stop("Wrong centrotypes argument", call. = FALSE)
-      if ("medoids" == centrotypes && is.null(d)) 
+      }
+      if ("medoids" == centrotypes && is.null(d)) {
         stop("For argument centrotypes = 'medoids' d cannot be null",
              call. = FALSE)
+      }
       if (!is.null(d)) {
         if (!is.matrix(d)) {
           d <- as.matrix(d)
