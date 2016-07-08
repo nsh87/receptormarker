@@ -818,8 +818,9 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   
   Indice.DB <- function(x, cl, d = NULL, centrotypes = "centroids", p = 2,
                         q = 2) {
-    if (sum(c("centroids") == centrotypes) == 0) 
+    if (centrotypes != "centroids") {
       stop("Wrong centrotypes argument", call. = FALSE)
+    }
     if (!is.null(d)) {
       if (!is.matrix(d)) {
         d <- as.matrix(d)
@@ -831,25 +832,20 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     }
     x <- as.matrix(x)
     n <- length(cl)
+    m <- ncol(x)
     k <- max(cl)
     dAm <- d
-    centers <- matrix(nrow = k, ncol = ncol(x))
-    if (centrotypes == "centroids") {
-      for (i in 1:k) {
-        for (j in 1:ncol(x)) {
-          centers[i, j] <- .Internal(mean(x[cl == i, j]))
-        }
-      }
-    } else {
-      stop("wrong centrotypes argument", call. = FALSE)
+    centers <- matrix(nrow = k, ncol = m)
+    for (i in 1:k) {
+      centers[i, ] <- colMeans(x[cl == i, ])
     }
     S <- rep(0, k)
     for (i in 1:k) {
-      ind <- (cl == i)
+      ind <- cl == i
       if (sum(ind) > 1) {
         centerI <- centers[i, ]
         centerI <- rep(centerI, sum(ind))
-        centerI <- matrix(centerI, nrow = sum(ind), ncol = ncol(x),
+        centerI <- matrix(centerI, nrow = sum(ind), ncol = m,
                           byrow = TRUE)
         S[i] <- .Internal(mean(sqrt(rowSums((x[ind, ] - centerI) ^ 2)) ^ q)) ^
           (1 / q)
