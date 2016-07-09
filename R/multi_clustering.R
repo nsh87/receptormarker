@@ -103,33 +103,7 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
   km[["clust_gap"]] <- cluster::clusGap(d, kmeans, 
                                         K.max = length(km[["clust_model"]]), 
                                         B = 15, verbose = FALSE)
-  if (bool) {
-    distance <- "binary"
-  } else {
-    distance <- "euclidean"
-  }
-  tryCatch({
-    nb_best <- suppressWarnings(suppressMessages(
-              NbClust(d,
-              min.nc = krange[1],
-              index = index,
-              max.nc = krange[length(krange)],
-              distance = distance,
-              method = "average")))
-  },
-  error = function(e) {
-    if (grepl("computationally singular", e)) {
-      stop("There are not enough rows of data to evaluate for clustering.",
-           call. = FALSE)
-    } else {
-      stop(e, call. = FALSE)
-    }
-  }
-  )
-  best <- aggregate(nb_best[["Best.nc"]][1, ], 
-                    by = list(nb_best[["Best.nc"]][1, ]), length)
-  idx <- which.max(best[[2]])
-  km[["k_best"]] <- best[idx, 1]
+  km[["k_best"]] <- which.max(km[["sil_avg"]])
   new("multiClust", clust_model=km[["clust_model"]], sil_avg=km[["sil_avg"]],
       num_clust=km[["num_clust"]], sil=km[["sil"]], clust_gap=km[["clust_gap"]],
       wss=km[["wss"]], k_best=km[["k_best"]])
