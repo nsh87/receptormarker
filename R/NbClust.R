@@ -872,7 +872,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     d <- as.matrix(d)
     Si <- 0
     for (k in 1:max(cl)) {
-      if ((sum(cl == k)) <= 1) 
+      if (sum(cl == k) <= 1) 
         Sil <- 1
       else {
         Sil <- 0
@@ -886,7 +886,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
                   dips <- cbind(dips, c((sum(d[i, cl == j])) / (sum(cl == j))))
                 else
                   dips <- cbind(dips, c((sum(d[i, cl == j]))))
-            }
+              }
             bi <- min(dips)
             Sil <- Sil + (bi - ai) / max(c(ai, bi))
           }
