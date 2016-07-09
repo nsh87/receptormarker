@@ -1,7 +1,7 @@
 #' @title Validate than an object is of class \emph{convergenceGroups}
 #' @description An internal function that raises an error if the argument is not
-#' of class \code{\link{convergenceGroups-class}} or if the \code{groups} are
-#' empty (i.e. if there are no convergence groups). 
+#' of class \emph{convergenceGroups} or if the \code{groups} are empty (i.e.
+#' if there are no convergence groups). 
 #' @param convergence_obj An item to be checked for class membership.
 #' @keywords internal
 validate_convergence_clust <- function(convergence_obj) {
@@ -21,9 +21,9 @@ validate_convergence_clust <- function(convergence_obj) {
 }
 
 
-#' @title Validate that an object is of class \code{\link{multiClust-class}}
+#' @title Validate that an object is of class \emph{multiClust}
 #' @description An internal function that raises an error if the argument is not
-#' of class \code{\link{multiClust-class}}.
+#' of class \emph{multiClust}.
 #' @param clust_obj An item to be checked for class membership.
 #' @keywords internal
 validate_multi_clust <- function(clust_obj) {
@@ -84,27 +84,47 @@ validate_sequences <- function(seqs) {
   }
 }
 
+
+#' Check if all columns of data.frame are boolean or binary
+#' 
+#' This is an internal function that returns \code{TRUE} if \code{d} is boolean
+#' or binary.
+#' @param d A data.frame or matrix.
+#' @return A logical indicating whether or not \emph{all} columns are boolean or
+#' binary.
+#' @keywords internal
+is_boolean <- function(d) {
+  for (col in d) {
+    uniq <- unique(col)
+    if (!all(uniq %in% 0:1)) {
+      return (FALSE)
+    }
+  }
+  return (TRUE)
+}
+
+
 #' @title Validate that the arg is either a numeric data.frame or matrix
 #' @description An internal function that raises an error if the argument is not
 #' either a \emph{data.frame} or \emph{matrix}. Also, if all columns are not
 #' numeric, it will raise an error.
-#' @param d A \emph{data.frame} or \emph{matrix} whose class (and the classes
-#' of each of its columns) the function will confirm.
+#' @param d A \emph{data.frame} or \emph{matrix} whose class the function will
+#' confirm.
 #' @keywords internal
 validate_num_data <- function(d) {
-  classes <- c("data.frame", "matrix")  # Acceptable classes for 'd'
-  types <- c("numeric", "integer")  # Acceptable types for each column of 'd'
+  classes <- c("data.frame", "matrix")
+  types <- c("numeric", "integer")
   if (!(class(d) %in% classes)) {
     stop("The argument 'd' is not a data.frame or matrix.", call.=FALSE)
   }
-  lapply(d, function(x) {
-    if (!(class(x) %in% types)) {
-      stop("The classes of the columns of 'd' are not all numeric.", 
-           call.=FALSE) 
-    }
-  })
-  for (i in ncol(d)) {
-    col <- d[, i]
+  lapply(d,
+          function(x) {
+            if (!(class(x) %in% types)) {
+              stop("The classes of the columns of 'd' are not all numeric.", 
+                   call.=FALSE) 
+            } else TRUE
+          })
+  for (col in d) {
     uniq <- unique(col)
     if (all(uniq %in% 0:1)) {
       message("At least one column of 'd' contains only values 0 and 1.")
@@ -112,7 +132,6 @@ validate_num_data <- function(d) {
     }
   }
 }
-
 
 #' @title Validate that an argument contains positive integers
 #' @description An internal function that raises an error if the argument does
@@ -155,24 +174,6 @@ validate_single_pos_num <- function(n) {
     stop("Argument 'n' must be greater than 0", call.=FALSE)
   } else if (grep("^[0-9]+$", n) != 1) {
     stop("Argument 'n' must be an integer greater than 0",
-         call.=FALSE)
-  }
-}
-
-#' @title Validate the krange parameter of the multi_clust function
-#' @description An internal function that raises an error if the argument is not
-#' a positive, non-duplicate range of integers beginning > 1. It is sorted into
-#' ascending order.
-#' @param n_range An item to be checked to make sure it is a valid range.
-#' @keywords internal
-validate_k_range <- function(range) {
-  if (!(class(range) %in% c("integer", "numeric")) || length(range) <= 1) {
-    stop("The argument 'krange' must be a range of integers.", call.=FALSE)
-  } else if (any(range <= 1)) {
-    stop("The argument 'krange' must contain only values greater than one.", 
-         call.=FALSE)
-  } else if (anyDuplicated(range) != 0) {
-    stop("The argument 'krange' must not contain any duplicate values.",
          call.=FALSE)
   }
 }

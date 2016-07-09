@@ -49,21 +49,3 @@ clean_data <- function(d, seqs_col, verbose, verbose_dir, verbose_format) {
   }
   list("seqs"=seqs, "d"=d_clean)
 }
-
-
-#' @title Check if all columns of data.frame are boolean or binary
-#' @description This is an internal function that returns \code{TRUE} if
-#' \code{d} is boolean or binary.
-#' @param d A data.frame or matrix.
-#' @return A logical indicating whether or not \emph{all} columns are boolean or
-#' binary.
-#' @keywords internal
-is_boolean <- function(d) {
-  for (col in d) {
-    uniq <- unique(col)
-    if (!all(uniq %in% 0:1)) {
-      return (FALSE)
-    }
-  }
-  return (TRUE)
-}

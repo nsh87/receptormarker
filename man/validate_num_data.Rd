@@ -7,8 +7,8 @@
 validate_num_data(d)
 }
 \arguments{
-\item{d}{A \emph{data.frame} or \emph{matrix} whose class (and the classes
-of each of its columns) the function will confirm.}
+\item{d}{A \emph{data.frame} or \emph{matrix} whose class the function will
+confirm.}
 }
 \description{
 An internal function that raises an error if the argument is not
