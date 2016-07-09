@@ -2,7 +2,7 @@
 % Please edit documentation in R/arg_validation.R
 \name{validate_multi_clust}
 \alias{validate_multi_clust}
-\title{Validate that an object is of class \emph{multiClust}}
+\title{Validate that an object is of class \code{\link{multiClust-class}}}
 \usage{
 validate_multi_clust(clust_obj)
 }
