@@ -11,8 +11,8 @@ validate_convergence_clust(convergence_obj)
 }
 \description{
 An internal function that raises an error if the argument is not
-of class \emph{convergenceGroups} or if the \code{groups} are empty (i.e.
-if there are no convergence groups).
+of class \code{\link{convergenceGroups-class}} or if the \code{groups} are
+empty (i.e. if there are no convergence groups).
 }
 \keyword{internal}
 

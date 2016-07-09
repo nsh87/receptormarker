@@ -7,12 +7,12 @@
 sil_plot(clust_obj, num_clust, ...)
 }
 \arguments{
-\item{clust_obj}{A \code{multiClust} object from which to extract
-\code{clust_model} based on the argument \code{num_clust}}
+\item{clust_obj}{A \code{\link{multiClust-class}} object from which to
+extract \code{clust_model} based on the argument \code{num_clust}}
 
 \item{num_clust}{An integer. The desired number of clusters to be used. Note:
 This integer should fall within the krange used to generate the 
-\code{multiClust} object.}
+\code{\link{multiClust-class}} object.}
 
 \item{...}{Further arguments to be passed to the \code{\link{plot}} 
 function (besides \code{xlab}, \code{ylab}, \code{main}).}
@@ -31,7 +31,7 @@ This function is intended to be used as part of deciding the ideal
   \code{\link[cluster]{silhouette}} for further details on its calculation.  
   This plot allows one to see how well the individual clusters of a given
   clustering perform according to silhouette width. One may pass in the
-  \code{k_best} element from the \code{multiClust} object for
+  \code{k_best} element from the \code{\link{multiClust-class}} object for
   \code{num_clust}, or use a different value. This is where other
   visualizations can be useful.  
   See the \emph{Details} section for the \code{\link{multi_clust}} function

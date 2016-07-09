@@ -1,6 +1,5 @@
 context("Unit test radial phylogram")
 
-
 data(tcr)
 tcr <- tcr[1:25, ]
 tcr_evil <- tcr; tcr_evil[3, "seqs"] <- "EVIL123"

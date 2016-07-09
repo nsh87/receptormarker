@@ -12,12 +12,13 @@ such a matrix (such as a numeric vector or a data frame with all numeric
 columns). Note: This should be the same one used to generate 
 \code{clust_obj}.}
 
-\item{clust_obj}{A \code{multiClust} object from which to extract
+\item{clust_obj}{A \code{\link{multiClust-class}} object from which to
+extract
 \code{clust_model} based on the argument \code{num_clust}}
 
 \item{num_clust}{An integer. The desired number of clusters to be used. Note:
 This integer should fall within the krange used to generate the 
-\code{multiClust} object.}
+\code{\link{multiClust-class}} object.}
 
 \item{...}{Further arguments to be passed to the \code{\link{qplot}} 
 function (besides \code{xlab}, \code{ylab}).}
@@ -36,9 +37,9 @@ This function is intended to be used to view the shape of a given
   relative expression level) are distributed. This function is primarily
   intended to try to uncover what sort of underlying structure a given
   clustering has found in the data.  
-  One may pass in the \code{k_best} element from the \code{multiClust} object
-  for \code{num_clust}, or use a different value. This is where other
-  visualizations can be useful.  
+  One may pass in the \code{k_best} element from the
+  \code{\link{multiClust-class}} object for \code{num_clust}, or use a
+  different value. This is where other visualizations can be useful.  
   See the \emph{Details} section for the \code{\link{multi_clust}} function
   and view the \emph{TIP} for a suggested workflow.
   

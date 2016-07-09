@@ -9,7 +9,7 @@ test_that("assume Python exists: verify version number is sane and not NULL", {
 })
 
 
-test_that("package can laod the Python and Biopython version from options", {
+test_that("package can load the Python and Biopython version from options", {
   expect_equal(getOption("receptormarker.py_version"), py_version())
   expect_equal(getOption("receptormarker.biopy_version"), biopy_version())
 })

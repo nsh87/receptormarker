@@ -7,8 +7,8 @@
 gap_plot(clust_obj, optimal = FALSE, ...)
 }
 \arguments{
-\item{clust_obj}{A \code{multiClust} object from which to extract
-\code{clust_gap}.}
+\item{clust_obj}{A \code{\link{multiClust-class}} object from which to
+extract \code{clust_gap}.}
 
 \item{optimal}{Logical. If \code{TRUE}, the optimal number of clusters as
 extracted from \code{clust_obj}, based on average silhouette width, is

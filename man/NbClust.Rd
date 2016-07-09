@@ -44,11 +44,15 @@ Gamma, Gplus and Tau included).}
 \item{plots}{boolean. Whether or not to view plots}
 }
 \description{
-An internal function using the \code{\link[NbClust]{NbClust}}
+An internal function using a local, modified version of the
+  \href{https://cran.r-project.org/web/packages/NbClust/NbClust.pdf}{NbClust}
   package. It provides 30 indices for determining the number of clusters and
-  proposes to user the best clustering scheme from the different results
+  proposes to the user the best clustering scheme from the different results
   obtained by varying all combinations of number of clusters, distance
   measures, and clustering methods.
+}
+\seealso{
+\code{\link{multi_clust}}
 }
 \keyword{internal}
 
