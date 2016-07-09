@@ -30,7 +30,7 @@ test_that("making sure argument is multiClust object works properly", {
                    list(1), matrix(3:6))
   lapply(arg_list, function(elem) expect_error(validate_multi_clust(elem),
                                                "object of class 'multiClust'"))
-  expect_that(validate_multi_clust(f_clust), not(throws_error()))
+  expect_silent(validate_multi_clust(f_clust))
 })
 
 
@@ -63,9 +63,41 @@ test_that("making sure multiClust object works properly", {
 
 
 test_that("multiClust object can be generated with boolean data", {
-  expect_that(multi_clust(tcr_binary_data), not(throws_error()))
+  expect_silent(suppressMessages(multi_clust(tcr_binary_data)))
 })
 
 test_that("multiClust object can be generated with non-boolean data", {
-  expect_that(multi_clust(fluidigm[1:40, ]), not(throws_error()))
+  expect_silent(multi_clust(fluidigm[1:40, ]))
+})
+
+# The data sets used below are tested directly with NbClust in test_nbclust.R,
+# however multi_clust() is supposed to detect boolean data itself and pass the
+# correct arguments to NbClust; this basically is an end-to-end test to ensure
+# that happens correctly.
+test_that("multi_clust() exhaustive correctly handles contrived boolean data", {
+  k_best <- multi_clust(contrived_bool,
+                        method="exhaustive",
+                        krange = 2:6)@k_best
+  expect_identical(k_best, 6)
+})
+
+test_that("multi_clust() exhaustive correctly handles tcr boolean data", {
+  k_best <- multi_clust(tcr_binary_data,
+                        method="exhaustive",
+                        krange = 2:7)@k_best
+  expect_identical(k_best, 2)
+})
+
+test_that("multi_clust() exhaustive correctly handles non-boolean iris data", {
+  k_best <- multi_clust(iris[, 1:4], 
+                        method="exhaustive",
+                        krange = 2:7)@k_best
+  expect_identical(k_best, 2)
+})
+
+test_that("multi_clust() exhaustive correctly handles non-bool fluidigm data", {
+  k_best <- multi_clust(fluidigm[1:50, ],
+                        method="exhaustive",
+                        krange = 2:7)@k_best
+  expect_identical(k_best, 3)
 })

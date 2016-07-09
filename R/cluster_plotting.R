@@ -162,12 +162,23 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
   sdev <- pca[["sdev"]]
   prop_var <- sdev ^ 2 / sum(sdev ^ 2)
   main <- paste0("PCA Plot (", round(sum(prop_var[1:2]) * 100), "% Variance)")
-  clusters <- clust_obj[["clust_model"]][[num_clust]][["cluster"]]
-  plot(pca[["scores"]][, 1:2], col = rainbow(num_clust)[clusters],
+  clusters <- clust_obj@clust_model[[num_clust]][["cluster"]]
+  clust_colors <- rainbow(num_clust)[clusters]
+  par(mar = c(5.1, 4.1, 4.1, 7.1), xpd = TRUE)
+  plot(pca[["scores"]][, 1:2], col = clust_colors,
        xlab = "Principal Component 1",
        ylab = "Principal Component 2",
        main = main,
        ...)
+  legend("topright",
+         inset = c(-0.25, 0),
+         legend = 1:num_clust,
+         pch = rep(1, num_clust),
+         col = rainbow(num_clust),
+         pt.cex = 1.0,
+         cex = 0.9,
+         title = "Cluster")
+  par(mar = c(5.1, 4.1, 4.1, 4.1))
 }
 
 #' Plot silhouette scores for a given clustering of data.
@@ -322,7 +333,7 @@ boxplot_num_cols <- function(num_clust) {
 #' Plot cluster membership for each feature.
 #' 
 #' This function plots cluster membership for each feature of \code{d} using box
-#' plots. It utlizes \code{facet_wrap} in the \code{\link[ggplot2]{qplot}}
+#' plots. It utilizes \code{facet_wrap} in the \code{\link[ggplot2]{qplot}}
 #' function and the desired \code{clust_model} from the argument 
 #' \code{clust_obj} to show the box plots of each feature after using the
 #' \code{\link[reshape2]{melt}} function to get the correct form of \code{d}.
@@ -378,19 +389,22 @@ clust_boxplot <- function(d, clust_obj, num_clust, ...) {
     d_bool <- aggregate(. ~ cluster, data = d, sum)
     d_bool[meas_vars] <- d_bool[meas_vars] / nrow(d)
     m <- reshape2::melt(d_bool, id.vars = "cluster", measure.vars = meas_vars)
-    ggplot2::qplot(x = as.factor(cluster), y = value, data = m, geom = "bar", 
-                   stat = "identity", fill = as.factor(cluster), xlab = NULL, 
-                   ylab = "Proportion expressed", ...) + 
-      ggplot2::facet_wrap(~variable, ncol=boxplot_num_cols(num_clust)) + 
+    ggplot2::ggplot(data = m, ggplot2::aes(x = as.factor(cluster), y = value,
+                                  fill = as.factor(cluster))) +
+      ggplot2::geom_bar(stat = "identity") +
+      ggplot2::ylab("Proportion expressed") +
+      ggplot2::facet_wrap(~variable, ncol = boxplot_num_cols(num_clust)) + 
       ggplot2::scale_fill_discrete(name = "Cluster") +
       ggplot2::theme(
-        axis.text=ggplot2::element_text(size=axis_label_size(num_clust))
+        axis.text=ggplot2::element_text(size=axis_label_size(num_clust)),
+        axis.title.x=ggplot2::element_blank()
       )
   } else {
     m <- reshape2::melt(d, id.vars = "cluster", measure.vars = meas_vars)
     ggplot2::qplot(x = as.factor(cluster), y = value, data = m,
                    geom = "boxplot", fill = as.factor(cluster), xlab = NULL, 
-                   ylab = "Relative expression level", ...) + 
+                   ylab = "Relative expression level",
+                   outlier.size = 0.8, ...) + 
       ggplot2::facet_wrap(~variable, ncol=boxplot_num_cols(num_clust)) + 
       ggplot2::scale_fill_discrete(name = "Cluster") +
       ggplot2::theme(

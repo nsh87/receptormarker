@@ -21,7 +21,20 @@ validate_convergence_clust <- function(convergence_obj) {
 }
 
 
-#' @title Validate that an object is of class \emph{multiClust}
+#' @title Validate the 'method' parameter of the multi_clust function
+#' @description An internal function that raises an error if the argument is not
+#' one of "kmeans" or "exhaustive".
+#' @param method The \code{method} passed to \code{\link{multi_clust}}.
+#' @keywords internal
+validate_multi_clust_method <- function(method) {
+  if (!(method %in% c("kmeans", "exhaustive"))) {
+    err <- "The argument 'method' must be either 'kmeans' or 'exhaustive'"
+    stop(err, call.=FALSE)
+  }
+}
+
+
+#' @title Validate that an object is of class \code{\link{multiClust-class}}
 #' @description An internal function that raises an error if the argument is not
 #' of class \emph{multiClust}.
 #' @param clust_obj An item to be checked for class membership.
