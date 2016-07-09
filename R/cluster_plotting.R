@@ -171,11 +171,12 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
        main = main,
        ...)
   legend("topright",
-         inset = c(-0.3, 0),
+         inset = c(-0.15, 0),
          legend = 1:num_clust,
-         lty = rep(1, num_clust),
-         col = clust_colors,
-         cex = 0.6,
+         pch = rep(1, num_clust),
+         col = rainbow(num_clust),
+         pt.cex = 1.0,
+         cex = 0.9,
          title = "Cluster")
   par(mar = c(5.1, 4.1, 4.1, 4.1))
 }
