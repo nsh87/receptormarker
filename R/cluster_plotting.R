@@ -164,14 +164,14 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
   main <- paste0("PCA Plot (", round(sum(prop_var[1:2]) * 100), "% Variance)")
   clusters <- clust_obj@clust_model[[num_clust]][["cluster"]]
   clust_colors <- rainbow(num_clust)[clusters]
-  par(mar = c(5.1, 4.1, 4.1, 8.1), xpd = TRUE)
+  par(mar = c(5.1, 4.1, 4.1, 4.1), xpd = TRUE)
   plot(pca[["scores"]][, 1:2], col = clust_colors,
        xlab = "Principal Component 1",
        ylab = "Principal Component 2",
        main = main,
        ...)
   legend("topright",
-         inset = c(-0.15, 0),
+         inset = c(-0.25, 0),
          legend = 1:num_clust,
          pch = rep(1, num_clust),
          col = rainbow(num_clust),
