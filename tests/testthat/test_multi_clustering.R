@@ -22,7 +22,7 @@ test_that("argument validation of the multiClust object works properly", {
                    list(1), matrix(3:6))
   lapply(arg_list, function(elem) expect_error(validate_multi_clust(elem),
                                                "object of class 'multiClust'"))
-  expect_that(validate_multi_clust(f_clust), not(throws_error()))
+  expect_silent(validate_multi_clust(f_clust))
 })
 
 
@@ -69,11 +69,11 @@ test_that("the 'k_best' slot in the pre-generated multiClust validates", {
 })
 
 test_that("multiClust object can be generated with boolean data", {
-  expect_that(multi_clust(tcr_binary_data), not(throws_error()))
+  expect_silent(suppressMessages(multi_clust(tcr_binary_data)))
 })
 
 test_that("multiClust object can be generated with non-boolean data", {
-  expect_that(multi_clust(fluidigm[1:40, ]), not(throws_error()))
+  expect_silent(multi_clust(fluidigm[1:40, ]))
 })
 
 # The data sets used below are tested directly with NbClust in test_nbclust.R,
