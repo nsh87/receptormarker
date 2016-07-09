@@ -53,11 +53,15 @@
 #' be find cluster centers when running kmeans.
 #' @param runs An integer representing the number of starts of the k-means
 #' algorithm for each k.
-#' @param method Either "kmeans", "hclust", or "both". Currently, it
-#' does nothing, but functionality will be added in the future.
+#' @param method Either "kmeans" or "exhaustive". If "kmeans", then the average
+#' silhouette score will be used to estimate the optimal k using KMeans
+#' clustering. If "exhausting", then \code{\link{NbClust}} will be used to
+#' estimate optimal k, although this takes significantly longer and is more
+#' error prone since the data is run through upwards of 20 algorithms for
+#' clustering; consider this method to be in beta.
 #' @param index The index to be calculated for determining the optimal k, passed
 #' to \code{\link{NbClust}} (see its documentation for details on this
-#' parameter).
+#' parameter). Only used when \code{method} is set to "exhaustive".
 #' @param ... Further arguments to be passed to \code{\link[stats]{kmeans}}.
 #' @return An object of class \code{\link{multiClust-class}}. This object can
 #' be used to create several plots (refer to the See Also section) that aid
@@ -81,12 +85,14 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
   validate_k_range(krange)
   validate_pos_num(list(iter.max = iter.max, runs = runs))
   validate_num_data(d)
+  validate_multi_clust_method(method)
   krange <- sort(krange)
   bool <- is_boolean(d)
   d <- d[complete.cases(d), ]
   d_dist <- dist(d)
   km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
              clust_gap = NULL, wss = NULL, k_best = NULL)
+  # Perform KMeans clustering for every k in krange
   for (k in krange) {
     km_opt <- stats::kmeans(d, k, iter.max = iter.max, nstart = runs, ...)
     min_wss <- km_opt[["tot.withinss"]]
@@ -103,7 +109,39 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
   km[["clust_gap"]] <- cluster::clusGap(d, kmeans, 
                                         K.max = length(km[["clust_model"]]), 
                                         B = 15, verbose = FALSE)
-  km[["k_best"]] <- which.max(km[["sil_avg"]])
+  # Estimate K using the average silhouette score if method == 'kmeans'
+  if (method == "kmeans") {
+    km[["k_best"]] <- which.max(km[["sil_avg"]])
+  } else {
+  # Estimate K using NbClust if method == 'exhaustive'
+    if (bool) {
+      distance <- "binary"
+    } else {
+      distance <- "euclidean"
+    }
+    tryCatch({
+      nb_best <- suppressWarnings(suppressMessages(
+                NbClust(d,
+                min.nc = krange[1],
+                index = index,
+                max.nc = krange[length(krange)],
+                distance = distance,
+                method = "average")))
+    },
+    error = function(e) {
+      if (grepl("computationally singular", e)) {
+        stop("There are not enough rows of data to evaluate for clustering.",
+             call. = FALSE)
+      } else {
+        stop(e, call. = FALSE)
+      }
+    }
+    )
+    best <- aggregate(nb_best[["Best.nc"]][1, ], 
+                      by = list(nb_best[["Best.nc"]][1, ]), length)
+    idx <- which.max(best[[2]])
+    km[["k_best"]] <- best[idx, 1]
+  }
   new("multiClust", clust_model=km[["clust_model"]], sil_avg=km[["sil_avg"]],
       num_clust=km[["num_clust"]], sil=km[["sil"]], clust_gap=km[["clust_gap"]],
       wss=km[["wss"]], k_best=km[["k_best"]])
