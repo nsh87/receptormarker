@@ -404,7 +404,8 @@ clust_boxplot <- function(d, clust_obj, num_clust, ...) {
     m <- reshape2::melt(d, id.vars = "cluster", measure.vars = meas_vars)
     ggplot2::qplot(x = as.factor(cluster), y = value, data = m,
                    geom = "boxplot", fill = as.factor(cluster), xlab = NULL, 
-                   ylab = "Relative expression level", ...) + 
+                   ylab = "Relative expression level",
+                   outlier.size = 0.8, ...) + 
       ggplot2::facet_wrap(~variable, ncol=boxplot_num_cols(num_clust)) + 
       ggplot2::scale_fill_discrete(name = "Cluster") +
       ggplot2::theme(
