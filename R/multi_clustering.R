@@ -48,16 +48,22 @@
 #' columns).
 #' @param krange An integer vector describing the range of k (numbers of
 #' clusters) which are to be compared. Note: \code{krange} should not
-#' include 1 since silhouette scores are not defined there.
+#' include 1 since silhouette scores and clusters are not defined at this value.
 #' @param iter.max An integer representing the maximum number of iterations to
-#' be find cluster centers when running kmeans.
+#' be find cluster centers when running kmeans. Only used when the \code{method}
+#' parameter is set to "kmeans".
 #' @param runs An integer representing the number of starts of the k-means
-#' algorithm for each k.
-#' @param method Either "kmeans", "hclust", or "both". Currently, it
-#' does nothing, but functionality will be added in the future.
+#' algorithm for each k. Only used when the \code{method} parameter is set to
+#' "kmeans".
+#' @param method Either "kmeans" or "exhaustive". If "kmeans", then the average
+#' silhouette score will be used to estimate the optimal k using KMeans
+#' clustering. If "exhausting", then \code{\link{NbClust}} will be used to
+#' estimate optimal k, although this takes significantly longer and is more
+#' error prone since the data is run through upwards of 20 algorithms for
+#' clustering; consider this method to be in beta.
 #' @param index The index to be calculated for determining the optimal k, passed
 #' to \code{\link{NbClust}} (see its documentation for details on this
-#' parameter).
+#' parameter). Only used when \code{method} is set to "exhaustive".
 #' @param ... Further arguments to be passed to \code{\link[stats]{kmeans}}.
 #' @return An object of class \code{\link{multiClust-class}}. This object can
 #' be used to create several plots (refer to the See Also section) that aid
@@ -74,19 +80,21 @@
 #' # Domain data set
 #' data(fluidigm)
 #' fluidigm_clust <- multi_clust(fluidigm[1:40, ])
-multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10, 
+multi_clust <- function(d, krange = 2:15, iter.max = 500, runs = 10, 
                         method = "kmeans", index = "alllong", ...) {
   validate_not_null(list(d = d, krange = krange, iter.max = iter.max, 
                          runs = runs, method = method, index = index))
   validate_k_range(krange)
   validate_pos_num(list(iter.max = iter.max, runs = runs))
   validate_num_data(d)
+  validate_multi_clust_method(method)
   krange <- sort(krange)
   bool <- is_boolean(d)
   d <- d[complete.cases(d), ]
   d_dist <- dist(d)
   km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
              clust_gap = NULL, wss = NULL, k_best = NULL)
+  # Perform KMeans clustering for every k in krange
   for (k in krange) {
     km_opt <- stats::kmeans(d, k, iter.max = iter.max, nstart = runs, ...)
     min_wss <- km_opt[["tot.withinss"]]
@@ -103,33 +111,39 @@ multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10,
   km[["clust_gap"]] <- cluster::clusGap(d, kmeans, 
                                         K.max = length(km[["clust_model"]]), 
                                         B = 15, verbose = FALSE)
-  if (bool) {
-    distance <- "binary"
+  # Estimate K using the average silhouette score if method == 'kmeans'
+  if (method == "kmeans") {
+    km[["k_best"]] <- which.max(km[["sil_avg"]])
   } else {
-    distance <- "euclidean"
-  }
-  tryCatch({
-    nb_best <- suppressWarnings(suppressMessages(
-              NbClust(d,
-              min.nc = krange[1],
-              index = index,
-              max.nc = krange[length(krange)],
-              distance = distance,
-              method = "average")))
-  },
-  error = function(e) {
-    if (grepl("computationally singular", e)) {
-      stop("There are not enough rows of data to evaluate for clustering.",
-           call. = FALSE)
+  # Estimate K using NbClust if method == 'exhaustive'
+    if (bool) {
+      distance <- "binary"
     } else {
-      stop(e, call. = FALSE)
+      distance <- "euclidean"
     }
+    tryCatch({
+      nb_best <- suppressWarnings(suppressMessages(
+                NbClust(d,
+                min.nc = krange[1],
+                index = index,
+                max.nc = krange[length(krange)],
+                distance = distance,
+                method = "average")))
+    },
+    error = function(e) {
+      if (grepl("computationally singular", e)) {
+        stop("There are not enough rows of data to evaluate for clustering.",
+             call. = FALSE)
+      } else {
+        stop(e, call. = FALSE)
+      }
+    }
+    )
+    best <- aggregate(nb_best[["Best.nc"]][1, ], 
+                      by = list(nb_best[["Best.nc"]][1, ]), length)
+    idx <- which.max(best[[2]])
+    km[["k_best"]] <- best[idx, 1]
   }
-  )
-  best <- aggregate(nb_best[["Best.nc"]][1, ], 
-                    by = list(nb_best[["Best.nc"]][1, ]), length)
-  idx <- which.max(best[[2]])
-  km[["k_best"]] <- best[idx, 1]
   new("multiClust", clust_model=km[["clust_model"]], sil_avg=km[["sil_avg"]],
       num_clust=km[["num_clust"]], sil=km[["sil"]], clust_gap=km[["clust_gap"]],
       wss=km[["wss"]], k_best=km[["k_best"]])
