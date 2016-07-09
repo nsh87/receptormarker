@@ -389,7 +389,7 @@ clust_boxplot <- function(d, clust_obj, num_clust, ...) {
     d_bool <- aggregate(. ~ cluster, data = d, sum)
     d_bool[meas_vars] <- d_bool[meas_vars] / nrow(d)
     m <- reshape2::melt(d_bool, id.vars = "cluster", measure.vars = meas_vars)
-    ggplot2::ggplot(data = m, aes(x = as.factor(cluster), y = value,
+    ggplot2::ggplot(data = m, ggplot2::aes(x = as.factor(cluster), y = value,
                                   fill = as.factor(cluster))) +
       ggplot2::geom_bar(stat = "identity") +
       ggplot2::ylab("Proportion expressed") +
@@ -397,7 +397,7 @@ clust_boxplot <- function(d, clust_obj, num_clust, ...) {
       ggplot2::scale_fill_discrete(name = "Cluster") +
       ggplot2::theme(
         axis.text=ggplot2::element_text(size=axis_label_size(num_clust)),
-        axis.title.x=element_blank()
+        axis.title.x=ggplot2::element_blank()
       )
   } else {
     m <- reshape2::melt(d, id.vars = "cluster", measure.vars = meas_vars)
