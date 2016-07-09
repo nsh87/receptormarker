@@ -48,11 +48,13 @@
 #' columns).
 #' @param krange An integer vector describing the range of k (numbers of
 #' clusters) which are to be compared. Note: \code{krange} should not
-#' include 1 since silhouette scores are not defined there.
+#' include 1 since silhouette scores and clusters are not defined at this value.
 #' @param iter.max An integer representing the maximum number of iterations to
-#' be find cluster centers when running kmeans.
+#' be find cluster centers when running kmeans. Only used when the \code{method}
+#' parameter is set to "kmeans".
 #' @param runs An integer representing the number of starts of the k-means
-#' algorithm for each k.
+#' algorithm for each k. Only used when the \code{method} parameter is set to
+#' "kmeans".
 #' @param method Either "kmeans" or "exhaustive". If "kmeans", then the average
 #' silhouette score will be used to estimate the optimal k using KMeans
 #' clustering. If "exhausting", then \code{\link{NbClust}} will be used to
@@ -78,7 +80,7 @@
 #' # Domain data set
 #' data(fluidigm)
 #' fluidigm_clust <- multi_clust(fluidigm[1:40, ])
-multi_clust <- function(d, krange = 2:15, iter.max = 300, runs = 10, 
+multi_clust <- function(d, krange = 2:15, iter.max = 500, runs = 10, 
                         method = "kmeans", index = "alllong", ...) {
   validate_not_null(list(d = d, krange = krange, iter.max = iter.max, 
                          runs = runs, method = method, index = index))
