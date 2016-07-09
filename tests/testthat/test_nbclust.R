@@ -38,17 +38,17 @@ test_that("invalid arguments to NbClust produce errors", {
 })
 
 test_that("NbClust object can be generated with boolean data", {
-  expect_that(suppressWarnings(NbClust(tcr_binary_data,
-                               distance = "binary",
-                               max.nc = 5,
-                               method = "average")),
-              not(throws_error()))
+  expect_silent(suppressWarnings(suppressMessages(
+    NbClust(tcr_binary_data,
+            distance = "binary",
+            max.nc = 5,
+            method = "average"))))
+              
 })
 
 test_that("NbClust object can be generated with non-boolean data", {
-  expect_that(suppressWarnings(
-    NbClust(f40, max.nc = 5, method = "average")),
-    not(throws_error()))
+  expect_silent(suppressWarnings(suppressMessages(
+    NbClust(f40, max.nc = 5, method = "average"))))
 })
 
 test_that("NbClust object picks expected number of clusters with fluidigm", {
