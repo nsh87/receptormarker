@@ -1028,11 +1028,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   
   Index.Dindex <- function(cl, x) {
     x <- as.matrix(x)
-    distance <- density.clusters(cl, x)[["distance"]]
-    n <- length(distance)
-    S <- 0
-    for (i in 1:n)
-      S <- S + distance[i]
+    S <- sum(density.clusters(cl, x)[["distance"]])
     inertieIntra <- S / n
     return(inertieIntra)
   }
