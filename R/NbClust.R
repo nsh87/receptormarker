@@ -915,7 +915,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         if (centrotypes == "centroids") {
           Xmm <- colMeans(X)
         }
-        for (k in (1:dim(X)[2])) {
+        for (k in 1:dim(X)[2]) {
           X[, k] <- X[, k] - Xmm[k]
         }
         ss <- svd(X)
@@ -940,56 +940,40 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
           Xnew <- pcsim(X, d, centrotypes)
         else
           stop("Wrong reference distribution type", call. = FALSE)
+        if (ClassNr == length(cl)) {
+          pp2 <- 1:ClassNr
+        } else if (method == "k-means") {
+          set.seed(1)
+          pp2 <- kmeans(Xnew, ClassNr, 100)[["cluster"]]
+        } else if (any(method == c("single", "complete", "average",
+                                   "ward.D2", "mcquitty", "median",
+                                   "centroid", "ward.D")))
+          pp2 <- cutree(hclust(dist(Xnew), method = method), ClassNr)
+        else
+          stop("Wrong clustering method", call. = FALSE)
         if (bb == 1) {
           pp <- cl
-          if (ClassNr == length(cl)) 
-            pp2 <- 1:ClassNr 
-          else if (method == "k-means") {
-            set.seed(1)
-            pp2 <- kmeans(Xnew, ClassNr, 100)[["cluster"]]
-          } else if (method == "single" || method == "complete" ||
-                     method == "average" || method == "ward.D2" ||
-                     method == "mcquitty" || method == "median" ||
-                     method == "centroid" || method == "ward.D") 
-            pp2 <- cutree(hclust(dist(Xnew), method = method), ClassNr)
-          else
-            stop("Wrong clustering method", call. = FALSE)
           if (ClassNr > 1) {
-            for (zz in (1:ClassNr)) {
+            for (zz in 1:ClassNr) {
               Xuse <- X[pp == zz, ]
               Wk0 <- Wk0 + sum(diag(var(Xuse))) * (length(pp[pp == zz]) - 
                 1) / (dim(X)[1] - ClassNr)
-            Xuse2 <- Xnew[pp2 == zz, ]
-            WkB[1, bb] <- WkB[1, bb] + sum(diag(var(Xuse2))) *
-              (length(pp2[pp2 == zz]) - 1) / (dim(X)[1] - ClassNr)
+              Xuse2 <- Xnew[pp2 == zz, ]
+              WkB[1, bb] <- WkB[1, bb] + sum(diag(var(Xuse2))) *
+                (length(pp2[pp2 == zz]) - 1) / (dim(X)[1] - ClassNr)
             }
-          }
-          if (ClassNr == 1) {
+          } else if (ClassNr == 1) {
             Wk0 <- sum(diag(var(X)))
             WkB[1, bb] <- sum(diag(var(Xnew)))
           }
-        }
-        if (bb > 1) {
-          if (ClassNr == length(cl)) 
-            pp2 <- 1:ClassNr
-          else if (method == "k-means") {
-            set.seed(1)
-            pp2 <- kmeans(Xnew, ClassNr, 100)[["cluster"]]
-          } else if (method == "single" || method == "complete" || 
-                     method == "average" || method == "ward.D2" ||
-                     method == "mcquitty" || method == "median" ||
-                     method == "centroid" || method == "ward.D") 
-            pp2 <- cutree(hclust(dist(Xnew), method = method), ClassNr)
-          else
-            stop("Wrong clustering method", call. = FALSE)
+        } else if (bb > 1) {
           if (ClassNr > 1) {
             for (zz in (1:ClassNr)) {
               Xuse2 <- Xnew[pp2 == zz, ]
               WkB[1, bb] <- WkB[1, bb] + sum(diag(var(Xuse2))) *
                 length(pp2[pp2 == zz]) / (dim(X)[1] - ClassNr)
             }
-          }
-          if (ClassNr == 1) {
+          } else if (ClassNr == 1) {
             WkB[1, bb] <- sum(diag(var(Xnew)))
           }
         }
@@ -999,12 +983,12 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       resul <- list(Sgap = Sgap, Sdgap = Sdgap)
       resul
     }
-    if (sum(c("centroids", "medoids") == centrotypes) == 0) 
+    if (!any(centrotypes == c("centroids", "medoids"))) {
       stop("Wrong centrotypes argument", call. = FALSE)
-    if ("medoids" == centrotypes && is.null(d)) 
+    } else if (centrotypes == "medoids" && is.null(d)) {
       stop("For argument centrotypes = 'medoids' d can not be null",
            call. = FALSE)
-    if (!is.null(d)) {
+    } else if (!is.null(d)) {
       if (!is.matrix(d)) {
         d <- as.matrix(d)
       }
@@ -1016,7 +1000,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     gap <- gap1[["Sgap"]]
     gap2 <- GAP(X, clall[, 2], reference.distribution, B, method, d,
                 centrotypes)
-    diffu <- gap - (gap2[["Sgap"]] - gap2[["Sdgap"]])
+    diffu <- gap - gap2[["Sgap"]] + gap2[["Sdgap"]]
     resul <- list(gap = gap, diffu = diffu)
     resul
   }
