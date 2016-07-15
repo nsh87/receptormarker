@@ -1043,9 +1043,9 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     for (i in 1:nc) {
       c1 <- which(clusters == i)
       for (j in i:nc) {
-        if (j == i) 
+        if (j == i) {
           intraClust[i] <- max(distance[c1, c1])
-        if (j > i) {
+        } else if (j > i) {
           c2 <- which(clusters == j)
           interClust[i, j] <- min(distance[c1, c2])
         }
