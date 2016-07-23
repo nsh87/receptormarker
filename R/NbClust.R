@@ -1922,23 +1922,18 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     res <- res[, c(indice)]
     if (indice == 14) {
       resCritical <- resCritical[, 1]
-    }
-    if (indice == 15) {
+    } else if (indice == 15) {
       resCritical <- resCritical[, 2]
-    }
-    if (indice == 16) {
+    } else if (indice == 16) {
       resCritical <- resCritical[, 3]
-    }
-    if (indice == 20) {
+    } else if (indice == 20) {
       resCritical <- resCritical[, 4]
     }
-  }
-  if (indice == 31) {
+  } else if (indice == 31) {
     res <- res[, c(1:19, 21:22, 26:30)]
     resCritical <- resCritical[, c(1:3)]
   }
-  if (any((indice == 20) || (indice == 23) || (indice == 24) ||
-          (indice == 25) || (indice == 32))) {
+  if (any(indice == c(20, 23, 24, 25, 32))) {
     results <- c(nc.KL, indice.KL, nc.CH, indice.CH, nc.Hartigan,
                  indice.Hartigan, nc.CCC, indice.CCC, nc.Scott, indice.Scott,
                  nc.Marriot, indice.Marriot, nc.TrCovW, indice.TrCovW,
@@ -1954,16 +1949,12 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
                  indice.sdindex, nc.Dindex, indice.Dindex, nc.SDbw, indice.SDbw)
     results1 <- matrix(c(results), nrow = 2, ncol = 30)
     resultats <- matrix(c(results), nrow = 2, ncol = 30,
-                        dimnames = list(c("Number_clusters", "Value_Index"),
-                                        c("KL", "CH", "Hartigan", "CCC",
-                                          "Scott", "Marriot", "TrCovW",
-                                          "TraceW", "Friedman", "Rubin",
-                                          "Cindex", "DB", "Silhouette", "Duda",
-                                          "PseudoT2", "Beale", "Ratkowsky",
-                                          "Ball", "PtBiserial", "Gap", "Frey",
-                                          "McClain", "Gamma", "Gplus", "Tau",
-                                          "Dunn", "Hubert", "SDindex", "Dindex",
-                                          "SDbw")))
+      dimnames = list(c("Number_clusters", "Value_Index"),
+        c("KL", "CH", "Hartigan", "CCC", "Scott", "Marriot", "TrCovW",
+        "TraceW", "Friedman", "Rubin", "Cindex", "DB", "Silhouette", "Duda",
+        "PseudoT2", "Beale", "Ratkowsky", "Ball", "PtBiserial", "Gap", "Frey",
+        "McClain", "Gamma", "Gplus", "Tau", "Dunn", "Hubert", "SDindex",
+        "Dindex", "SDbw")))
   } else {
     results <- c(nc.KL, indice.KL, nc.CH, indice.CH, nc.Hartigan,
                  indice.Hartigan, nc.CCC, indice.CCC, nc.Scott, indice.Scott,
@@ -1979,26 +1970,18 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
                  indice.Dindex, nc.SDbw, indice.SDbw)
     results1 <- matrix(c(results), nrow = 2, ncol = 26)
     resultats <- matrix(c(results), nrow = 2, ncol = 26,
-                        dimnames = list(c("Number_clusters", "Value_Index"),
-                                        c("KL", "CH", "Hartigan", "CCC",
-                                          "Scott", "Marriot", "TrCovW",
-                                          "TraceW", "Friedman", "Rubin",
-                                          "Cindex", "DB", "Silhouette", "Duda",
-                                          "PseudoT2", "Beale", "Ratkowsky",
-                                          "Ball", "PtBiserial", "Frey", 
-                                          "McClain", "Dunn", "Hubert",
-                                          "SDindex", "Dindex", "SDbw")))
+      dimnames = list(c("Number_clusters", "Value_Index"),
+        c("KL", "CH", "Hartigan", "CCC", "Scott", "Marriot", "TrCovW",
+        "TraceW", "Friedman", "Rubin", "Cindex", "DB", "Silhouette", "Duda",
+        "PseudoT2", "Beale", "Ratkowsky", "Ball", "PtBiserial", "Frey", 
+        "McClain", "Dunn", "Hubert", "SDindex", "Dindex", "SDbw")))
   }
-  if (any((indice <= 20) || (indice == 23) || (indice == 24) ||
-          (indice == 25))) {
-    resultats <- resultats[, c(indice)]
-  }
-  if (any((indice == 21) || (indice == 22))) {
+  if (indice == 21 || indice == 22) {
     indice3 <- indice - 1
     resultats <- resultats[, c(indice3)]
-  }
-  if (any((indice == 26) || (indice == 27) || (indice == 28) ||
-          (indice == 29) || (indice == 30))) {
+  } else if (indice <= 25) {
+    resultats <- resultats[, c(indice)]
+  } else if (indice <= 30) {
     indice4 <- indice - 4
     resultats <- resultats[, c(indice4)]
   }
