@@ -2018,26 +2018,18 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     
     ########################## The Best partition ###################
     
-    if (any((methodM == 1) || (methodM == 2) || (methodM == 3) || (methodM == 4) ||
-      (methodM == 5) || (methodM == 6) || (methodM == 7) || (methodM == 9))) 
+    if (methodM != 8) {
       partition <- cutree(hc, k = j)
+    }
     else {
       set.seed(1)
       partition <- kmeans(jeu, j)[["cluster"]]
     }
   }
-  if (any((indice == 1) || (indice == 2) || (indice == 3) || (indice == 4) ||
-          (indice == 5) || (indice == 6) || (indice == 7) || (indice == 8) ||
-          (indice == 9) || (indice == 10) || (indice == 11) || (indice == 12) ||
-          (indice == 13) || (indice == 14) || (indice == 15) ||
-          (indice == 16) || (indice == 17) || (indice == 18) ||
-          (indice == 19) || (indice == 20) || (indice == 21) ||
-          (indice == 22) || (indice == 23) || (indice == 24) ||
-          (indice == 25) || (indice == 26) || (indice == 28) ||
-          (indice == 30))) {
-    if (any((methodM == 1) || (methodM == 2) || (methodM == 3) || (methodM == 4) ||
-      (methodM == 5) || (methodM == 6) || (methodM == 7) || (methodM == 9))) 
+  if (indice < 31 && indice != 27 && indice != 29) {
+    if (methodM != 8) {
       partition <- cutree(hc, k = best.nc)
+    }
     else {
       set.seed(1)
       partition <- kmeans(jeu, best.nc)[["cluster"]]
