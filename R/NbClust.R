@@ -1991,21 +1991,22 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   
   ######################## Summary results #####################################
   
-  if (any((indice == 31) || (indice == 32))) {
-    message("*****************************************************************",
-      "\n")
-    message("* Among all indices:                                             ",
-      "\n")
+  if (indice == 31 || indice == 32) {
+    message("****************************************************************",
+      "*\n")
+    message("* Among all indices:                                            ",
+      " \n")
     BestCluster <- results1[1, ]
     c <- 0
     for (i in min.nc:max.nc) {
       vect <- which(BestCluster == i)
-      if (length(vect) > 0) 
+      if (length(vect) > 0) {
         message("*", length(vect), " proposed ", i,
                 " as the best number of clusters", "\n")
-      if (c < length(vect)) {
-        j <- i
-        c <- length(vect)
+        if (c < length(vect)) {
+          j <- i
+          c <- length(vect)
+        }
       }
     }
     message("\n", "               *****Conclusion*****                       ", 
