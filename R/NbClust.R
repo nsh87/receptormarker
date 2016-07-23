@@ -2038,21 +2038,14 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   
   ######################### Summary results ############################
   
-  if (any((indice == 14) || (indice == 15) || (indice == 16) ||
-          (indice == 20) || (indice == 31) || (indice == 32))) {
-    results.final <- list(All.index = res, All.CriticalValues = resCritical, 
+  if (any(indice == c(14, 15, 16, 20, 31, 32))) {
+    results.final <- list(All.index = res, All.CriticalValues = resCritical,
       Best.nc = resultats, Best.partition = partition)
-  }
-  if (any((indice == 27) || (indice == 29))) 
+  } else if (indice == 27 || indice == 29) {
     results.final <- list(All.index = res)
-  if (any((indice == 1) || (indice == 2) || (indice == 3) || (indice == 4) ||
-          (indice == 5) || (indice == 6) || (indice == 7) || (indice == 8) ||
-          (indice == 9) || (indice == 10) || (indice == 11) || (indice == 12) ||
-          (indice == 13) || (indice == 17) || (indice == 18) ||
-          (indice == 19) || (indice == 21) || (indice == 22) || 
-          (indice == 23) || (indice == 24) || (indice == 25) ||
-          (indice == 26) || (indice == 28) || (indice == 30))) 
+  } else {
     results.final <- list(All.index = res, Best.nc = resultats,
                           Best.partition = partition)
+  }
   return(results.final)
-} 
+}
