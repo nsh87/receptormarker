@@ -756,7 +756,8 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       centers <- gss(x, cl, d)[["centers"]]
       varwithins <- varwithinss(x, centers, cl)
       zvargss <- vargss(x, clsize, varwithins)
-      ratio <- .Internal(mean(sqrt(zvargss[["varbgss"]] / zvargss[["vartss"]])))
+      ratio <- .Internal(mean(sqrt(zvargss[["varbgss"]] /
+        zvargss[["vartss"]])))
       ratkowsky <- ratio / sqrt(qq)
       return(ratkowsky)
     }
@@ -978,7 +979,7 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
           }
         }
       }
-      Sgap <- .Internal(mean(log(WkB[1, ])) - log(Wk0))
+      Sgap <- .Internal(mean(log(WkB[1, ]))) - log(Wk0)
       Sdgap <- sqrt(1 + 1 / B) * sqrt(var(log(WkB[1, ]))) * sqrt((B - 1) / B)
       resul <- list(Sgap = Sgap, Sdgap = Sdgap)
       resul
@@ -1028,8 +1029,9 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
   
   Index.Dindex <- function(cl, x) {
     x <- as.matrix(x)
-    S <- sum(density.clusters(cl, x)[["distance"]])
-    inertieIntra <- S / n
+    distance <- density.clusters(cl, x)[["distance"]]
+    S <- sum(distance)
+    inertieIntra <- S / length(distance)
     return(inertieIntra)
   }
   
@@ -1884,8 +1886,9 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         nc.Ball <- indice.Ball <- 0
         nc.Ball <- DiffLev[, 1][which.max(DiffLev[, 9])]
         indice.Ball <- max(DiffLev[, 9], na.rm = TRUE)
-        if (plots) {
         nc.Hubert <- indice.Hubert <- 0
+        nc.Dindex <- indice.Dindex <- 0
+        if (plots) {
         par(mfrow = c(1, 2))
         plot(x_axis, res[, 27], tck = 0, type = "b", col = "red",
              xlab = expression(paste("Number of clusters ")), 
@@ -1899,7 +1902,6 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
           "                   significant increase of the value of the ",
           "measure i.e the significant peak in Hubert\n                   ",
           "index second differences plot.", "\n", "\n")
-        nc.Dindex <- indice.Dindex <- 0
         par(mfrow = c(1, 2))
         plot(x_axis, res[, 29], tck = 0, type = "b", col = "red",
           xlab = expression(paste("Number of clusters ")),
