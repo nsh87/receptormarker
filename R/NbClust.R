@@ -1715,215 +1715,215 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
         nc.Gap <- NA
         indice.Gap <- NA
       }
-      nc.Duda <- indice.Duda <- 0
-      foundDuda <- FALSE
-      for (ncD in min_nc:max_nc) {
-        if (res[ncD - min_nc + 1, 14] >= resCritical[ncD - min_nc + 1, 1] &&
-            !foundDuda) {
-          ncDuda <- ncD
-          indiceDuda <- res[ncD - min_nc + 1, 14]
-          foundDuda <- TRUE
-        }
+    }
+    nc.Duda <- indice.Duda <- 0
+    foundDuda <- FALSE
+    for (ncD in min_nc:max_nc) {
+      if (res[ncD - min_nc + 1, 14] >= resCritical[ncD - min_nc + 1, 1] &&
+          !foundDuda) {
+        ncDuda <- ncD
+        indiceDuda <- res[ncD - min_nc + 1, 14]
+        foundDuda <- TRUE
       }
-      if (foundDuda) {
-        nc.Duda <- ncDuda
-        indice.Duda <- indiceDuda
-      } else {
-        nc.Duda <- NA
-        indice.Duda <- NA
+    }
+    if (foundDuda) {
+      nc.Duda <- ncDuda
+      indice.Duda <- indiceDuda
+    } else {
+      nc.Duda <- NA
+      indice.Duda <- NA
+    }
+    nc.Pseudo <- indice.Pseudo <- 0
+    foundPseudo <- FALSE
+    for (ncP in min_nc:max_nc) {
+      if (res[ncP - min_nc + 1, 15] <= resCritical[ncP - min_nc + 1, 2] &&
+          !foundPseudo) {
+        ncPseudo <- ncP
+        indicePseudo <- res[ncP - min_nc + 1, 15]
+        foundPseudo <- TRUE
       }
-      nc.Pseudo <- indice.Pseudo <- 0
-      foundPseudo <- FALSE
-      for (ncP in min_nc:max_nc) {
-        if (res[ncP - min_nc + 1, 15] <= resCritical[ncP - min_nc + 1, 2] &&
-            !foundPseudo) {
-          ncPseudo <- ncP
-          indicePseudo <- res[ncP - min_nc + 1, 15]
-          foundPseudo <- TRUE
-        }
+    }
+    if (foundPseudo) {
+      nc.Pseudo <- ncPseudo
+      indice.Pseudo <- indicePseudo
+    } else {
+      nc.Pseudo <- NA
+      indice.Pseudo <- NA
+    }
+    nc.Beale <- indice.Beale <- 0
+    foundBeale <- FALSE
+    for (ncB in min_nc:max_nc) {
+      if (resCritical[ncB - min_nc + 1, 3] >= alphaBeale && !foundBeale) {
+        ncBeale <- ncB
+        indiceBeale <- res[ncB - min_nc + 1, 16]
+        foundBeale <- TRUE
       }
-      if (foundPseudo) {
-        nc.Pseudo <- ncPseudo
-        indice.Pseudo <- indicePseudo
-      } else {
-        nc.Pseudo <- NA
-        indice.Pseudo <- NA
+    }
+    if (foundBeale) {
+      nc.Beale <- ncBeale
+      indice.Beale <- indiceBeale
+    } else {
+      nc.Beale <- NA
+      indice.Beale <- NA
+    }
+    nc.Ratkowsky <- indice.Ratkowsky <- 0
+    nc.Ratkowsky <- (min_nc:max_nc)[which.max(res[, 17])]
+    indice.Ratkowsky <- max(res[, 17], na.rm = TRUE)
+    nc.ptbiserial <- indice.ptbiserial <- 0
+    nc.ptbiserial <- (min_nc:max_nc)[which.max(res[, 19])]
+    indice.ptbiserial <- max(res[, 19], na.rm = TRUE)
+    foundNC <- foundIndice <- numeric(0)
+    nc.Frey <- indice.Frey <- 0
+    foundFrey <- FALSE
+    i <- 1
+    for (ncF in min_nc:max_nc) {
+      if (res[ncF - min_nc + 1, 21] < 1) {
+        ncFrey <- ncF - 1
+        indiceFrey <- res[ncF - 1 - min_nc + 1, 21]
+        foundFrey <- TRUE
+        foundNC[i] <- ncFrey
+        foundIndice[i] <- indiceFrey
+        i <- i + 1
       }
-      nc.Beale <- indice.Beale <- 0
-      foundBeale <- FALSE
-      for (ncB in min_nc:max_nc) {
-        if (resCritical[ncB - min_nc + 1, 3] >= alphaBeale && !foundBeale) {
-          ncBeale <- ncB
-          indiceBeale <- res[ncB - min_nc + 1, 16]
-          foundBeale <- TRUE
-        }
-      }
-      if (foundBeale) {
-        nc.Beale <- ncBeale
-        indice.Beale <- indiceBeale
-      } else {
-        nc.Beale <- NA
-        indice.Beale <- NA
-      }
-      nc.Ratkowsky <- indice.Ratkowsky <- 0
-      nc.Ratkowsky <- (min_nc:max_nc)[which.max(res[, 17])]
-      indice.Ratkowsky <- max(res[, 17], na.rm = TRUE)
-      nc.ptbiserial <- indice.ptbiserial <- 0
-      nc.ptbiserial <- (min_nc:max_nc)[which.max(res[, 19])]
-      indice.ptbiserial <- max(res[, 19], na.rm = TRUE)
-      foundNC <- foundIndice <- numeric(0)
-      nc.Frey <- indice.Frey <- 0
-      foundFrey <- FALSE
-      i <- 1
-      for (ncF in min_nc:max_nc) {
-        if (res[ncF - min_nc + 1, 21] < 1) {
-          ncFrey <- ncF - 1
-          indiceFrey <- res[ncF - 1 - min_nc + 1, 21]
-          foundFrey <- TRUE
-          foundNC[i] <- ncFrey
-          foundIndice[i] <- indiceFrey
-          i <- i + 1
-        }
-      }
-      if (foundFrey) {
-        nc.Frey <- foundNC[1]
-        indice.Frey <- foundIndice[1]
-      } else {
-        nc.Frey <- NA
-        indice.Frey <- NA
-        message("Frey index : No clustering structure in this data set")
-      }
-      nc.McClain <- indice.McClain <- 0
-      nc.McClain <- (min_nc:max_nc)[which.min(res[, 22])]
-      indice.McClain <- min(res[, 22], na.rm = TRUE)
-      nc.Gamma <- indice.Gamma <- 0
-      nc.Gamma <- (min_nc:max_nc)[which.max(res[, 23])]
-      indice.Gamma <- max(res[, 23], na.rm = TRUE)
-      nc.Gplus <- indice.Gplus <- 0
-      nc.Gplus <- (min_nc:max_nc)[which.min(res[, 24])]
-      indice.Gplus <- min(res[, 24], na.rm = TRUE)
-      nc.Tau <- indice.Tau <- 0
-      nc.Tau <- (min_nc:max_nc)[which.max(res[, 25])]
-      indice.Tau <- max(res[, 25], na.rm = TRUE)
-      nc.Dunn <- indice.Dunn <- 0
-      nc.Dunn <- (min_nc:max_nc)[which.max(res[, 26])]
-      indice.Dunn <- max(res[, 26], na.rm = TRUE)
-      nc.sdindex <- indice.sdindex <- 0
-      nc.sdindex <- (min_nc:max_nc)[which.min(res[, 28])]
-      indice.sdindex <- min(res[, 28], na.rm = TRUE)
-      nc.SDbw <- indice.SDbw <- 0
-      nc.SDbw <- (min_nc:max_nc)[which.min(res[, 30])]
-      indice.SDbw <- min(res[, 30], na.rm = TRUE)
-      DiffLev <- array(0, c(max_nc - min_nc + 1, 12))
-      DiffLev[, 1] <- min_nc:max_nc
-      DiffLev[1, 2] <- abs(res[1, 3] - NA)
-      DiffLev[1, 3] <- abs(res[1, 5] - NA)
-      DiffLev[1, 4] <- abs(res[1, 6] - NA)
-      DiffLev[1, 5] <- abs(res[1, 7] - NA)
-      DiffLev[1, 6] <- abs(res[1, 8] - NA)
-      DiffLev[1, 7] <- abs(res[1, 9] - NA)
-      DiffLev[1, 8] <- abs(res[1, 10] - NA)
-      DiffLev[1, 9] <- abs(res[1, 18] - NA)
-      DiffLev[1, 10] <- abs(res[1, 27] - NA)
-      DiffLev[1, 12] <- abs(res[1, 29] - NA)
-      DiffLev[max_nc - min_nc + 1, 2] <- abs(res[max_nc - min_nc + 1, 3] -
-        res[max_nc - min_nc, 3])
-      DiffLev[max_nc - min_nc + 1, 3] <- abs(res[max_nc - min_nc + 1, 5] -
-        res[max_nc - min_nc, 5])
-      DiffLev[max_nc - min_nc + 1, 4] <- abs(res[max_nc - min_nc + 1, 6] - NA)
-      DiffLev[max_nc - min_nc + 1, 5] <- abs(res[max_nc - min_nc + 1, 7] -
-        res[max_nc - min_nc, 7])
-      DiffLev[max_nc - min_nc + 1, 6] <- abs(res[max_nc - min_nc + 1, 8] - NA)
-      DiffLev[max_nc - min_nc + 1, 7] <- abs(res[max_nc - min_nc + 1, 9] -
-        res[max_nc - min_nc, 9])
-      DiffLev[max_nc - min_nc + 1, 8] <- abs(res[max_nc - min_nc + 1, 10] - NA)
-      DiffLev[max_nc - min_nc + 1, 9] <- abs(res[max_nc - min_nc + 1, 18] -
-        res[max_nc - min_nc, 18])
-      DiffLev[max_nc - min_nc + 1, 10] <- abs(res[max_nc - min_nc + 1, 27] -
-        NA)
-      DiffLev[max_nc - min_nc + 1, 12] <- abs(res[max_nc - min_nc + 1, 29] -
-        NA)
-      for (nc3 in (min_nc + 1):(max_nc - 1)) {
-        DiffLev[nc3 - min_nc + 1, 2] <- abs(res[nc3 - min_nc + 1, 3] -
-          res[nc3 - min_nc, 3])
-        DiffLev[nc3 - min_nc + 1, 3] <- abs(res[nc3 - min_nc + 1, 5] -
-          res[nc3 - min_nc, 5])
-        DiffLev[nc3 - min_nc + 1, 4] <- ((res[nc3 - min_nc + 2, 6] -
-          res[nc3 - min_nc + 1, 6]) - (res[nc3 - min_nc + 1, 6] -
-          res[nc3 - min_nc, 6]))
-        DiffLev[nc3 - min_nc + 1, 5] <- abs(res[nc3 - min_nc + 1, 7] -
-          res[nc3 - min_nc, 7])
-        DiffLev[nc3 - min_nc + 1, 6] <- ((res[nc3 - min_nc + 2, 8] -
-          res[nc3 - min_nc + 1, 8]) - (res[nc3 - min_nc + 1, 8] -
-          res[nc3 - min_nc, 8]))
-        DiffLev[nc3 - min_nc + 1, 7] <- abs(res[nc3 - min_nc + 1, 9] -
-          res[nc3 - min_nc, 9])
-        DiffLev[nc3 - min_nc + 1, 8] <- ((res[nc3 - min_nc + 2, 10] -
-          res[nc3 - min_nc + 1, 10]) - (res[nc3 - min_nc + 1, 10] -
-          res[nc3 - min_nc, 10]))
-        DiffLev[nc3 - min_nc + 1, 9] <- abs(res[nc3 - min_nc + 1, 18] -
-          res[nc3 - min_nc, 18])
-        DiffLev[nc3 - min_nc + 1, 10] <- abs((res[nc3 - min_nc + 1, 27] -
-          res[nc3 - min_nc, 27]))
-        DiffLev[nc3 - min_nc + 1, 12] <- ((res[nc3 - min_nc + 2, 29] -
-          res[nc3 - min_nc + 1, 29]) - (res[nc3 - min_nc + 1, 29] -
-          res[nc3 - min_nc, 29]))
-      }
-        nc.Hartigan <- indice.Hartigan <- 0
-        nc.Hartigan <- DiffLev[, 1][which.max(DiffLev[, 2])]
-        indice.Hartigan <- max(DiffLev[, 2], na.rm = TRUE)
-        nc.Scott <- indice.Scott <- 0
-        nc.Scott <- DiffLev[, 1][which.max(DiffLev[, 3])]
-        indice.Scott <- max(DiffLev[, 3], na.rm = TRUE)
-        nc.Marriot <- indice.Marriot <- 0
-        nc.Marriot <- DiffLev[, 1][which.max(DiffLev[, 4])]
-        round(nc.Marriot, digits = 1)
-        indice.Marriot <- max(DiffLev[, 4], na.rm = TRUE)
-        nc.TrCovW <- indice.TrCovW <- 0
-        nc.TrCovW <- DiffLev[, 1][which.max(DiffLev[, 5])]
-        indice.TrCovW <- max(DiffLev[, 5], na.rm = TRUE)
-        nc.TraceW <- indice.TraceW <- 0
-        nc.TraceW <- DiffLev[, 1][which.max(DiffLev[, 6])]
-        indice.TraceW <- max(DiffLev[, 6], na.rm = TRUE)
-        nc.Friedman <- indice.Friedman <- 0
-        nc.Friedman <- DiffLev[, 1][which.max(DiffLev[, 7])]
-        indice.Friedman <- max(DiffLev[, 7], na.rm = TRUE)
-        nc.Rubin <- indice.Rubin <- 0
-        nc.Rubin <- DiffLev[, 1][which.min(DiffLev[, 8])]
-        indice.Rubin <- min(DiffLev[, 8], na.rm = TRUE)
-        nc.Ball <- indice.Ball <- 0
-        nc.Ball <- DiffLev[, 1][which.max(DiffLev[, 9])]
-        indice.Ball <- max(DiffLev[, 9], na.rm = TRUE)
-        nc.Hubert <- indice.Hubert <- 0
-        nc.Dindex <- indice.Dindex <- 0
-        if (plots) {
-        par(mfrow = c(1, 2))
-        plot(x_axis, res[, 27], tck = 0, type = "b", col = "red",
-             xlab = expression(paste("Number of clusters ")), 
-             ylab = expression(paste("Hubert Statistic values")))
-        plot(DiffLev[, 1], DiffLev[, 10], tck = 0, type = "b", col = "blue",
-             xlab = expression(paste("Number of clusters ")),
-             ylab = expression(paste("Hubert statistic second differences")))
-        message("*** : The Hubert index is a graphical method of determining ",
-          "the number of clusters.\n                   In the plot of Hubert ",
-          "index, we seek a significant knee that corresponds to a \n",
-          "                   significant increase of the value of the ",
-          "measure i.e the significant peak in Hubert\n                   ",
-          "index second differences plot.", "\n", "\n")
-        par(mfrow = c(1, 2))
-        plot(x_axis, res[, 29], tck = 0, type = "b", col = "red",
-          xlab = expression(paste("Number of clusters ")),
-          ylab = expression(paste("Dindex Values")))
-        plot(DiffLev[, 1], DiffLev[, 12], tck = 0, type = "b", col = "blue",
-          xlab = expression(paste("Number of clusters ")),
-          ylab = expression(paste("Second differences Dindex Values")))
-        message(paste("*** : The D index is a graphical method of determining",
-          " the number of clusters. \n                   In the plot of D ",
-          "index, we seek a significant knee (the significant peak in ",
-          "Dindex\n                   second differences plot) that ",
-          "corresponds to a significant increase of the value of\n",
-          "                   the measure.", "\n", "\n"))
-      }
+    }
+    if (foundFrey) {
+      nc.Frey <- foundNC[1]
+      indice.Frey <- foundIndice[1]
+    } else {
+      nc.Frey <- NA
+      indice.Frey <- NA
+      message("Frey index : No clustering structure in this data set")
+    }
+    nc.McClain <- indice.McClain <- 0
+    nc.McClain <- (min_nc:max_nc)[which.min(res[, 22])]
+    indice.McClain <- min(res[, 22], na.rm = TRUE)
+    nc.Gamma <- indice.Gamma <- 0
+    nc.Gamma <- (min_nc:max_nc)[which.max(res[, 23])]
+    indice.Gamma <- max(res[, 23], na.rm = TRUE)
+    nc.Gplus <- indice.Gplus <- 0
+    nc.Gplus <- (min_nc:max_nc)[which.min(res[, 24])]
+    indice.Gplus <- min(res[, 24], na.rm = TRUE)
+    nc.Tau <- indice.Tau <- 0
+    nc.Tau <- (min_nc:max_nc)[which.max(res[, 25])]
+    indice.Tau <- max(res[, 25], na.rm = TRUE)
+    nc.Dunn <- indice.Dunn <- 0
+    nc.Dunn <- (min_nc:max_nc)[which.max(res[, 26])]
+    indice.Dunn <- max(res[, 26], na.rm = TRUE)
+    nc.sdindex <- indice.sdindex <- 0
+    nc.sdindex <- (min_nc:max_nc)[which.min(res[, 28])]
+    indice.sdindex <- min(res[, 28], na.rm = TRUE)
+    nc.SDbw <- indice.SDbw <- 0
+    nc.SDbw <- (min_nc:max_nc)[which.min(res[, 30])]
+    indice.SDbw <- min(res[, 30], na.rm = TRUE)
+    DiffLev <- array(0, c(max_nc - min_nc + 1, 12))
+    DiffLev[, 1] <- min_nc:max_nc
+    DiffLev[1, 2] <- abs(res[1, 3] - NA)
+    DiffLev[1, 3] <- abs(res[1, 5] - NA)
+    DiffLev[1, 4] <- abs(res[1, 6] - NA)
+    DiffLev[1, 5] <- abs(res[1, 7] - NA)
+    DiffLev[1, 6] <- abs(res[1, 8] - NA)
+    DiffLev[1, 7] <- abs(res[1, 9] - NA)
+    DiffLev[1, 8] <- abs(res[1, 10] - NA)
+    DiffLev[1, 9] <- abs(res[1, 18] - NA)
+    DiffLev[1, 10] <- abs(res[1, 27] - NA)
+    DiffLev[1, 12] <- abs(res[1, 29] - NA)
+    DiffLev[max_nc - min_nc + 1, 2] <- abs(res[max_nc - min_nc + 1, 3] -
+                                             res[max_nc - min_nc, 3])
+    DiffLev[max_nc - min_nc + 1, 3] <- abs(res[max_nc - min_nc + 1, 5] -
+                                             res[max_nc - min_nc, 5])
+    DiffLev[max_nc - min_nc + 1, 4] <- abs(res[max_nc - min_nc + 1, 6] - NA)
+    DiffLev[max_nc - min_nc + 1, 5] <- abs(res[max_nc - min_nc + 1, 7] -
+                                             res[max_nc - min_nc, 7])
+    DiffLev[max_nc - min_nc + 1, 6] <- abs(res[max_nc - min_nc + 1, 8] - NA)
+    DiffLev[max_nc - min_nc + 1, 7] <- abs(res[max_nc - min_nc + 1, 9] -
+                                             res[max_nc - min_nc, 9])
+    DiffLev[max_nc - min_nc + 1, 8] <- abs(res[max_nc - min_nc + 1, 10] - NA)
+    DiffLev[max_nc - min_nc + 1, 9] <- abs(res[max_nc - min_nc + 1, 18] -
+                                             res[max_nc - min_nc, 18])
+    DiffLev[max_nc - min_nc + 1, 10] <- abs(res[max_nc - min_nc + 1, 27] -
+                                              NA)
+    DiffLev[max_nc - min_nc + 1, 12] <- abs(res[max_nc - min_nc + 1, 29] -
+                                              NA)
+    for (nc3 in (min_nc + 1):(max_nc - 1)) {
+      DiffLev[nc3 - min_nc + 1, 2] <- abs(res[nc3 - min_nc + 1, 3] -
+                                            res[nc3 - min_nc, 3])
+      DiffLev[nc3 - min_nc + 1, 3] <- abs(res[nc3 - min_nc + 1, 5] -
+                                            res[nc3 - min_nc, 5])
+      DiffLev[nc3 - min_nc + 1, 4] <- ((res[nc3 - min_nc + 2, 6] -
+                                          res[nc3 - min_nc + 1, 6]) - (res[nc3 - min_nc + 1, 6] -
+                                                                         res[nc3 - min_nc, 6]))
+      DiffLev[nc3 - min_nc + 1, 5] <- abs(res[nc3 - min_nc + 1, 7] -
+                                            res[nc3 - min_nc, 7])
+      DiffLev[nc3 - min_nc + 1, 6] <- ((res[nc3 - min_nc + 2, 8] -
+                                          res[nc3 - min_nc + 1, 8]) - (res[nc3 - min_nc + 1, 8] -
+                                                                         res[nc3 - min_nc, 8]))
+      DiffLev[nc3 - min_nc + 1, 7] <- abs(res[nc3 - min_nc + 1, 9] -
+                                            res[nc3 - min_nc, 9])
+      DiffLev[nc3 - min_nc + 1, 8] <- ((res[nc3 - min_nc + 2, 10] -
+                                          res[nc3 - min_nc + 1, 10]) - (res[nc3 - min_nc + 1, 10] -
+                                                                          res[nc3 - min_nc, 10]))
+      DiffLev[nc3 - min_nc + 1, 9] <- abs(res[nc3 - min_nc + 1, 18] -
+                                            res[nc3 - min_nc, 18])
+      DiffLev[nc3 - min_nc + 1, 10] <- abs((res[nc3 - min_nc + 1, 27] -
+                                              res[nc3 - min_nc, 27]))
+      DiffLev[nc3 - min_nc + 1, 12] <- ((res[nc3 - min_nc + 2, 29] -
+                                           res[nc3 - min_nc + 1, 29]) - (res[nc3 - min_nc + 1, 29] -
+                                                                           res[nc3 - min_nc, 29]))
+    }
+    nc.Hartigan <- indice.Hartigan <- 0
+    nc.Hartigan <- DiffLev[, 1][which.max(DiffLev[, 2])]
+    indice.Hartigan <- max(DiffLev[, 2], na.rm = TRUE)
+    nc.Scott <- indice.Scott <- 0
+    nc.Scott <- DiffLev[, 1][which.max(DiffLev[, 3])]
+    indice.Scott <- max(DiffLev[, 3], na.rm = TRUE)
+    nc.Marriot <- indice.Marriot <- 0
+    nc.Marriot <- DiffLev[, 1][which.max(DiffLev[, 4])]
+    round(nc.Marriot, digits = 1)
+    indice.Marriot <- max(DiffLev[, 4], na.rm = TRUE)
+    nc.TrCovW <- indice.TrCovW <- 0
+    nc.TrCovW <- DiffLev[, 1][which.max(DiffLev[, 5])]
+    indice.TrCovW <- max(DiffLev[, 5], na.rm = TRUE)
+    nc.TraceW <- indice.TraceW <- 0
+    nc.TraceW <- DiffLev[, 1][which.max(DiffLev[, 6])]
+    indice.TraceW <- max(DiffLev[, 6], na.rm = TRUE)
+    nc.Friedman <- indice.Friedman <- 0
+    nc.Friedman <- DiffLev[, 1][which.max(DiffLev[, 7])]
+    indice.Friedman <- max(DiffLev[, 7], na.rm = TRUE)
+    nc.Rubin <- indice.Rubin <- 0
+    nc.Rubin <- DiffLev[, 1][which.min(DiffLev[, 8])]
+    indice.Rubin <- min(DiffLev[, 8], na.rm = TRUE)
+    nc.Ball <- indice.Ball <- 0
+    nc.Ball <- DiffLev[, 1][which.max(DiffLev[, 9])]
+    indice.Ball <- max(DiffLev[, 9], na.rm = TRUE)
+    nc.Hubert <- indice.Hubert <- 0
+    nc.Dindex <- indice.Dindex <- 0
+    if (plots) {
+      par(mfrow = c(1, 2))
+      plot(x_axis, res[, 27], tck = 0, type = "b", col = "red",
+           xlab = expression(paste("Number of clusters ")), 
+           ylab = expression(paste("Hubert Statistic values")))
+      plot(DiffLev[, 1], DiffLev[, 10], tck = 0, type = "b", col = "blue",
+           xlab = expression(paste("Number of clusters ")),
+           ylab = expression(paste("Hubert statistic second differences")))
+      message("*** : The Hubert index is a graphical method of determining ",
+              "the number of clusters.\n                   In the plot of Hubert ",
+              "index, we seek a significant knee that corresponds to a \n",
+              "                   significant increase of the value of the ",
+              "measure i.e the significant peak in Hubert\n                   ",
+              "index second differences plot.", "\n", "\n")
+      par(mfrow = c(1, 2))
+      plot(x_axis, res[, 29], tck = 0, type = "b", col = "red",
+           xlab = expression(paste("Number of clusters ")),
+           ylab = expression(paste("Dindex Values")))
+      plot(DiffLev[, 1], DiffLev[, 12], tck = 0, type = "b", col = "blue",
+           xlab = expression(paste("Number of clusters ")),
+           ylab = expression(paste("Second differences Dindex Values")))
+      message(paste("*** : The D index is a graphical method of determining",
+                    " the number of clusters. \n                   In the plot of D ",
+                    "index, we seek a significant knee (the significant peak in ",
+                    "Dindex\n                   second differences plot) that ",
+                    "corresponds to a significant increase of the value of\n",
+                    "                   the measure.", "\n", "\n"))
     }
   }
   ###################################### Displaying results ###############
