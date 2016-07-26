@@ -668,7 +668,11 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
       varwithins <- matrix(0, nrow, nvar)
       x <- (x - centers[cluster, ]) ^ 2
       for (k in 1:nrow) {
-        varwithins[k, ] <- colSums(x[cluster == k, ])
+        if (is.null(dim(x[cluster == k, ]))) {
+          varwithins[k, ] <- x[cluster == k, ]
+        } else {
+          varwithins[k, ] <- colSums(x[cluster == k, ])
+        }
       }
       return(varwithins)
     }
@@ -838,7 +842,11 @@ NbClust <- function(data = NULL, diss = NULL, distance = "euclidean",
     dAm <- d
     centers <- matrix(nrow = k, ncol = m)
     for (i in 1:k) {
-      centers[i, ] <- colMeans(x[cl == i, ])
+      if (is.null(dim(x[cl == i, ]))) {
+        centers[i, ] <- x[cl == i, ]
+      } else {
+        centers[i, ] <- colMeans(x[cl == i, ])
+      }
     }
     S <- rep(0, k)
     for (i in 1:k) {
