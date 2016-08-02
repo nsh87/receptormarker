@@ -100,7 +100,19 @@ multi_clust <- function(d, krange = 2:15, iter.max = 500, runs = 10,
              clust_gap = NULL, wss = NULL, k_best = NULL)
   # Perform KMeans clustering for every k in krange
   for (k in krange) {
-    km_opt <- stats::kmeans(d, k, iter.max = iter.max, nstart = runs, ...)
+    tryCatch({
+      km_opt <- stats::kmeans(d, k, iter.max = iter.max, nstart = runs, ...)
+    },
+    error = function(e) {
+      if (grepl("cluster centers than distinct", e)) {
+        stop("The same data points repeat such that only less than ", k,
+             "clusters can be calculated. Please adjust the krange ",
+             "accordingly and rerun multi_clust.", call. = FALSE)
+      } else {
+        stop(e, call. = FALSE)
+      }
+    }
+    )
     min_wss <- km_opt[["tot.withinss"]]
     sil <- cluster::silhouette(km_opt[["cluster"]], d_dist)
     sil_sum <- summary(sil)
