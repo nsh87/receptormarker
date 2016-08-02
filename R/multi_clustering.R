@@ -96,12 +96,12 @@ multi_clust <- function(d, krange = 2:15, iter.max = 500, runs = 10,
   }
   d <- d[complete.cases(d), ]
   d_dist <- dist(d, method = distance)
-  km <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
+  cl <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
              clust_gap = NULL, wss = NULL, k_best = NULL)
   # Perform KMeans clustering for every k in krange
   for (k in krange) {
     tryCatch({
-      km_opt <- stats::kmeans(d, k, iter.max = iter.max, nstart = runs, ...)
+      cl_opt <- stats::kmeans(d, k, iter.max = iter.max, nstart = runs, ...)
     },
     error = function(e) {
       if (grepl("cluster centers than distinct", e)) {
@@ -113,23 +113,23 @@ multi_clust <- function(d, krange = 2:15, iter.max = 500, runs = 10,
       }
     }
     )
-    min_wss <- km_opt[["tot.withinss"]]
-    sil <- cluster::silhouette(km_opt[["cluster"]], d_dist)
+    min_wss <- cl_opt[["tot.withinss"]]
+    sil <- cluster::silhouette(cl_opt[["cluster"]], d_dist)
     sil_sum <- summary(sil)
     sil_avg <- sil_sum[["avg.width"]]
     
-    km[["clust_model"]][[k]] <- km_opt
-    km[["sil_avg"]][[k]] <- sil_avg
-    km[["num_clust"]][[k]] <- k
-    km[["sil"]][[k]] <- sil
-    km[["wss"]][[k]] <- min_wss
+    cl[["clust_model"]][[k]] <- cl_opt
+    cl[["sil_avg"]][[k]] <- sil_avg
+    cl[["num_clust"]][[k]] <- k
+    cl[["sil"]][[k]] <- sil
+    cl[["wss"]][[k]] <- min_wss
   }
-  km[["clust_gap"]] <- cluster::clusGap(d, kmeans, 
-                                        K.max = length(km[["clust_model"]]), 
+  cl[["clust_gap"]] <- cluster::clusGap(d, kmeans,
+                                        K.max = length(cl[["clust_model"]]),
                                         B = 15, verbose = FALSE)
   # Estimate K using the average silhouette score if method == 'kmeans'
   if (method == "kmeans") {
-    km[["k_best"]] <- which.max(km[["sil_avg"]])
+    cl[["k_best"]] <- which.max(cl[["sil_avg"]])
   } else if (method == "exhaustive") {
     # Estimate K using NbClust if method == 'exhaustive'
     tryCatch({
@@ -153,9 +153,9 @@ multi_clust <- function(d, krange = 2:15, iter.max = 500, runs = 10,
     best <- aggregate(nb_best[["Best.nc"]][1, ], 
                       by = list(nb_best[["Best.nc"]][1, ]), length)
     idx <- which.max(best[[2]])
-    km[["k_best"]] <- best[idx, 1]
+    cl[["k_best"]] <- best[idx, 1]
   }
-  new("multiClust", clust_model=km[["clust_model"]], sil_avg=km[["sil_avg"]],
-      num_clust=km[["num_clust"]], sil=km[["sil"]], clust_gap=km[["clust_gap"]],
-      wss=km[["wss"]], k_best=km[["k_best"]])
+  new("multiClust", clust_model=cl[["clust_model"]], sil_avg=cl[["sil_avg"]],
+      num_clust=cl[["num_clust"]], sil=cl[["sil"]], clust_gap=cl[["clust_gap"]],
+      wss=cl[["wss"]], k_best=cl[["k_best"]])
 }
