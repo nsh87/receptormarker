@@ -1,13 +1,13 @@
-#' @title Cluster using kmeans over multiple k and find optimal k
-#' @description This calls the function \code{\link[stats]{kmeans}} to perform
-#' kmeans clustering, but initializes multiple times. It chooses the best
-#' clustering for each number of clusters (there are multiple runs for each
-#' k) based on within sum of squares. The best overall k (i.e. best number of
-#' clusters to use for the data set) is then chosen by running the data set
-#' through a number of different cluster estimation algorithms. Majority rule
-#' of all the algorithms determines the optimal k. For example, if 12 algorithms
-#' suggest that k=9 and 7 algorithms suggest that k=6 then the optimal k will
-#' be 9.
+#' @title Cluster using kmeans  or hclust over multiple k and find optimal k
+#' @description This calls the function \code{\link[stats]{kmeans}} or
+#' \code{\link[stats]{hclust}} to perform clustering, but initializes
+#' multiple times. It chooses the best clustering for each number of clusters
+#' (there are multiple runs for each k) based on within sum of squares.
+#' The best overall k (i.e. best number of clusters to use for the data set)
+#' is then chosen by running the data set through a number of different cluster
+#' estimation algorithms. Majority rule of all the algorithms determines the
+#' optimal k. For example, if 12 algorithms suggest that k = 9 and 7
+#' algorithms suggest that k = 6 then the optimal k will be 9.
 #' @details The \code{\link{multiClust-class}} object returned is primarily
 #' intended for use with the plotting functions in the \emph{receptormarker}
 #' package (the See Also section contains a complete list). However, its
@@ -49,22 +49,26 @@
 #' @param krange An integer vector describing the range of k (numbers of
 #' clusters) which are to be compared. Note: \code{krange} should not
 #' include 1 since silhouette scores and clusters are not defined at this value.
-#' @param iter.max An integer representing the maximum number of iterations to
-#' be find cluster centers when running kmeans. Only used when the \code{method}
-#' parameter is set to "kmeans".
-#' @param runs An integer representing the number of starts of the k-means
+#' @param iter.max An integer representing the maximum number of iterations
+#' used to find cluster centers when running kmeans. Only used when the
+#' \code{algorithm} parameter is set to "kmeans".
+#' @param runs An integer representing the number of starts of the kmeans
 #' algorithm for each k. Only used when the \code{method} parameter is set to
 #' "kmeans".
-#' @param method Either "kmeans" or "exhaustive". If "kmeans", then the average
-#' silhouette score will be used to estimate the optimal k using KMeans
-#' clustering. If "exhaustive", then \code{\link{NbClust}} will be used to
+#' @param algorithm Either "kmeans" or "hclust". If "kmeans", then the
+#' \code{\link[stats]{kmeans}} function is used for clustering. If "hclust",
+#' then the \code{\link[stats]{hclust}} function is used for clustering.
+#' @param method Either "silhouette" or "exhaustive". If "silhouette", then the
+#' average silhouette score will be used to estimate the optimal k.
+#' If "exhaustive", then \code{\link{NbClust}} will be used to
 #' estimate optimal k, although this takes significantly longer and is more
 #' error prone since the data is run through upwards of 20 algorithms for
 #' clustering; consider this method to be in beta.
 #' @param index The index to be calculated for determining the optimal k, passed
 #' to \code{\link{NbClust}} (see its documentation for details on this
 #' parameter). Only used when \code{method} is set to "exhaustive".
-#' @param ... Further arguments to be passed to \code{\link[stats]{kmeans}}.
+#' @param ... Further arguments to be passed to \code{\link[stats]{kmeans}} or
+#' \code{\link[stats]{hclust}}.
 #' @return An object of class \code{\link{multiClust-class}}. This object can
 #' be used to create several plots (refer to the See Also section) that aid
 #' in determining the optimal k for the data set. It also contains statistics
