@@ -12,5 +12,19 @@
 #' @return An integer value indicating the total within sum of squares
 #' @keywords internal
 totwss <- function(dist_obj, clusters){
-  
+  totwss <- 0
+  for (cluster in unique(clusters)) {
+    indices <- which(cluster == clusters)
+    n <- length(indices)
+    if (n > 1) {
+      clust_dist_obj <- as.dist(as.matrix(dist_obj)[indices, indices])
+      wss <- mean(clust_dist_obj ^ 2) / 2 * (n - 1)
+    } else if (n == 1) {
+      wss <- 0
+    } else {
+      wss <- NA
+    }
+    totwss <- totwss + wss
+  }
+  return (totwss)
 }
