@@ -93,6 +93,7 @@ multi_clust <- function(d, krange = 2:15, iter.max = 500, runs = 10,
   validate_pos_num(list(iter.max = iter.max, runs = runs))
   validate_num_data(d)
   validate_multi_clust_method(method)
+  validate_multi_clust_algorithm(algorithm)
   krange <- sort(krange)
   if (is_boolean(d)) {
     distance <- "binary"
