@@ -84,8 +84,9 @@
 #' # Domain data set
 #' data(fluidigm)
 #' fluidigm_clust <- multi_clust(fluidigm[1:40, ])
-multi_clust <- function(d, krange = 2:15, iter.max = 500, runs = 10, 
-                        method = "kmeans", index = "alllong", ...) {
+multi_clust <- function(d, krange = 2:15, iter.max = 500, runs = 10,
+                        algorithm = "kmeans", method = "silhouette",
+                        index = "alllong", ...) {
   validate_not_null(list(d = d, krange = krange, iter.max = iter.max, 
                          runs = runs, method = method, index = index))
   validate_k_range(krange)
@@ -132,7 +133,7 @@ multi_clust <- function(d, krange = 2:15, iter.max = 500, runs = 10,
                                         K.max = length(cl[["clust_model"]]),
                                         B = 15, verbose = FALSE)
   # Estimate K using the average silhouette score if method == 'kmeans'
-  if (method == "kmeans") {
+  if (method == "silhouette") {
     cl[["k_best"]] <- which.max(cl[["sil_avg"]])
   } else if (method == "exhaustive") {
     # Estimate K using NbClust if method == 'exhaustive'
