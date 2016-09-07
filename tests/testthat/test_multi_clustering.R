@@ -70,10 +70,13 @@ test_that("the 'k_best' slot in the pre-generated multiClust validates", {
 
 test_that("multiClust object can be generated with boolean data", {
   expect_silent(suppressMessages(multi_clust(tcr_binary_data)))
+  expect_silent(suppressMessages(multi_clust(tcr_binary_data,
+                                             algorithm = "hclust")))
 })
 
 test_that("multiClust object can be generated with non-boolean data", {
   expect_silent(multi_clust(fluidigm[1:40, ]))
+  expect_silent(multi_clust(fluidigm[1:40, ], algorithm = "hclust"))
 })
 
 # The data sets used below are tested directly with NbClust in test_nbclust.R,
