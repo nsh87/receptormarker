@@ -333,7 +333,7 @@ boxplot_num_cols <- function(num_clust) {
 #' Plot cluster membership for each feature.
 #' 
 #' This function plots cluster membership for each feature of \code{d} using box
-#' plots. It utilizes \code{facet_wrap} in the \code{\link[ggplot2]{qplot}}
+#' plots. It utilizes \code{facet_wrap} in the \code{\link[ggplot2]{ggplot}}
 #' function and the desired \code{clust_model} from the argument 
 #' \code{clust_obj} to show the box plots of each feature after using the
 #' \code{\link[reshape2]{melt}} function to get the correct form of \code{d}.
@@ -346,7 +346,7 @@ boxplot_num_cols <- function(num_clust) {
 #'   clustering has found in the data.  
 #'   One may pass in the \code{k_best} element from the
 #'   \code{\link{multiClust-class}} object for \code{num_clust}, or use a
-#'   different value. This is where other visualizations can be useful.  
+#'   different value. This is where other visualizations can be useful.
 #'   See the \emph{Details} section for the \code{\link{multi_clust}} function
 #'   and view the \emph{TIP} for a suggested workflow.
 #'   
@@ -360,13 +360,12 @@ boxplot_num_cols <- function(num_clust) {
 #'   columns). Note: This should be the same one used to generate 
 #'   \code{clust_obj}.
 #' @param clust_obj A \code{\link{multiClust-class}} object from which to
-#'   extract
-#'   \code{clust_model} based on the argument \code{num_clust}
-#' @param num_clust An integer. The desired number of clusters to be used. Note:
-#'   This integer should fall within the krange used to generate the 
+#'   extract \code{clust_model} based on the argument \code{num_clust}.
+#' @param num_clust An integer. The desired number of clusters to be used.
+#'   Note: This integer should fall within the krange used to generate the
 #'   \code{\link{multiClust-class}} object.
-#' @param ... Further arguments to be passed to the \code{\link{qplot}} 
-#'   function (besides \code{xlab}, \code{ylab}).
+#' @param ... Further arguments to be passed to the
+#'   \code{\link[ggplot2]{ggplot}} function (besides \code{xlab}, \code{ylab}).
 #'
 #' @export
 #'
@@ -394,7 +393,7 @@ clust_boxplot <- function(d, clust_obj, num_clust, ...) {
                                   fill = as.factor(cluster))) +
       ggplot2::geom_bar(stat = "identity") +
       ggplot2::ylab("Proportion expressed") +
-      ggplot2::facet_wrap(~variable, ncol = boxplot_num_cols(num_clust)) + 
+      ggplot2::facet_wrap(~variable, ncol = boxplot_num_cols(num_clust)) +
       ggplot2::scale_fill_discrete(name = "Cluster") +
       ggplot2::theme(
         axis.text=ggplot2::element_text(size=axis_label_size(num_clust)),
@@ -403,10 +402,10 @@ clust_boxplot <- function(d, clust_obj, num_clust, ...) {
   } else {
     m <- reshape2::melt(d, id.vars = "cluster", measure.vars = meas_vars)
     ggplot2::qplot(x = as.factor(cluster), y = value, data = m,
-                   geom = "boxplot", fill = as.factor(cluster), xlab = NULL, 
+                   geom = "boxplot", fill = as.factor(cluster), xlab = NULL,
                    ylab = "Relative expression level",
-                   outlier.size = 0.8, ...) + 
-      ggplot2::facet_wrap(~variable, ncol=boxplot_num_cols(num_clust)) + 
+                   outlier.size = 0.8, ...) +
+      ggplot2::facet_wrap(~variable, ncol=boxplot_num_cols(num_clust)) +
       ggplot2::scale_fill_discrete(name = "Cluster") +
       ggplot2::theme(
         axis.text=ggplot2::element_text(size=axis_label_size(num_clust))

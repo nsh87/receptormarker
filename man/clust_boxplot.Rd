@@ -13,19 +13,18 @@ columns). Note: This should be the same one used to generate
 \code{clust_obj}.}
 
 \item{clust_obj}{A \code{\link{multiClust-class}} object from which to
-extract
-\code{clust_model} based on the argument \code{num_clust}}
+extract \code{clust_model} based on the argument \code{num_clust}.}
 
-\item{num_clust}{An integer. The desired number of clusters to be used. Note:
-This integer should fall within the krange used to generate the 
+\item{num_clust}{An integer. The desired number of clusters to be used.
+Note: This integer should fall within the krange used to generate the
 \code{\link{multiClust-class}} object.}
 
-\item{...}{Further arguments to be passed to the \code{\link{qplot}} 
-function (besides \code{xlab}, \code{ylab}).}
+\item{...}{Further arguments to be passed to the
+\code{\link[ggplot2]{ggplot}} function (besides \code{xlab}, \code{ylab}).}
 }
 \description{
 This function plots cluster membership for each feature of \code{d} using box
-plots. It utlizes \code{facet_wrap} in the \code{\link[ggplot2]{qplot}}
+plots. It utilizes \code{facet_wrap} in the \code{\link[ggplot2]{ggplot}}
 function and the desired \code{clust_model} from the argument 
 \code{clust_obj} to show the box plots of each feature after using the
 \code{\link[reshape2]{melt}} function to get the correct form of \code{d}.
@@ -39,7 +38,7 @@ This function is intended to be used to view the shape of a given
   clustering has found in the data.  
   One may pass in the \code{k_best} element from the
   \code{\link{multiClust-class}} object for \code{num_clust}, or use a
-  different value. This is where other visualizations can be useful.  
+  different value. This is where other visualizations can be useful.
   See the \emph{Details} section for the \code{\link{multi_clust}} function
   and view the \emph{TIP} for a suggested workflow.
   
