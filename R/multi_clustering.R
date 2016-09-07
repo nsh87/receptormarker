@@ -104,19 +104,36 @@ multi_clust <- function(d, krange = 2:15, iter.max = 500, runs = 10,
   d_dist <- dist(d, method = distance)
   cl <- list(clust_model = NULL, sil_avg = NULL, num_clust = NULL, sil = NULL,
              clust_gap = NULL, wss = NULL, k_best = NULL)
-  # Perform KMeans clustering for every k in krange
-  for (k in krange) {
-    tryCatch({
-      cl_opt <- stats::kmeans(d, k, iter.max = iter.max, nstart = runs, ...)
-    },
-    error = function(e) {
-      if (grepl("cluster centers than distinct", e)) {
-        stop("The same data points repeat such that only less than ", k,
-             "clusters can be calculated. Please adjust the krange ",
-             "accordingly and rerun multi_clust.", call. = FALSE)
-      } else {
-        stop(e, call. = FALSE)
+  # Perform clustering for every k in krange
+  if (algorithm == "kmeans") {
+    for (k in krange) {
+      tryCatch({
+        cl_opt <- stats::kmeans(d, k, iter.max = iter.max, nstart = runs, ...)
+      },
+      error = function(e) {
+        if (grepl("cluster centers than distinct", e)) {
+          stop("The same data points repeat such that only less than ", k,
+               "clusters can be calculated. Please adjust the krange ",
+               "accordingly and rerun multi_clust.", call. = FALSE)
+        } else {
+          stop(e, call. = FALSE)
+        }
       }
+      )
+      if (distance == "euclidean") {
+        min_wss <- cl_opt[["tot.withinss"]]
+      } else {
+        min_wss <- totwss(d_dist, cl_opt[["cluster"]])
+      }
+      sil <- cluster::silhouette(cl_opt[["cluster"]], d_dist)
+      sil_sum <- summary(sil)
+      sil_avg <- sil_sum[["avg.width"]]
+      
+      cl[["clust_model"]][[k]] <- cl_opt
+      cl[["sil_avg"]][[k]] <- sil_avg
+      cl[["num_clust"]][[k]] <- k
+      cl[["sil"]][[k]] <- sil
+      cl[["wss"]][[k]] <- min_wss
     }
     )
     min_wss <- cl_opt[["tot.withinss"]]
