@@ -32,6 +32,16 @@ validate_multi_clust_method <- function(method) {
     stop(err, call.=FALSE)
   }
 }
+
+
+#' @title Validate the 'algorithm' parameter of the multi_clust function
+#' @description An internal function that raises an error if the argument is not
+#' one of "kmeans" or "hclust".
+#' @param algorithm The \code{algorithm} passed to \code{\link{multi_clust}}.
+#' @keywords internal
+validate_multi_clust_algorithm <- function(algorithm) {
+  if (!(algorithm %in% c("kmeans", "hclust"))) {
+    err <- "The argument 'algorithm' must be either 'kmeans' or 'hclust'"
     stop(err, call.=FALSE)
   }
 }
