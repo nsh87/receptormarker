@@ -135,17 +135,26 @@ multi_clust <- function(d, krange = 2:15, iter.max = 500, runs = 10,
       cl[["sil"]][[k]] <- sil
       cl[["wss"]][[k]] <- min_wss
     }
-    )
-    min_wss <- cl_opt[["tot.withinss"]]
-    sil <- cluster::silhouette(cl_opt[["cluster"]], d_dist)
-    sil_sum <- summary(sil)
-    sil_avg <- sil_sum[["avg.width"]]
-    
-    cl[["clust_model"]][[k]] <- cl_opt
-    cl[["sil_avg"]][[k]] <- sil_avg
-    cl[["num_clust"]][[k]] <- k
-    cl[["sil"]][[k]] <- sil
-    cl[["wss"]][[k]] <- min_wss
+  } else if (algorithm == "hclust") {
+    cl_opt <- stats::hclust(d_dist, method = "average")
+    clustering <- stats::cutree(cl_opt, k = krange)
+    for (i in 1:length(krange)) {
+      k <- krange[i]
+      clusters <- clustering[, i]
+      sil <- cluster::silhouette(clusters, d_dist)
+      sil_sum <- summary(sil)
+      sil_avg <- sil_sum[["avg.width"]]
+      cl_opt[["cluster"]] <- clusters
+      
+      cl[["clust_model"]][[k]] <- cl_opt
+      cl[["sil_avg"]][[k]] <- sil_avg
+      cl[["num_clust"]][[k]] <- k
+      cl[["sil"]][[k]] <- sil
+      cl[["wss"]][[k]] <- totwss(d_dist, clusters)
+    }
+  } else {
+    stop("You have chosen an invalid algorithm. Please choose one of kmeans ",
+         "or hclust.", call. = FALSE)
   }
   cl[["clust_gap"]] <- cluster::clusGap(d, kmeans,
                                         K.max = length(cl[["clust_model"]]),
