@@ -11,7 +11,7 @@ validate_multi_clust_method(method)
 }
 \description{
 An internal function that raises an error if the argument is not
-one of "kmeans" or "exhaustive".
+one of "silhouette" or "exhaustive".
 }
 \keyword{internal}
 
