@@ -161,28 +161,39 @@ gap_plot <- function(clust_obj, optimal = FALSE, ...) {
 pca_plot <- function(d, clust_obj, num_clust, ...) {
   validate_num_data(d)
   validate_multi_clust(clust_obj)
-  validate_pos_num(list(num_clust = num_clust))
+  # Use k_range validation since num_clust could be vector
+  validate_k_range(num_clust)
   pca <- stats::princomp(d)
+  scores <- as.data.frame(pca[["scores"]][, 1:2])
   sdev <- pca[["sdev"]]
   prop_var <- sdev ^ 2 / sum(sdev ^ 2)
-  main <- paste0("PCA Plot (", round(sum(prop_var[1:2]) * 100), "% Variance)")
-  clusters <- clust_obj@clust_model[[num_clust]][["cluster"]]
-  clust_colors <- rainbow(num_clust)[clusters]
-  par(mar = c(5.1, 4.1, 4.1, 7.1), xpd = TRUE)
-  plot(pca[["scores"]][, 1:2], col = clust_colors,
-       xlab = "Principal Component 1",
-       ylab = "Principal Component 2",
-       main = main,
-       ...)
-  legend("topright",
-         inset = c(-0.25, 0),
-         legend = 1:num_clust,
-         pch = rep(1, num_clust),
-         col = rainbow(num_clust),
-         pt.cex = 1.0,
-         cex = 0.9,
-         title = "Cluster")
-  par(mar = c(5.1, 4.1, 4.1, 4.1))
+  title <- paste0("PCA Plot (", round(sum(prop_var[1:2]) * 100), "% Variance)")
+  # Build clusters by putting all cluster assignments in one vector so that
+  # facet_wrap can cycle through them.
+  clusters <- c()
+  for (i in num_clust) {
+    clusters <- c(clusters, clust_obj@clust_model[[i]][["cluster"]])
+  }
+  # Build column for wrapping. It has right number of rows so that it can be
+  # bound to scores and needs the rows to num_clust contents to cycle through
+  # each one with proper labels.
+  wrapping <- suppressWarnings(numeric(nrow(scores)) + num_clust)
+  scores <- cbind(scores, wrapping = wrapping)
+  num_plots <- length(num_clust)
+  # Plot using facet_wrap, but make wrapping = NULL so that all data is plotted
+  # each time.
+  ggplot2::ggplot(scores, ggplot2::aes(Comp.1, Comp.2)) +
+    ggplot2::geom_point(data = transform(scores, wrapping = NULL),
+                        colour = clusters) +
+    ggplot2::facet_wrap(~wrapping, ncol = boxplot_num_cols(num_plots)) +
+    ggplot2::xlab("Principal Component 1") +
+    ggplot2::ylab("Principal Component 2") +
+    ggplot2::ggtitle(title) +
+    ggplot2::theme(
+      axis.text=ggplot2::element_text(size=axis_label_size(num_plots)),
+      axis.text.x=ggplot2::element_blank(),  # Remove meainingless axis text
+      axis.text.y=ggplot2::element_blank(),  # Remove meainingless axis text
+      axis.ticks=ggplot2::element_blank())  # Remove unneeded tick marks
 }
 
 #' Plot silhouette scores for a given clustering of data.
