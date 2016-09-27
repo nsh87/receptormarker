@@ -37,8 +37,9 @@
 #'   \item Choose the number of clusters to be used.
 #'   \item View the \code{\link{sil_plot}} using your chosen number of
 #'     clusters to confirm the choice.
-#'   \item View the \code{\link{pca_plot}} using your chosen number of clusters
-#'     to see the shape of the data using its first two principal components.
+#'   \item View the \code{\link{pca_plot}} using your chosen number or range
+#'     of clusters to see the shape of the data using its first two principal
+#'     components.
 #'   \item View the \code{\link{clust_boxplot}} using your chosen number of
 #'     clusters to see the cluster membership of each feature (likely
 #'     phenotypic markers). This should yield useful conclusions.
