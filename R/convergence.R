@@ -127,7 +127,7 @@ run_convergence <- function(seqs, verbose, verbose_dir){
   
   # Run the convergence tool
   convergence <- system.file(file.path("perl/vdjfasta/bin"),
-                             "convergence-pipeline.pl",
+                             "gligh-group-discovery.pl",
                              package="receptormarker")
   system(sprintf("perl %s --textfile=%s", convergence, seqs_file),
          ignore.stdout=!verbose, ignore.stderr=!verbose)
