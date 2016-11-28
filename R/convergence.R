@@ -129,7 +129,7 @@ run_convergence <- function(seqs, verbose, verbose_dir){
   convergence <- system.file(file.path("perl/vdjfasta/bin"),
                              "gligh-group-discovery.pl",
                              package="receptormarker")
-  system(sprintf("perl %s --textfile=%s", convergence, seqs_file),
+  system(sprintf("perl -V %s --textfile=%s", convergence, seqs_file),
          ignore.stdout=!verbose, ignore.stderr=!verbose)
   
   # Collect output file containing groups
