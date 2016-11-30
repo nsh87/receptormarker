@@ -8,12 +8,12 @@ BEGIN{
 };
 use lib "$rootdir/lib";
 #use Text::NSP::Measures::2D::Fisher::left;
-#use VDJFasta;
+use VDJFasta;
 use strict;
 use warnings;
   
 print "\nGLIPH - Grouping Lymphocyte Interfaces by Paratope Hotspots\n"; # immune interfaces clustii
-print "\nAn algorithm for statistical clustering of adaptive repertoire convergence\n"; 
+print "\nA tools for statistical clustering of adaptive repertoire convergence\n"; 
 print "Contact: Jacob Glanville (jakeg\@stanford.edu)\n\n";
 
 ################################## Arguments ###################################
@@ -51,31 +51,14 @@ my %refdb_hash_h3s=();				     # initialize the reference
 my @refdb_unique_h3s=();			     # database data structures
 my $refdb_nseqs=0;				     # but keep empty unless
 my %refdb_kmers=();			             # performing simulations
-my @refdb_redundant_nseqs=loadtextDBRedundantArray($textfile); # loading number of redundant clones into an array
+
 my $nseqs = scalar(keys %unique_h3s);		     # count the number of CDR3s
-my $nseqs_redundant = scalar(@refdb_redundant_nseqs);
-
-my %forbidden_motifs=("AKN",1,                       # J-segment encoded motifs
-        "GAN",1,
-        "NTG",1,
-        "SGA",1,
-        "SGAN",1,
-        "SGN",1,
-        "SNQ",1,
-        "STD",1,
-        "SYN",1,
-        "SYNS",1,
-        "TNE",1,
-        "YNS",1);
-
 
 ################################## Outputs #####################################
 
-my $kmer_sim_log            = $corename . "-kmer_resample_" . $samplingDepth . "_log.txt";
-my $clone_network           = $corename . "-clone-network.txt";
-my $convergence_table       = $corename . "-convergence-groups.txt";
-my $global_similarity_table = $corename . "-global-similarity.txt";
-
+my $kmer_sim_log = $corename . "-kmer_resample_" . $samplingDepth . "_log.txt";
+my $clone_network= $corename . "-clone-network.txt";
+my $convergence_table= $corename . "-convergence-groups.txt";
 unless(-f $localConvergenceMotifList){
   $localConvergenceMotifList = $corename . "-kmer_resample_" . $samplingDepth . "_minp" 
                              . $motif_minp . "_ove" . $motif_min_foldchange . ".txt";
@@ -87,10 +70,9 @@ print "Establishing global convergence significance cutoff\n";
 print "=====================================================================\n";
 
 if( $globalConverganceCutoff eq ""){
-  print "  simulated stochastic resampling of depth $nseqs unique seqs out of $nseqs_redundant seqs from $refdb\n";
+  print "  simulated stochastic resampling of depth $nseqs from $refdb\n";
   # get distribution from current sample
-  getGlobalConvergenceDistribution(\@refdb_redundant_nseqs,"Sample",$global_similarity_table); 
-  
+  # perform 1000 random resamplings of $refdb at depth $nseqs
   # load the reference database
   if(scalar(@refdb_unique_h3s)>0){
     print "  reference db has already been loaded\n";
@@ -101,18 +83,9 @@ if( $globalConverganceCutoff eq ""){
     $refdb_nseqs=scalar(@refdb_unique_h3s);
   }
 
-
-  # perform 1000 random resamplings of $refdb at depth $nseqs
-  for(my $s=0;$s<10;$s++){
-    my @random_subsample=randomSubsample(\@refdb_unique_h3s,$nseqs_redundant);
-    getGlobalConvergenceDistribution(\@random_subsample,"Sim$s",$global_similarity_table);
-  }
-
   # calculate how often the values were as elevated in the observed sample 
   # vs the ref sample
   # store output of both tests in a results file
-  $globalConverganceCutoff=1;
-
 }elsif(-f $globalConverganceCutoff){
   print "Recovering global convergence results from previous simulation file "
         . $globalConverganceCutoff . "\n";
@@ -137,7 +110,7 @@ unless( -f $localConvergenceMotifList){
   my @sample_kmer_array=keys %sample_kmers;
   print "  kmers obtained:             " . scalar(@sample_kmer_array) . "\n";
   my @sample_highcount_kmer_array = getMinDepthKmerArray(\%sample_kmers,$kmer_mindepth);
-  print "  mindepth>=$kmer_mindepth kmers obtained: " . scalar(@sample_highcount_kmer_array) . "\n"; 
+  print "  mindepth>=2 kmers obtained: " . scalar(@sample_highcount_kmer_array) . "\n"; 
 
   # print kmer scores to the kmer subsampling log
   appendToKmerLog(\@sample_highcount_kmer_array,\%sample_kmers,"Discovery",$kmer_sim_log);
@@ -194,8 +167,7 @@ for(my $x=0;$x<scalar(@motif_file_lines);$x++){
 print "   Sourced " . scalar(@local_motifs) . " significant motifs\n";
 print "\n\n";
 
-
-print "Global and local clustering of immune interfaces\n";
+print "Global-local clustering of immune interfaces\n";
 print "=====================================================================\n";
 
 if(-f $clone_network){
@@ -209,7 +181,6 @@ if(-f $clone_network){
   my @h3s=keys %unique_h3s;
   my %is_networked=(); # a hash of clones that have been networked. To be used
                        # for cleaning up the un-networked clones
-  # for every sequence
   for(my $x=0;$x<$nseqs;$x++){
     # output
     if($iter>49){
@@ -221,28 +192,35 @@ if(-f $clone_network){
     $| = 1;
     $iter++;
 
-    if(length($h3s[$x])>7){
-      for(my $y=($x+1);$y<$nseqs;$y++){  # compare to sequences that haven't been compared to yet
-        if(length($h3s[$y])>7){
-          if(length($h3s[$x]) == length($h3s[$y])){
-            my $dist = getContactDist($h3s[$x],$h3s[$y]);
-            if($dist<=$globalConverganceCutoff){
-              $is_networked{$h3s[$x]}=1;
-              $is_networked{$h3s[$y]}=1;
-              print NETWORK $h3s[$x] . "\t" . $h3s[$y] . "\tglobal\n";
-            }
-          }
-          # LOCAL SEARCH
-          # for each motif. if motif is found in both sequences
-          for(my $m=0;$m<scalar(@local_motifs);$m++){
-            my $h3a=$h3s[$x];
-            my $h3b=$h3s[$y];
-            if(  ($h3s[$x]=~m/...$local_motifs[$m].../) 
-               and 
-              ($h3s[$y]=~m/...$local_motifs[$m].../)){
-              $is_networked{$h3s[$x]}=1;
-              $is_networked{$h3s[$y]}=1;
-              print NETWORK $h3s[$x] . "\t" . $h3s[$y] . "\tlocal\n";
+    # clustering
+    unless(defined($cluster_assignment{$h3s[$x]})){
+      if(length($h3s[$x])>7){
+        for(my $y=($x+1);$y<$nseqs;$y++){
+          if(length($h3s[$y])>7){
+            unless(defined($cluster_assignment{$h3s[$y]})){
+              # GLOBAL SEARCH
+              if(length($h3s[$x]) == length($h3s[$y])){
+                my $dist = getContactDist($h3s[$x],$h3s[$y]);
+                if($dist<=$globalConverganceCutoff){
+                  $is_networked{$h3s[$x]}=1;
+                  $is_networked{$h3s[$y]}=1;
+                  print NETWORK $h3s[$x] . "\t" . $h3s[$y] . "\tglobal\n";
+                }
+              }
+              # LOCAL SEARCH
+              # for each motif. if motif is found in both sequences
+              for(my $m=0;$m<scalar(@local_motifs);$m++){
+                #print "Testing " . $local_motifs[$m] . "\n";
+                my $h3a=$h3s[$x];
+                my $h3b=$h3s[$y];
+                if(  ($h3s[$x]=~m/$local_motifs[$m]/) 
+                     and 
+                     ($h3s[$y]=~m/$local_motifs[$m]/)){
+                     $is_networked{$h3s[$x]}=1;
+                     $is_networked{$h3s[$y]}=1;
+                   print NETWORK $h3s[$x] . "\t" . $h3s[$y] . "\tlocal\n";
+                }
+              }
             }
           }
         }
@@ -331,21 +309,6 @@ for(my $x=0;$x<scalar(@unique_cdrs);$x++){
 
 
 ############################### subroutines ###############################
-
-sub motifMinFoldPerCounts {
-  my($motif_count)=@_;
-  # minimum fold-change for the motif to count
-  # there is a motif count to fold-change relationship
-  if($motif_count == 2){
-    return 1000;
-  }elsif($motif_count == 3){
-    return 100;
-  }elsif($motif_count == 4){
-    return 10;#50;
-  }elsif($motif_count > 4){
-    return 10;#25;
-  }
-}
 
 sub recursiveSingleLinkage {
   my($seed_clone,$current_clones,$all_connections_per_clone)=@_;
@@ -446,9 +409,7 @@ sub analyzeKmerLog {
       if($odds_as_enriched_as_discovery == 0){
         $odds_as_enriched_as_discovery=(1/$simdepth);
       }
-      my $this_minfoldchange=motifMinFoldPerCounts($discovery_sample_counts[$m]);
-      # if($ove>=$minfoldchange){
-      if($ove>=$this_minfoldchange){ #$minfoldchange){
+      if($ove>=$minfoldchange){
         print LOG        $motifs[$m] 
           . "\t" . $discovery_sample_counts[$m] 
           . "\t" . $average
@@ -495,59 +456,6 @@ sub appendToKmerLog {
   close(LOG);
 }
 
-sub getGlobalConvergenceDistribution {
-  my($sequences,$samplename,$global_similarity_table)=@_;
-
-  open(FILE,">>$global_similarity_table");
-
-  my @counts=(0,0,0,0,0, 0,0,0,0,0,
-              0,0,0,0,0, 0,0,0,0,0,
-              0,0,0,0,0, 0,0,0,0,0,
-              0,0,0,0,0, 0,0,0,0,0); 
-  for(my $x=0;$x<scalar(@$sequences);$x++){
-    my $distance=length($$sequences[$x]);
-    for(my $y=0;$y<scalar(@$sequences);$y++){
-      if($x != $y){
-        if(length($$sequences[$x]) == length($$sequences[$y])){
-          my $this_dist=getHammingDist($$sequences[$x],$$sequences[$y]);
-          if($this_dist<$distance){
-            $distance=$this_dist;
-          }
-        } 
-      }
-    }
-    $counts[$distance]++;
-  }
-  
-  # print the result
-  print $samplename;
-  print FILE $samplename;
-  for(my $x=0;$x<13;$x++){
-    print "\t" . $counts[$x];
-    print FILE "\t" . $counts[$x];
-  }
-  print "\n";
-  print FILE "\n";
-  return @counts; 
-
-  close(FILE);
-}
-
-sub getHammingDist {
-  my($seq1,$seq2)=@_;
-  my @chars1=split(/ */,$seq1);
-  my @chars2=split(/ */,$seq2);
-
-  my $mismatch_columns=0;
-
-  for(my $c=0;$c<scalar(@chars1);$c++){
-    if($chars1[$c] ne $chars2[$c]){
-      $mismatch_columns++;
-    }
-  }
-  return $mismatch_columns;
-}
-
 sub getMinDepthKmerArray {
   my($kmer_hash,$mindepth)=@_;
   my @all_kmers=keys %$kmer_hash;
@@ -558,15 +466,6 @@ sub getMinDepthKmerArray {
     }   
   }
   return @selected_kmers;
-}
-
-sub loadtextDBRedundantArray {
-  my($textfile)=@_;
-  open(FILE,$textfile);
-  my @lines=<FILE>;
-  chomp(@lines);
-  close(FILE);
-  return @lines;
 }
 
 sub loadtextDB {
@@ -585,28 +484,14 @@ sub loadtextDB {
 sub loadvdjfastaDB {
   my($fasta)=@_;
   if(-f $fasta){
-    open(FILE,$fasta);
-    my @lines=<FILE>;
-    chomp(@lines);
-    close(FILE);
-    my $count=0;
+    my $fastadb=VDJFasta->new();
+       $fastadb->loadSeqs($fasta);
+    my $count = $fastadb->getSeqCount();
     my %refdb_hash_h3s=();
-    for(my $x=0;$x<scalar(@lines);$x++){
-      if($lines[$x]=~m/>/){
-        $count++;
-        my @fields=split(/;/,$lines[$x]);
-        my $h3=$fields[4];
-        addToHash(\%refdb_hash_h3s,$h3);
-      }
+    for(my $x=0;$x<$count;$x++){
+      my $h3=$fastadb->getHeaderField($x,4);
+      addToHash(\%refdb_hash_h3s,$h3);
     }
-    #my $fastadb=VDJFasta->new();		# fastadb MONKEY
-    #   $fastadb->loadSeqs($fasta);		# fastadb
-    #my $count = $fastadb->getSeqCount();	# fastadb
-    #my %refdb_hash_h3s=();
-    #for(my $x=0;$x<$count;$x++){
-    #  my $h3=$fastadb->getHeaderField($x,4);	# fastadb
-    #  addToHash(\%refdb_hash_h3s,$h3);
-    #}
     #@refdb_unique_h3s=keys %refdb_hash_h3s;
     return %refdb_hash_h3s;
   }else{
@@ -620,7 +505,7 @@ sub getContactDist {
   $seq1=uc($seq1);
   $seq2=uc($seq2);
 
-  # remove the first three and last three characters
+  # remove the first four and last four characters
   $seq1=~s/^...//;
   $seq1=~s/...$//;
   $seq2=~s/^...//;
@@ -684,13 +569,13 @@ sub getAllKmerLengths {
   my($unique_cdrs)=@_;
   my %sample_kmers=();
 
-  my %sample_2mers=getKmers(\@$unique_cdrs,2);
+  #my %sample_2mers=getKmers(\@$unique_cdrs,2);
   my %sample_3mers=getKmers(\@$unique_cdrs,3);
   my %sample_4mers=getKmers(\@$unique_cdrs,4);
-  #my %sample_xxox4mers=getKmers(\@$unique_cdrs,"xx.x");
-  #my %sample_xoxx4mers=getKmers(\@$unique_cdrs,"x.xx");
+  my %sample_xxox4mers=getKmers(\@$unique_cdrs,"xx.x");
+  my %sample_xoxx4mers=getKmers(\@$unique_cdrs,"x.xx");
 
-  %sample_kmers=(%sample_2mers,%sample_3mers,%sample_4mers); #,%sample_xxox4mers,%sample_xoxx4mers);
+  %sample_kmers=(%sample_3mers,%sample_4mers,%sample_xxox4mers,%sample_xoxx4mers);
 
   return %sample_kmers;
 }
@@ -699,19 +584,19 @@ sub getKmers {
   my($h3_array,$kmer_size)=@_;
   my %kmer_hash=();
   my $nseqs=scalar(@$h3_array);
-  my $mask_type=$kmer_size;
   for(my $s=0;$s<$nseqs;$s++){
     my $seq=$$h3_array[$s];
        $seq=~s/^...//;
        $seq=~s/...$//;
    
     my $length = length($seq);
-    
+
     # dealing with x.x, x..x, or x...x
     my $mask=0;
-    if($mask_type =~ m/x/){
+    my $mask_type=$kmer_size;
+    if($kmer_size =~ m/x/){
       $mask=1;
-      $kmer_size=length($mask_type);
+      $kmer_size=length($kmer_size);
     }
 
     # run search
@@ -758,8 +643,8 @@ sub GatherOptions {
   my $refdb            		= "$rootdir/db/tcrab-naive-refdb-pseudovdjfasta.fa";
   my $resampling_depth          = 1000;
   my $motif_min_foldchange      = 10;
-  my $motif_minp                = 0.001;
-  my $kmer_mindepth             = 3;
+  my $motif_minp                = 0.01;
+  my $kmer_mindepth             =  2;
 
   GetOptions(
      "--file=s"     => \$vdjfastafile,
@@ -793,7 +678,7 @@ sub GatherOptions {
     print "                         significance (0.01 by default)\n";
     print "  --lcminove=10          local convergence minimum observed vs\n";
     print "                         expected fold change (10 by default).\n";
-    print "  --kmer_mindepth=3      minimum observations of kmer for it to\n";
+    print "  --kmer_mindepth=2      minimum observations of kmer for it to\n";
     print "                         be evaluated\n";
     exit;
   }

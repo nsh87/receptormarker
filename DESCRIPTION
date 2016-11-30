@@ -1,8 +1,8 @@
 Package: receptormarker
 Type: Package
 Title: Analysis and Visualization of Immunological Data
-Version: 0.0.0.9003
-Date: 2016-11-30
+Version: 0.0.0.9002
+Date: 2016-02-23
 Authors@R: as.person(c(
     "Nikhil Haas <nikhil@nikhilhaas.com> [aut, cre]",
     "Chris Atterbury <chris.atterbury@gmail.com> [aut]",
@@ -36,6 +36,6 @@ Imports:
     muscle(>= 3.10.0),
     methods(>= 3.2.0)
 Suggests:
-    testthat (>= 1.0.2),
+    testthat (>= 0.9.1),
     lintr (>= 0.2.0)
 RoxygenNote: 5.0.1

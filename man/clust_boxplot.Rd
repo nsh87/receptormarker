@@ -25,7 +25,7 @@ function (besides \code{xlab}, \code{ylab}).}
 }
 \description{
 This function plots cluster membership for each feature of \code{d} using box
-plots. It utilizes \code{facet_wrap} in the \code{\link[ggplot2]{qplot}}
+plots. It utlizes \code{facet_wrap} in the \code{\link[ggplot2]{qplot}}
 function and the desired \code{clust_model} from the argument 
 \code{clust_obj} to show the box plots of each feature after using the
 \code{\link[reshape2]{melt}} function to get the correct form of \code{d}.
