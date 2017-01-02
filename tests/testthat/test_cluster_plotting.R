@@ -24,7 +24,7 @@ test_that("validation functions work properly in pca_plot", {
   expect_error(pca_plot(1, f_clust, num_clust=4), "data.frame or matrix")
   expect_error(pca_plot(fluidigm, 1, num_clust=4),
                "object of class 'multiClust'")
-  expect_error(pca_plot(fluidigm, f_clust, num_clust=-1), "num_clust")
+  expect_error(pca_plot(fluidigm, f_clust, num_clust=-1), "krange")
   expect_silent(pca_plot(fluidigm, f_clust, num_clust = 2:4))
 })
 
