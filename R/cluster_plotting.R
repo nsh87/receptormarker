@@ -170,7 +170,7 @@ pca_plot <- function(d, clust_obj, num_clust, ...) {
     if (grepl("integer", e)) {
       validate_k_range(num_clust)
     } else {
-      stop(e, call. = FALSE)
+      suppressWarnings(stop(e, call. = FALSE))
     }
   }
   )
