@@ -161,8 +161,19 @@ gap_plot <- function(clust_obj, optimal = FALSE, ...) {
 pca_plot <- function(d, clust_obj, num_clust, ...) {
   validate_num_data(d)
   validate_multi_clust(clust_obj)
-  # Use pos_num validation since num_clust could be vector or single int
-  validate_pos_num(list(num_clust = num_clust))
+  # Use pos_num and k_range validation since num_clust could be vector
+  # or single int
+  tryCatch({
+    validate_single_pos_num(num_clust)
+  },
+  error = function(e) {
+    if (grepl("integer", e)) {
+      validate_k_range(num_clust)
+    } else {
+      stop(e, call. = FALSE)
+    }
+  }
+  )
   pca <- stats::princomp(d)
   scores <- as.data.frame(pca[["scores"]][, 1:2])
   sdev <- pca[["sdev"]]
