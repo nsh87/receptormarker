@@ -4,7 +4,7 @@
 \alias{phyloxml_via_biopython}
 \title{Create a PhyloXML using Biopython}
 \usage{
-phyloxml_via_biopython(ms_alignment, verbose)
+phyloxml_via_biopython(ms_alignment, dist, verbose)
 }
 \arguments{
 \item{ms_alignment}{A multiple sequence alignment of class

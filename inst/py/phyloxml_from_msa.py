@@ -13,17 +13,19 @@ argparser.add_argument("--msa", dest="msa", required=True, metavar="MSA_FILE",
                        help="path to a MUSCLE_msa.fasta to create phylo from")
 argparser.add_argument("--dest", dest="dest", required=True,
                        help="path to an output phylo.xml")
+argparser.add_argument("--distance", dest="distance", required=True,
+                       help="distance calculator to use on MSA")
 args = argparser.parse_args()
 ##### END PARSE ARGUMENTS #####
 
 
-def phyloxml_from_msa(msa, phyloxml):
+def phyloxml_from_msa(msa, phyloxml, distance):
     from Bio import AlignIO
     from Bio.Phylo.TreeConstruction import DistanceCalculator
     from Bio.Phylo.TreeConstruction import DistanceTreeConstructor
     from Bio import Phylo
     ms_alignment = AlignIO.read(msa, "fasta")
-    calculator = DistanceCalculator("ident")
+    calculator = DistanceCalculator(distance)
     dist_matrix = calculator.get_distance(ms_alignment)
     constructor = DistanceTreeConstructor()
     tree = constructor.upgma(dist_matrix)
@@ -33,5 +35,6 @@ def phyloxml_from_msa(msa, phyloxml):
 if __name__ == "__main__":
     msa = args.msa
     phyloxml = args.dest
-    phyloxml_from_msa(msa, phyloxml)
+    distance = args.distance
+    phyloxml_from_msa(msa, phyloxml, distance)
 
