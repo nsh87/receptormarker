@@ -732,6 +732,7 @@ add_phylo_outer_rings_all <- function(xml_file, seqs, d_clean, seqs_col,
   # the color wheel you're using.
   ring_col <- names(rings)[[1]]
   ring_values <- unique(d_clean[, ring_col])
+  ring_values[is.na(ring_values)] <- 'N/A (NULL)'
   ring_map <- vapply(seq_along(ring_values), FUN.VALUE=character(1),
                      FUN=function(x) {
     index_with_wrap(x, colors)[["name"]]
@@ -768,6 +769,9 @@ add_phylo_outer_rings_all <- function(xml_file, seqs, d_clean, seqs_col,
         data_row <- seq_data_rows[i, ]
         # Get the value in the current row's ring column
         val <- data_row[[ring_col]]
+        if (is.na(val)) {
+          val <- 'N/A (NULL)'
+        }
         # Get the index of that value in the ring map
         idx <- which(names(ring_map) == val)
         # Add the appropriate XML node to color the appropriate ring
@@ -781,6 +785,7 @@ add_phylo_outer_rings_all <- function(xml_file, seqs, d_clean, seqs_col,
         # For this sequence, get the unique values in the ring column and
         # annotate each of them.
         unique_ring_col_vals <- unique(seq_data_rows[, ring_col])
+        unique_ring_col_vals[is.na(unique_ring_col_vals)] <- 'N/A (NULL)'
         rings_to_add <- lapply(unique_ring_col_vals, function(val) {
           # Very similar to above
           idx <- which(names(ring_map) == val)
