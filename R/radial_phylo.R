@@ -1212,9 +1212,23 @@ radial_phylo <- function(d, seqs_col=NULL, dist="ident", condense=FALSE,
                                       condense)
   }
   
-  # Calculate canvas size based on number of nodes in phylo.xml
+  # Calculate canvas size based on number of nodes in phylo.xml. 
   if (canvas_size == "auto") {
-    canvas_size <- calculate_canvas_size(xml_file, condense, rings) 
+    # Normally canvas size is calculated by the length of the 'rings' variable,
+    # but when you allow all values of a column to be annotated with col='all',
+    # the number of rings get expanded into the number of unique values in that
+    # column. So, need to account for that.
+    total_rings <- c()
+    for (ring_name in names(rings)) {
+      ring_val <- rings[[ring_name]]
+      if (ring_val == "all") {
+        expanded_rings <- unique(clean[["d"]][, ring_name])
+        total_rings <- append(total_rings, expanded_rings)
+      } else {
+        total_rings <- append(total_rings, c(ring_name=ring_val))
+      }
+    }
+    canvas_size <- calculate_canvas_size(xml_file, condense, total_rings) 
   }
   
   if (arc == "auto") {
