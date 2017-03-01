@@ -4,8 +4,12 @@
 \alias{radial_phylo}
 \title{Create an interactive radial phylogram}
 \usage{
-radial_phylo(d, seqs_col = NULL, condense = FALSE, rings = NULL,
-  canvas_size = "auto", font_size = 12, scale = TRUE, browser = FALSE,
+radial_phylo(d, seqs_col = NULL, dist = "ident", condense = FALSE,
+  rings = NULL, canvas_size = "auto", font_size = 12,
+  tree_margin = 0.28, arc = "auto", color_wheel = c(green = "#82A538",
+  orange = "#B1903C", blue = "#626DBC", pink = "#B5598F", turqoise = "#0DA765",
+  yellow = "#E9E700", purple = "#64059C", tangerine = "#DE531C"),
+  ring_thickness = 10, scale = TRUE, label = TRUE, browser = FALSE,
   verbose = FALSE, fast = FALSE)
 }
 \arguments{
@@ -16,16 +20,23 @@ to a column index or a string corresponding to a column name in \code{d}
 that contains the sequences. If \code{d} is a character vector,
 \code{seqs_col} should be \code{NULL}.}
 
+\item{dist}{A string representing a distance matrix to use for calculating
+distances from the sequence alignment. Only applicable if Biopython is
+installed and available. Must be one of "benner6", "benner22",}
+
 \item{condense}{\code{TRUE} or \code{FALSE}, depending on whether or not the
 radial phylogram should only contain unique sequences. If \code{TRUE}, clonal
 expansion (i.e. sequence frequency data) will be represented by orthogonal
-vertical bars on the perimiter of the phylogram.}
+vertical bars on the perimeter of the phylogram.}
 
 \item{rings}{A named character vector that can be used to create outer-ring
-annotations on the radial phylogram. The names of the vector must correspond
-to column names in the data.frame \code{d}, and the values should
-correspond to a desired value in each column which should be annotated
-on the ring. For example, \code{c(FOXP3=1, species="human")} will create
+annotations on the radial phylogram. There are two ways \code{rings} can
+be used.
+
+1. The names of the vector correspond to column names in the data.frame
+\code{d}, and the values should correspond to a desired value in each
+column which should be annotated on the ring.
+For example, \code{rings=c(FOXP3=1, species="human")} will create
 two outer rings, the first of which will be colored whenever the column
 "FOXP3" is 1 and the second of which will be colored whenever the column
 "species" is "human". Annotations occur on a per-sequence basis when the
@@ -33,7 +44,22 @@ PhyloXML represents a non-condensed phylogram. If the PhyloXML represents
 a condensed phylogram, annotations occur using individual sequence
 populations: if 50\% or more of the cells with a given sequence meet the
 current criteria given by \code{rings} then that sequence's ring on the
-radial phylogram will be annotated.}
+radial phylogram will be annotated.
+
+2. Alternatively, \code{rings} can be used to label all unique values in
+a single column. In this case, only a single column can be used to create
+rings. The name of the vector should correspond to the column name in the
+data.frame \code{d}, and the value should be \code{"all"}. For example,
+Consider the scenario where column "patient" contains four unique values,
+"P1", "P2", "P3", and "P4". Using  \code{rings=c(patient="all")}
+will create four outer rings, the first of which will be colored
+whenever the column "patient" is "P1", the second whenever it is,
+"P2", the third whenever it is "P3", and the fourth whenever it is
+"P4". The coloring of the rings is not mutually exclusive, so a
+single sequence could have colored rings for, say, "P1" and "P3" at
+the same time if there are identical sequences for the first and third
+patients in \code{d}. Note that due to the large number of rings this can
+create, only a single column can be labeled using this method.}
 
 \item{canvas_size}{An integer representing the desired width and height of
 the SVG canvas in pixels. Defaults to \code{"auto"} to automatically
@@ -46,10 +72,29 @@ Details section for more information.}
 suggested to leave this at the default value and then adjust only if
 necessary.}
 
+\item{tree_margin}{A number between 0 and 1 indicating the size of the
+tree with respect to the phylogram. To give more focus on the
+sequence labels, increase this value and increase \code{font_size}.}
+
+\item{arc}{An integer betwen 1 and 359 indicating the size of the split in
+the phylogram, in degrees. Defaults to \code{"auto"} to automatically
+estimate the appropriate arc size.}
+
+\item{color_wheel}{A named character vector where the names typically
+describe a color and the values correspond to 6-character hex color codes
+(preceded with "#"). These colors are used for the outer \code{rings} of the
+phylogram. If more colors than those supplied are needed, the colors in the
+wheel will be recycled, starting from the beginning.}
+
+\item{ring_thickness}{An integer representing the thickness of the rings.}
+
 \item{scale}{\code{TRUE} or \code{FALSE}, depending on whether or not the
 phylogram should scale to fit the browser or RStudio Viewer window. If
 \code{FALSE} and the phylogram is on a large canvas, it will be necessary to
 scroll to see the entire canvas.}
+
+\item{label}{\code{TRUE} or \code{FALSE}, depending on whether or not
+sequence labels should be present in the phylogram.}
 
 \item{browser}{\code{TRUE} or \code{FALSE}, depending on whether or not the 
 visualization should open in a browser window. Only applicable if using
