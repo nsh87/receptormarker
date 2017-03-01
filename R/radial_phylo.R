@@ -582,7 +582,9 @@ calculate_canvas_size <- function(xml_file, condensed, rings) {
   }
   extra_room <- quotient * 500 + remainder * 60
   canvas_size <- base_size + extra_room
-  # Need to add extra room if there are outer rings (~100 pixels per ring works)
+  # Need to add extra room if there are outer rings (~100 pixels per ring works,
+  # unless there is a ring that is annotating 'all', then that's going to create
+  # many additional rings).
   if (!is.null(rings)) {
     canvas_size <- canvas_size + length(rings) * 120
   }
@@ -732,7 +734,7 @@ add_phylo_outer_rings_all <- function(xml_file, seqs, d_clean, seqs_col,
   # the color wheel you're using.
   ring_col <- names(rings)[[1]]
   ring_values <- unique(d_clean[, ring_col])
-  ring_values[is.na(ring_values)] <- 'N/A (NULL)'
+  ring_values[is.na(ring_values)] <- "N/A (NULL)"
   ring_map <- vapply(seq_along(ring_values), FUN.VALUE=character(1),
                      FUN=function(x) {
     index_with_wrap(x, colors)[["name"]]
@@ -770,7 +772,7 @@ add_phylo_outer_rings_all <- function(xml_file, seqs, d_clean, seqs_col,
         # Get the value in the current row's ring column
         val <- data_row[[ring_col]]
         if (is.na(val)) {
-          val <- 'N/A (NULL)'
+          val <- "N/A (NULL)"
         }
         # Get the index of that value in the ring map
         idx <- which(names(ring_map) == val)
@@ -785,7 +787,7 @@ add_phylo_outer_rings_all <- function(xml_file, seqs, d_clean, seqs_col,
         # For this sequence, get the unique values in the ring column and
         # annotate each of them.
         unique_ring_col_vals <- unique(seq_data_rows[, ring_col])
-        unique_ring_col_vals[is.na(unique_ring_col_vals)] <- 'N/A (NULL)'
+        unique_ring_col_vals[is.na(unique_ring_col_vals)] <- "N/A (NULL)"
         rings_to_add <- lapply(unique_ring_col_vals, function(val) {
           # Very similar to above
           idx <- which(names(ring_map) == val)
