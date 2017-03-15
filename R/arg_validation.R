@@ -158,12 +158,12 @@ validate_pos_num <- function(n) {
 #' @param n An item to be checked.
 #' @keywords internal
 validate_single_pos_num <- function(n) {
-  if (is.na(n)) {
+  if (length(n) != 1) {
+    stop("Argument 'n' must be a single integer", call.=FALSE)
+  } else if (is.na(n)) {
     stop("Argument 'n' must be a real value", call.=FALSE)
   } else if (class(n) != "numeric") {
     stop("Argument 'n' must be an integer", call.=FALSE)
-  } else if (length(n) != 1) {
-    stop("Argument 'n' must be a single integer", call.=FALSE)
   } else if(n == 0) {
     stop("Argument 'n' must be greater than 0", call.=FALSE)
   } else if (grep("^[0-9]+$", n) != 1) {

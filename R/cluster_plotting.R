@@ -116,35 +116,39 @@ gap_plot <- function(clust_obj, optimal = FALSE, ...) {
 #' calculated using \code{\link[stats]{princomp}}. It represents each cluster
 #' with a different color so that one can understand the distribution of the
 #' clusters based on the first two components. It is a wrapper on the
-#' \code{\link[graphics]{plot}} function.
+#' \code{\link[ggplot2]{ggplot}} function.
 #' 
 #' @details This function is intended to be used to view the shape of a given
 #'   clustering to use for analysis. Principal component analysis looks for the
 #'   way to represent the data such that the most variance is explained using a
 #'   linear combination of the features. See \code{\link[stats]{princomp}} for
 #'   further details on its calculation. Here it is used strictly for its
-#'   ability to represent the data relatively well in just a couple dimensions.  
+#'   ability to represent the data relatively well in just a couple dimensions.
 #'   One may pass in the \code{k_best} element from the
-#'   \code{\link{multiClust-class}} object for \code{num_clust}, or use a
-#'   different value. This is where other visualizations can be useful.  
+#'   \code{\link{multiClust-class}} object for \code{num_clust}, or pass in a
+#'   vector of values. If a vector of values is passed in, then the plots will
+#'   be wrapped together and the data colored by each respective number of
+#'   clusters. This is where other visualizations can be useful.
 #'   See the \emph{Details} section for the \code{\link{multi_clust}} function
 #'   and view the \emph{TIP} for a suggested workflow.
 #'
 #' @param d A numeric matrix of data, or an object that can be coerced to
 #'   such a matrix (such as a numeric vector or a data frame with all numeric
-#'   columns). Note: This should be the same one used to generate 
+#'   columns). Note: This should be the same one used to generate
 #'   \code{clust_obj}.
 #' @param clust_obj A \code{\link{multiClust-class}} object from which to
-#' extract \code{clust_model} based on the argument \code{num_clust}
-#' @param num_clust An integer. The desired number of clusters to be used. Note:
-#'   This integer should fall within the krange used to generate the 
-#'   \code{\link{multiClust-class}} object.
-#' @param ... Further arguments to be passed to the \code{\link{plot}} 
-#'   function (besides \code{xlab}, \code{ylab}, \code{main}).
+#'   extract \code{clust_model} based on the argument \code{num_clust}
+#' @param num_clust An integer, or vector of integers. The desired number of
+#'   clusters to be used. Note: This integer, or vector of integers, should
+#'   fall within the krange used to generate the \code{\link{multiClust-class}}
+#'   object.
+#' @param ... Further arguments to be passed to the
+#'   \code{\link[ggplot2]{ggplot}} function (besides the labels and title of
+#'   the plot).
 #'
 #' @export
 #'
-#' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}}, 
+#' @seealso \code{\link{multi_clust}}, \code{\link{wss_plot}},
 #'   \code{\link{gap_plot}}, \code{\link{sil_plot}},
 #'   \code{\link{avg_sil_plot}}, \code{\link{clust_boxplot}}
 #'
@@ -157,28 +161,50 @@ gap_plot <- function(clust_obj, optimal = FALSE, ...) {
 pca_plot <- function(d, clust_obj, num_clust, ...) {
   validate_num_data(d)
   validate_multi_clust(clust_obj)
-  validate_pos_num(list(num_clust = num_clust))
+  # Use pos_num and k_range validation since num_clust could be vector
+  # or single int
+  tryCatch({
+    validate_single_pos_num(num_clust)
+  },
+  error = function(e) {
+    if (grepl("integer", e)) {
+      validate_k_range(num_clust)
+    } else {
+      suppressWarnings(stop(e, call. = FALSE))
+    }
+  }
+  )
   pca <- stats::princomp(d)
+  scores <- as.data.frame(pca[["scores"]][, 1:2])
   sdev <- pca[["sdev"]]
   prop_var <- sdev ^ 2 / sum(sdev ^ 2)
-  main <- paste0("PCA Plot (", round(sum(prop_var[1:2]) * 100), "% Variance)")
-  clusters <- clust_obj@clust_model[[num_clust]][["cluster"]]
-  clust_colors <- rainbow(num_clust)[clusters]
-  par(mar = c(5.1, 4.1, 4.1, 7.1), xpd = TRUE)
-  plot(pca[["scores"]][, 1:2], col = clust_colors,
-       xlab = "Principal Component 1",
-       ylab = "Principal Component 2",
-       main = main,
-       ...)
-  legend("topright",
-         inset = c(-0.25, 0),
-         legend = 1:num_clust,
-         pch = rep(1, num_clust),
-         col = rainbow(num_clust),
-         pt.cex = 1.0,
-         cex = 0.9,
-         title = "Cluster")
-  par(mar = c(5.1, 4.1, 4.1, 4.1))
+  title <- paste0("PCA Plot (", round(sum(prop_var[1:2]) * 100), "% Variance)")
+  # Build clusters by putting all cluster assignments in one vector so that
+  # facet_wrap can cycle through them.
+  clusters <- c()
+  for (i in num_clust) {
+    clusters <- c(clusters, clust_obj@clust_model[[i]][["cluster"]])
+  }
+  # Build column for wrapping. It has right number of rows so that it can be
+  # bound to scores and needs the rows to num_clust contents to cycle through
+  # each one with proper labels.
+  wrapping <- suppressWarnings(numeric(nrow(scores)) + num_clust)
+  scores <- cbind(scores, wrapping = wrapping)
+  num_plots <- length(num_clust)
+  # Plot using facet_wrap, but make wrapping = NULL so that all data is plotted
+  # each time.
+  ggplot2::ggplot(scores, ggplot2::aes(Comp.1, Comp.2)) +
+    ggplot2::geom_point(data = transform(scores, wrapping = NULL),
+                        colour = clusters) +
+    ggplot2::facet_wrap(~wrapping, ncol = boxplot_num_cols(num_plots)) +
+    ggplot2::xlab("Principal Component 1") +
+    ggplot2::ylab("Principal Component 2") +
+    ggplot2::ggtitle(title) +
+    ggplot2::theme(
+      axis.text=ggplot2::element_text(size=axis_label_size(num_plots)),
+      axis.text.x=ggplot2::element_blank(),  # Remove meainingless axis text
+      axis.text.y=ggplot2::element_blank(),  # Remove meainingless axis text
+      axis.ticks=ggplot2::element_blank())  # Remove unneeded tick marks
 }
 
 #' Plot silhouette scores for a given clustering of data.
