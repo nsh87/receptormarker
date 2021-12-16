@@ -113,7 +113,7 @@ multi_clust <- function(d, krange = 2:15, iter.max = 500, runs = 10,
                                         B = 15, verbose = FALSE)
   # Estimate K using the average silhouette score if method == 'kmeans'
   if (method == "kmeans") {
-    km[["k_best"]] <- which.max(km[["sil_avg"]])
+    km[["k_best"]] <- which.max(unlist(km[["sil_avg"]]))
   } else {
   # Estimate K using NbClust if method == 'exhaustive'
     if (bool) {
