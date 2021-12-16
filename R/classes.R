@@ -73,9 +73,9 @@ setOldClass("clusGap")
 #' \code{\link{pca_plot}}, \code{\link{sil_plot}}, \code{\link{avg_sil_plot}},
 #' \code{\link{clust_boxplot}}, \code{\link{multi_clust}}
 setClass("multiClust", slots=list(clust_model="list",
-                                  sil_avg="numeric",
-                                  num_clust="integer",
+                                  sil_avg="list",
+                                  num_clust="list",
                                   sil="list",
                                   clust_gap="clusGap",
-                                  wss="numeric",
+                                  wss="list",
                                   k_best="numeric"))
