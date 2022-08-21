@@ -40,7 +40,7 @@ validate_multi_clust_method <- function(method) {
 #' @param clust_obj An item to be checked for class membership.
 #' @keywords internal
 validate_multi_clust <- function(clust_obj) {
-  if (class(clust_obj) != "multiClust") {
+  if ((class(clust_obj) != "multiClust")[1]) {
     stop("The argument 'clust_obj' must be an object of class 'multiClust'",
          call.=FALSE)
   }
