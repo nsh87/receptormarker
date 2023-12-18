@@ -24,7 +24,7 @@ def phyloxml_from_msa(msa, phyloxml, distance):
     from Bio.Phylo.TreeConstruction import DistanceCalculator
     from Bio.Phylo.TreeConstruction import DistanceTreeConstructor
     from Bio import Phylo
-    ms_alignment = AlignIO.read(msa, "fasta")
+    ms_alignment = AlignIO.parse(msa, "fasta")
     # For some reason, we're getting weird chars appending to the IDs now
     for record in ms_alignment:
         if '.' in record.id:
